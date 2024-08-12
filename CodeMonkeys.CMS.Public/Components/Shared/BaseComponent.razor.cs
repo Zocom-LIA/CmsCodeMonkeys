@@ -26,18 +26,17 @@
 
         protected override async Task OnInitializedAsync()
         {
-            if (!_firstVisit) return;
-
-            await base.OnInitializedAsync();
-
-            await ExecuteWithLoadingAsync(async () =>
+            if (_firstVisit)
             {
-                _pageVisits = await StatisticsHandler.GetAndUpdatePageVisits(Navigation.Uri);
-            });
+                await base.OnInitializedAsync();
 
-            _firstVisit = false;
-        }
+                await ExecuteWithLoadingAsync(async () =>
+                {
+                    _pageVisits = await StatisticsHandler.GetAndUpdatePageVisits(Navigation.Uri);
+                });
 
+                _firstVisit = false;
+            }
         }
 
         protected void SetLoading(bool isLoading)
