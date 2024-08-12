@@ -1,11 +1,18 @@
 ﻿@page "/"
 @using CodeMonkeys.CMS.Public.Components.Shared
-@using CodeMonkeys.CMS.Public.Shared
-@inherits BaseComponent
+@inherits BaseComponent<Home>
 @rendermode InteractiveServer
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
+@if (IsLoading) 
+{
+    <p>Loading...</p>
+}
+else
+{
+    <h1>Welcome</h1>
+    <p>This is a simple example of a Blazor WebAssembly application.</p>
+    <p>Use the navigation bar to navigate to other pages.</p>
+    <p>This page has been visited @PageVisits times.</p>
+}

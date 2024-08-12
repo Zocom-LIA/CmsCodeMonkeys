@@ -18,14 +18,21 @@ namespace CodeMonkeys.CMS.Public.Shared
                 {
                     var visits = await _context.Set<Statistics>().FirstOrDefaultAsync(page => page.PageUrl == pageUrl);
 
-                    if (visits == null) return 1;
+                    if (visits == null)
+                    {
+                        visits = new Statistics
+                        {
+                            PageUrl = pageUrl,
+                            PageVisits = 0
+                        };
+                    }
 
                     visits.PageVisits++;
 
                     var result = await _context.SaveChangesAsync();
                     await transaction.CommitAsync();
 
-                    return visits.PageVisits + 1;
+                    return visits.PageVisits;
                 }
                 catch (Exception ex)
                 {

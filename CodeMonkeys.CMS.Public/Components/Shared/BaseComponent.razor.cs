@@ -4,23 +4,23 @@
     using Microsoft.AspNetCore.Components;
     using Microsoft.AspNetCore.Components.Authorization;
 
-    public abstract partial class BaseComponent : ComponentBase
+    public abstract class BaseComponent<T> : ComponentBase where T : class
     {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        [Inject]
-        protected NavigationManager Navigation { get; set; }
+        [Inject] protected NavigationManager Navigation { get; set; }
+        [Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+        [Inject] protected StatisticsHandler StatisticsHandler { get; set; }
+        [Inject] protected ILogger<T> Logger { get; set; }
 
-        [Inject]
-        protected AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+        private bool _isLoading = false;
+        private string _errorMessage = string.Empty;
+        private string _successMessage = string.Empty;
+        private int _pageVisits;
 
-        [Inject]
-        protected StatisticsHandler StatisticsHandler { get; set; }
-
-        protected ILogger? Logger { get; set; }
-        protected bool isLoading = false;
-        protected string errorMessage = string.Empty;
-        protected string successMessage = string.Empty;
-        protected int PageVisits { get; set; }
+        protected bool IsLoading => _isLoading;
+        protected string ErrorMessage => _errorMessage;
+        protected string SuccessMessage => _successMessage;
+        protected int PageVisits => _pageVisits;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         protected override async Task OnInitializedAsync()
@@ -31,31 +31,25 @@
 
             await ExecuteWithLoadingAsync(async () =>
             {
-                string pageUrl = Navigation.BaseUri;
-                await IncrementPageVisitAsync(pageUrl);
+                _pageVisits = await StatisticsHandler.GetAndUpdatePageVisits(Navigation.BaseUri);
             });
-        }
-
-        private async Task IncrementPageVisitAsync(string pageUrl)
-        {
-            PageVisits = await StatisticsHandler.GetAndUpdatePageVisits(pageUrl);
         }
 
         protected void SetLoading(bool isLoading)
         {
-            this.isLoading = isLoading;
+            this._isLoading = isLoading;
         }
 
         protected void SetError(string message)
         {
-            errorMessage = message;
-            successMessage = string.Empty;
+            _errorMessage = message;
+            _successMessage = string.Empty;
         }
 
         protected void SetSuccess(string message)
         {
-            successMessage = message;
-            errorMessage = string.Empty;
+            _successMessage = message;
+            _errorMessage = string.Empty;
         }
 
         protected async Task<bool> HasRole(string role)
@@ -73,6 +67,7 @@
         protected async Task ExecuteWithLoadingAsync(Func<Task> action)
         {
             SetLoading(true);
+
             try
             {
                 await action();
@@ -88,7 +83,7 @@
             }
         }
 
-        private void LogError(Exception ex)
+        protected void LogError(Exception ex)
         {
             Logger?.LogError(ex.Message);
         }
