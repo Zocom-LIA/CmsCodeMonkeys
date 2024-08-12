@@ -1,7 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using CodeMonkeys.CMS.Public.Data
+@using CodeMonkeys.CMS.Public.Shared.Data
+@using CodeMonkeys.CMS.Public.Shared.Entities
 
-@inject SignInManager<ApplicationUser> SignInManager
+@inject SignInManager<User> SignInManager
 
 <ul class="nav nav-pills flex-column">
     <li class="nav-item">
