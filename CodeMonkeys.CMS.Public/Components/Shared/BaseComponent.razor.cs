@@ -12,6 +12,7 @@
         [Inject] protected StatisticsHandler StatisticsHandler { get; set; }
         [Inject] protected ILogger<T> Logger { get; set; }
 
+        private bool _firstVisit = true;
         private bool _isLoading = false;
         private string _errorMessage = string.Empty;
         private string _successMessage = string.Empty;
@@ -25,14 +26,17 @@
 
         protected override async Task OnInitializedAsync()
         {
-            await base.OnInitializedAsync();
-
-            // TODO: Count Stats
-
-            await ExecuteWithLoadingAsync(async () =>
+            if (_firstVisit)
             {
-                _pageVisits = await StatisticsHandler.GetAndUpdatePageVisits(Navigation.BaseUri);
-            });
+                await base.OnInitializedAsync();
+
+                await ExecuteWithLoadingAsync(async () =>
+                {
+                    _pageVisits = await StatisticsHandler.GetAndUpdatePageVisits(Navigation.Uri);
+                });
+
+                _firstVisit = false;
+            }
         }
 
         protected void SetLoading(bool isLoading)

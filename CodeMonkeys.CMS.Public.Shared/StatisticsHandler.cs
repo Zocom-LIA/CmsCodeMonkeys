@@ -2,13 +2,24 @@
 using CodeMonkeys.CMS.Public.Shared.Entities;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Extensions.Logging;
+using System;
 
 namespace CodeMonkeys.CMS.Public.Shared
 {
-    public class StatisticsHandler(ApplicationDbContext context)
+    public class StatisticsHandler
     {
+        private DbContext _context;
+        private readonly DbSet<Statistics> _statistics;
+        private readonly ILogger _logger;
 
-        private DbContext _context = context;
+        public StatisticsHandler(ApplicationDbContext context, ILogger<StatisticsHandler> logger)
+        {
+            _context = context;
+            _logger = logger;
+            _statistics = context.Set<Statistics>();
+        }
 
         public async Task<int> GetAndUpdatePageVisits(string pageUrl)
         {
@@ -16,20 +27,23 @@ namespace CodeMonkeys.CMS.Public.Shared
             {
                 try
                 {
-                    var visits = await _context.Set<Statistics>().FirstOrDefaultAsync(page => page.PageUrl == pageUrl);
-
+                    var visits = await _statistics.Where(s => s.PageUrl.Equals(pageUrl)).FirstOrDefaultAsync();
                     if (visits == null)
                     {
                         visits = new Statistics
                         {
                             PageUrl = pageUrl,
-                            PageVisits = 0
+                            PageVisits = 1
                         };
+                        await _statistics.AddAsync(visits);
+                    }
+                    else
+                    {
+                        visits.PageVisits++;
+                        _statistics.Update(visits);
                     }
 
-                    visits.PageVisits++;
-
-                    var result = await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
                     await transaction.CommitAsync();
 
                     return visits.PageVisits;
@@ -37,7 +51,9 @@ namespace CodeMonkeys.CMS.Public.Shared
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    throw new DbUpdateException("Error updating page visits", ex);
+                    // Log the error and rethrow the exception
+                    _logger.LogError(ex, "An error occurred while updating page visits.");
+                    throw;
                 }
             }
         }
