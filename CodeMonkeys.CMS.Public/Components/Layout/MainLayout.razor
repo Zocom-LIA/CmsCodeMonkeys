@@ -1,23 +1,39 @@
-﻿@inherits LayoutComponentBase
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        margin: 0;
+    }
+
+    .header-divider {
+        border-top: 2px solid black; /* Black line under the header */
+        margin-top: 10px;
+    }
+
+    .page {
+        flex: 1;
+        padding-top: 90px; /* Adjust this value to match the height of the header */
+        padding-bottom: 40px; /* Padding for the footer */
+        background-color: #494949;
+    }
+
+
+</style>
+
+<CascadingAuthenticationState>
+    <div class="page">
         <NavMenu />
+        <main>
+
+            <article class="content px-4">
+                @Body
+            </article>
+        </main>
+
     </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
-
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
-</div>
+    <Footer />
+</CascadingAuthenticationState>

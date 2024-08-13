@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeMonkeys.CMS.Public", "CodeMonkeys.CMS.Public\CodeMonkeys.CMS.Public.csproj", "{AE46A29B-DD1A-4495-82B0-77A2BC90D25B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeMonkeys.CMS.Public", "CodeMonkeys.CMS.Public\CodeMonkeys.CMS.Public.csproj", "{AE46A29B-DD1A-4495-82B0-77A2BC90D25B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeMonkeys.CMS.Public.Backend", "CodeMonkeys.CMS.Public.Backend\CodeMonkeys.CMS.Public.Backend.csproj", "{AB2170AE-F52C-49C1-B45A-F0CBDE9681C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeMonkeys.CMS.Public.Backend", "CodeMonkeys.CMS.Public.Backend\CodeMonkeys.CMS.Public.Backend.csproj", "{AB2170AE-F52C-49C1-B45A-F0CBDE9681C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeMonkeys.CMS.Public.Shared", "CodeMonkeys.CMS.Public.Shared\CodeMonkeys.CMS.Public.Shared.csproj", "{544344E4-592F-44C1-8977-A2659B97BF76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeMonkeys.CMS.Public.Shared", "CodeMonkeys.CMS.Public.Shared\CodeMonkeys.CMS.Public.Shared.csproj", "{544344E4-592F-44C1-8977-A2659B97BF76}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
