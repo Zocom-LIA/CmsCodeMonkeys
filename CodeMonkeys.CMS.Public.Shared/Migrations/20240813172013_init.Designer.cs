@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeMonkeys.CMS.Public.Shared.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240812151633_init")]
+    [Migration("20240813172013_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -84,6 +84,26 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.ToTable("Page");
                 });
 
+            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.PageStats", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("PageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PageVisits")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PageStats");
+                });
+
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Role", b =>
                 {
                     b.Property<Guid>("Id")
@@ -110,26 +130,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-                });
-
-            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Statistics", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("PageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PageVisits")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Statistics");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.User", b =>
