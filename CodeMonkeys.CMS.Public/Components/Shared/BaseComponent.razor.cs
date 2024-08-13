@@ -1,6 +1,7 @@
 ﻿namespace CodeMonkeys.CMS.Public.Components.Shared
 {
     using CodeMonkeys.CMS.Public.Shared;
+    using CodeMonkeys.CMS.Public.Shared.Services;
     using Microsoft.AspNetCore.Components;
     using Microsoft.AspNetCore.Components.Authorization;
 
@@ -9,7 +10,8 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         [Inject] protected NavigationManager Navigation { get; set; }
         [Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; }
-        [Inject] protected StatisticsHandler StatisticsHandler { get; set; }
+        [Inject] protected IHttpContextAccessor HttpContextAccessor { get; set; }
+        [Inject] protected IPageStatsService PageStatsService { get; set; }
         [Inject] protected ILogger<T> Logger { get; set; }
 
         private bool _firstVisit = true;
@@ -31,15 +33,14 @@
                 _firstVisit = false;
                 await base.OnInitializedAsync();
 
-                await ExecuteWithLoadingAsync(async () =>
+                HttpContext httpContext = HttpContextAccessor?.HttpContext!;
+                if (httpContext != null)
                 {
-                    int visits = await StatisticsHandler.GetPageVisits(Navigation.Uri);
-                    Logger.LogInformation($"BaseComponent: Page visits: {visits} before update.");
-                    _pageVisits = await StatisticsHandler.GetAndUpdatePageVisits(Navigation.Uri);
-                    Logger.LogInformation($"BaseComponent: Page visits: {PageVisits} after update.");
-                    visits = await StatisticsHandler.GetPageVisits(Navigation.Uri);
-                    Logger.LogInformation($"BaseComponent: Page visits: {visits} after update.");
-                });
+                    await ExecuteWithLoadingAsync(async () =>
+                    {
+                        _pageVisits = await PageStatsService.GetPageVisitsAsync(httpContext.Request.Path.Value!) + 1;
+                    });
+                }
             }
         }
 

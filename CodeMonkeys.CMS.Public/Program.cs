@@ -3,7 +3,9 @@ using CodeMonkeys.CMS.Public.Components.Account;
 using CodeMonkeys.CMS.Public.Shared;
 using CodeMonkeys.CMS.Public.Shared.Data;
 using CodeMonkeys.CMS.Public.Shared.Entities;
-
+using CodeMonkeys.CMS.Public.Shared.Middleware;
+using CodeMonkeys.CMS.Public.Shared.Repository;
+using CodeMonkeys.CMS.Public.Shared.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +21,7 @@ builder.Logging.AddConsole();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
@@ -42,7 +45,9 @@ builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirme
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
-builder.Services.AddScoped<StatisticsHandler>();
+builder.Services.AddScoped<IPageStatsRepository, PageStatsRepository>();
+builder.Services.AddScoped<IPageStatsService, PageStatsService>();
+builder.Services.AddScoped<VisitCounterMiddleware>();
 
 var app = builder.Build();
 
@@ -61,7 +66,12 @@ else
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseAntiforgery();
+
+app.UseMiddleware<VisitCounterMiddleware>();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();

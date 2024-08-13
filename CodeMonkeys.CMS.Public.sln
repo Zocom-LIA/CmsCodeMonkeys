@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeMonkeys.CMS.Public", "CodeMonkeys.CMS.Public\CodeMonkeys.CMS.Public.csproj", "{AE46A29B-DD1A-4495-82B0-77A2BC90D25B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeMonkeys.CMS.Public.Backend", "CodeMonkeys.CMS.Public.Backend\CodeMonkeys.CMS.Public.Backend.csproj", "{AB2170AE-F52C-49C1-B45A-F0CBDE9681C8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{544344E4-592F-44C1-8977-A2659B97BF76} = {544344E4-592F-44C1-8977-A2659B97BF76}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeMonkeys.CMS.Public.Shared", "CodeMonkeys.CMS.Public.Shared\CodeMonkeys.CMS.Public.Shared.csproj", "{544344E4-592F-44C1-8977-A2659B97BF76}"
 EndProject
