@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CodeMonkeys.CMS.Public.Shared.Entities
 {
-    public class Statistics
+    public class PageStats
     {
         public int Id { get; set; }
         required public string PageUrl { get; set; }

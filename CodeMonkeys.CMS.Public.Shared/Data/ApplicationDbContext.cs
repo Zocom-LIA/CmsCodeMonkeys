@@ -6,6 +6,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Data
 {
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<User, Role, Guid>(options)
     {
-        DbSet<Statistics> Statistics => Set<Statistics>();
+        DbSet<PageStats> Statistics => Set<PageStats>();
     }
 }
