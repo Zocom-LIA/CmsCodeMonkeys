@@ -51,7 +51,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Statistics",
+                name: "PageStats",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -61,7 +61,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Statistics", x => x.Id);
+                    table.PrimaryKey("PK_PageStats", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -287,7 +287,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 name: "Content");
 
             migrationBuilder.DropTable(
-                name: "Statistics");
+                name: "PageStats");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
