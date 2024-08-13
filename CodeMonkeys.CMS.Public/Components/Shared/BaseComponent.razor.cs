@@ -4,7 +4,7 @@
     using Microsoft.AspNetCore.Components;
     using Microsoft.AspNetCore.Components.Authorization;
 
-    public abstract class BaseComponent<T> : ComponentBase where T : class
+    public abstract partial class BaseComponent<T> : ComponentBase where T : class
     {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         [Inject] protected NavigationManager Navigation { get; set; }
@@ -28,20 +28,24 @@
         {
             if (_firstVisit)
             {
+                _firstVisit = false;
                 await base.OnInitializedAsync();
 
                 await ExecuteWithLoadingAsync(async () =>
                 {
+                    int visits = await StatisticsHandler.GetPageVisits(Navigation.Uri);
+                    Logger.LogInformation($"BaseComponent: Page visits: {visits} before update.");
                     _pageVisits = await StatisticsHandler.GetAndUpdatePageVisits(Navigation.Uri);
+                    Logger.LogInformation($"BaseComponent: Page visits: {PageVisits} after update.");
+                    visits = await StatisticsHandler.GetPageVisits(Navigation.Uri);
+                    Logger.LogInformation($"BaseComponent: Page visits: {visits} after update.");
                 });
-
-                _firstVisit = false;
             }
         }
 
         protected void SetLoading(bool isLoading)
         {
-            this._isLoading = isLoading;
+            _isLoading = isLoading;
         }
 
         protected void SetError(string message)

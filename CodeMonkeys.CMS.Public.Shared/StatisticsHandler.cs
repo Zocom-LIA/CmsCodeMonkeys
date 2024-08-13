@@ -27,6 +27,8 @@ namespace CodeMonkeys.CMS.Public.Shared
             {
                 try
                 {
+                    // TODO: Handle transactions properly by using a transaction scope and savepoints
+                    _logger.LogInformation($"StatisticsHandler: Updating page visits for {pageUrl}");
                     var visits = await _statistics.Where(s => s.PageUrl.Equals(pageUrl)).FirstOrDefaultAsync();
                     if (visits == null)
                     {
@@ -43,19 +45,27 @@ namespace CodeMonkeys.CMS.Public.Shared
                         _statistics.Update(visits);
                     }
 
+                    _logger.LogInformation($"StatisticsHandler: Updated visits: {visits.PageVisits}");
+
                     await _context.SaveChangesAsync();
-                    await transaction.CommitAsync();
 
                     return visits.PageVisits;
                 }
                 catch (Exception ex)
                 {
-                    await transaction.RollbackAsync();
                     // Log the error and rethrow the exception
                     _logger.LogError(ex, "An error occurred while updating page visits.");
                     throw;
                 }
             }
+        }
+
+        public async Task<int> GetPageVisits(string pageUrl)
+        {
+            _logger.LogInformation($"StatisticsHandler: Getting page visits for {pageUrl}");
+            var visits = await _statistics.Where(s => s.PageUrl.Equals(pageUrl)).FirstOrDefaultAsync();
+            _logger.LogInformation($"StatisticsHandler: Page visits: {visits?.PageVisits ?? 0}");
+            return visits?.PageVisits ?? 0;
         }
     }
 }
