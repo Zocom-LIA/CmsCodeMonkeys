@@ -1,5 +1,7 @@
 ﻿using CodeMonkeys.CMS.Public.Shared.Data;
+using CodeMonkeys.CMS.Public.Shared.Entities;
 using CodeMonkeys.CMS.Public.Shared.Repository;
+
 using Microsoft.Extensions.Logging;
 
 namespace CodeMonkeys.CMS.Public.Shared.Services
@@ -15,9 +17,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<int> GetPageVisitsAsync(string pageUrl)
-        {
-            return await _repository.GetPageVisitsAsync(pageUrl);
-        }
+        public async Task<IEnumerable<PageStats>> GetPageStatsAsync() => await _repository.GetPageStatsAsync();
+        public async Task<int> GetPageVisitsAsync(string pageUrl) => await _repository.GetPageVisitsAsync(pageUrl);
     }
 }

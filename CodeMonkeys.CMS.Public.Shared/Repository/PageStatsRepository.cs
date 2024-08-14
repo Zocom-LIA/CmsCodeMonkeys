@@ -1,5 +1,6 @@
 ﻿using CodeMonkeys.CMS.Public.Shared.Data;
 using CodeMonkeys.CMS.Public.Shared.Entities;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -50,5 +51,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             // TODO: Exception Handling
             return (await _pageStats.Where(page => page.PageUrl.Equals(pageUrl)).FirstOrDefaultAsync())?.PageVisits ?? 0;
         }
+
+        public async Task<IEnumerable<PageStats>> GetPageStatsAsync() => await _pageStats.ToListAsync();
     }
 }

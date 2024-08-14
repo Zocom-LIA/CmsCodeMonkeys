@@ -1,0 +1,33 @@
+﻿@page  "/pagevisits"
+
+@using CodeMonkeys.CMS.Public.Components.Shared
+@using CodeMonkeys.CMS.Public.Shared.Entities
+@using CodeMonkeys.CMS.Public.Shared.Services
+@inherits BaseComponent<Home>
+@rendermode InteractiveServer
+
+@if (IsLoading)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <h3>PageStats</h3>
+
+    <p>This component demonstrates how to create a simple page that displays statistics about the pages.</p>
+
+    foreach(var pageStats in Pages)
+    {
+        <p>@pageStats.PageUrl: @pageStats.PageVisits</p>
+    }
+}
+
+@code {
+    private IEnumerable<PageStats> Pages { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        Pages = await PageStatsService.GetPageStatsAsync();
+    }
+}

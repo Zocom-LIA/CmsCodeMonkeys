@@ -1,5 +1,6 @@
 ﻿using CodeMonkeys.CMS.Public.Shared.Data;
 using CodeMonkeys.CMS.Public.Shared.Repository;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -20,18 +21,32 @@ namespace CodeMonkeys.CMS.Public.Shared.Middleware
         {
             try
             {
-                var pageUrl = context.Request.Path.Value;
-
-                if (pageUrl != null)
-                {
-                    await _repository.UpdatePageCountAsync(pageUrl);
-                }
-
                 await next(context);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                _logger.LogError(ex, "An error occurred while processing the request.");
+            }
+            finally
+            {
+                try
+                {
+                    var header = context.Response.Headers["Content-Type"].ToString();
+                    if (string.IsNullOrEmpty(header) || header.Contains("text/html"))
+                    {
+                        var pageUrl = context.Request.Path.Value;
+
+                        if (pageUrl != null)
+                        {
+                            await _repository.UpdatePageCountAsync(pageUrl);
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
             }
         }
     }
