@@ -20,20 +20,21 @@
         padding-bottom: 40px; /* Padding for the footer */
         background-color: white;
     }
-
-
 </style>
 
 <CascadingAuthenticationState>
     <div class="page">
         <NavMenu />
         <main>
-
             <article class="content px-4">
                 @Body
             </article>
         </main>
-
     </div>
-    <Footer />
+    <footer class="footer">
+        <!-- Here we added the class="footer" -->
+        <div class="container">
+            <p>&copy; 2024 Code Monkeys.</p>
+        </div>
+    </footer>
 </CascadingAuthenticationState>
