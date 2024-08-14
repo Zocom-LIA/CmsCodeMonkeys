@@ -1,7 +1,99 @@
 ﻿@page "/"
 
+<style>
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        
+    }
+
+    .left-top, .left-bottom, .right-top, .right-bottom {
+        box-sizing: border-box;
+        padding: 20px;
+     
+    }
+
+    .left-top, .left-bottom {
+        width: 48%;
+       
+        
+    }
+
+    .right-top, .right-bottom {
+        width: 48%; 
+   
+        
+    }
+
+    .left-top {
+        background-color: white
+    }
+
+    .right-top {
+        background-color: white
+        
+    }
+
+    .left-bottom {
+        display: flex;
+        justify-content: space-between; 
+        
+        height: 300px; 
+    }
+
+    .right-bottom {
+        background-color: white
+   
+    }
+
+    .small-container {
+        width: 30%;
+        height: 100px;
+        margin: 10px 0;
+        background-color: #b0b0b0;
+        border: 2px solid #000; 
+       
+    }
+
+    .h1 {
+        font-family: 'Courier New', monospace;
+        margin-bottom: 40px;
+    }
+
+    p {
+        margin-top: 20px;
+    }
+
+    img {
+        border-radius: 50%;
+        width: 300px; 
+        height: 300px; 
+        object-fit: cover;
+</style>
+
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="container">
 
-Welcome to your new app.
+    <div class="left-top">
+        <h1>PUBLIC</h1>
+        <p>Lorem ipsum dolor sit amet consectetur. Scelerisque egestas id lectus facilisis in sapien ac dui. Sed curabitur urna senectus senectus dapibus tristique. Magna pretium elit netus velit leo facilisis dignissim bibendum eleifend. Non consectetur proin neque in cras lobortis.</p>
+    </div>
+
+    <div class="right-top">
+        <img src="/CMS2.png" alt="My Image">
+
+    </div>
+
+    <div class="left-bottom">
+        <div class="small-container"></div>
+        <div class="small-container"></div>
+        <div class="small-container"></div>
+    </div>
+
+    <div class="right-bottom">
+        <h1>Available Templates</h1>
+        <p>Lorem ipsum dolor sit amet consectetur. Sed vestibulum suspendisse sollicitudin gravida id senectus. Eu amet ullamcorper eu et eget auctor. Dignissim aenean molestie vel amet turpis urna enim ultrices nisi. Eu vivamus sed ullamcorper amet praesent quam laoreet ac.</p>
+    </div>
+</div>
