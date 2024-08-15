@@ -5,25 +5,33 @@
 
 <PageTitle>Home</PageTitle>
 
-<div class="container">
+@if (IsLoading)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="container">
 
-    <div class="left-top">
-        <h1>PUBLIC</h1>
-        <p>Lorem ipsum dolor sit amet consectetur. Scelerisque egestas id lectus facilisis in sapien ac dui. Sed curabitur urna senectus senectus dapibus tristique. Magna pretium elit netus velit leo facilisis dignissim bibendum eleifend. Non consectetur proin neque in cras lobortis.</p>
-    </div>
+        <div class="left-top">
+            <h1>PUBLIC</h1>
+            <p>Lorem ipsum dolor sit amet consectetur. Scelerisque egestas id lectus facilisis in sapien ac dui. Sed curabitur urna senectus senectus dapibus tristique. Magna pretium elit netus velit leo facilisis dignissim bibendum eleifend. Non consectetur proin neque in cras lobortis.</p>
+        </div>
 
-    <div class="right-top">
-        <img src="/CMS2.png" alt="My Image">
-    </div>
+        <div class="right-top">
+            <img src="/CMS2.png" alt="My Image">
+        </div>
 
-    <div class="left-bottom">
-        <div class="small-container"></div>
-        <div class="small-container"></div>
-        <div class="small-container"></div>
-    </div>
+        <div class="left-bottom">
+            <div class="small-container"></div>
+            <div class="small-container"></div>
+            <div class="small-container"></div>
+        </div>
 
-    <div class="right-bottom">
-        <h1>Available Templates</h1>
-        <p>Lorem ipsum dolor sit amet consectetur. Sed vestibulum suspendisse sollicitudin gravida id senectus. Eu amet ullamcorper eu et eget auctor. Dignissim aenean molestie vel amet turpis urna enim ultrices nisi. Eu vivamus sed ullamcorper amet praesent quam laoreet ac.</p>
+        <div class="right-bottom">
+            <h1>Available Templates</h1>
+            <p>Lorem ipsum dolor sit amet consectetur. Sed vestibulum suspendisse sollicitudin gravida id senectus. Eu amet ullamcorper eu et eget auctor. Dignissim aenean molestie vel amet turpis urna enim ultrices nisi. Eu vivamus sed ullamcorper amet praesent quam laoreet ac.</p>
+        </div>
     </div>
-</div>
+}
+
