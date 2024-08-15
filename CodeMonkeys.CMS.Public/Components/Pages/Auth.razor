@@ -1,13 +1,21 @@
 ﻿@page "/auth"
 
+@inherits BaseComponent<Auth>
+@using CodeMonkeys.CMS.Public.Components.Shared
 @using Microsoft.AspNetCore.Authorization
-
 @attribute [Authorize]
 
 <PageTitle>Auth</PageTitle>
 
-<h1>You are authenticated</h1>
+@if (IsLoading)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <h1>You are authenticated</h1>
 
-<AuthorizeView>
-    Hello @context.User.Identity?.Name!
-</AuthorizeView>
+    <AuthorizeView>
+        Hello @context.User.Identity?.Name!
+    </AuthorizeView>
+}
