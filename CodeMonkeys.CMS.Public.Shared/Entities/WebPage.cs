@@ -2,16 +2,17 @@
 
 namespace CodeMonkeys.CMS.Public.Shared.Entities
 {
-    public class Content
+    public class WebPage
     {
         [Key]
-        public int ContentId { get; set; }
+        public int PageId { get; set; }
         public string Title { get; set; }
-        public string ContentType { get; set; }
-        public string Body { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime LastModifiedDate { get; set; }
 
+        public int? SiteId { get; set; }
         public Guid? AuthorId { get; set; }
+
+        public ICollection<Content> Contents { get; set; } = new List<Content>();
     }
 }
