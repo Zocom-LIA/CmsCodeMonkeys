@@ -11,5 +11,13 @@ namespace CodeMonkeys.CMS.Public.Shared.Data
         public DbSet<Site> Sites => Set<Site>();
         public DbSet<WebPage> Pages => Set<WebPage>();
         public DbSet<Content> Contents => Set<Content>();
+
+        
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.Entity<Site>().HasMany<WebPage>(s=>s.Pages).WithOne().HasForeignKey(s=>s.SiteId);
+
+        }
     }
 }

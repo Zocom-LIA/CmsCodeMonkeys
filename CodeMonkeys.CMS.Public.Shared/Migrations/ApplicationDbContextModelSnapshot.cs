@@ -17,7 +17,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.7")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -51,12 +51,12 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("WebPagePageId")
+                    b.Property<int?>("WebPageId")
                         .HasColumnType("int");
 
                     b.HasKey("ContentId");
 
-                    b.HasIndex("WebPagePageId");
+                    b.HasIndex("WebPageId");
 
                     b.ToTable("Contents");
                 });
@@ -188,9 +188,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<int>("UserRoles")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -206,11 +203,11 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", b =>
                 {
-                    b.Property<int>("PageId")
+                    b.Property<int>("WebPageId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PageId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WebPageId"));
 
                     b.Property<Guid?>("AuthorId")
                         .HasColumnType("uniqueidentifier");
@@ -224,6 +221,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.Property<int?>("SiteId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("SiteId1")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -231,9 +231,13 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("PageId");
+                    b.HasKey("WebPageId");
 
                     b.HasIndex("SiteId");
+
+                    b.HasIndex("SiteId1")
+                        .IsUnique()
+                        .HasFilter("[SiteId1] IS NOT NULL");
 
                     b.HasIndex("UserId");
 
@@ -347,7 +351,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 {
                     b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", null)
                         .WithMany("Contents")
-                        .HasForeignKey("WebPagePageId");
+                        .HasForeignKey("WebPageId");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", b =>
@@ -355,6 +359,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.Site", null)
                         .WithMany("Pages")
                         .HasForeignKey("SiteId");
+
+                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.Site", null)
+                        .WithOne("LandingPage")
+                        .HasForeignKey("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", "SiteId1");
 
                     b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.User", null)
                         .WithMany("Pages")
@@ -414,6 +422,8 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Site", b =>
                 {
+                    b.Navigation("LandingPage");
+
                     b.Navigation("Pages");
                 });
 
