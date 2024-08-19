@@ -56,6 +56,7 @@ builder.Services.AddScoped<IContentRepository, ContentRepository>();
 builder.Services.AddScoped<ISiteService, SiteService>();
 builder.Services.AddScoped<IWebPageService, WebPageService>();
 builder.Services.AddScoped<IContentService, ContentService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
