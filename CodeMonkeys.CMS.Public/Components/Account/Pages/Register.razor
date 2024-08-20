@@ -69,6 +69,7 @@
 
 @code {
     private IEnumerable<IdentityError>? identityErrors;
+    [Inject] RoleManager<Role> RoleManager { get; set; }
 
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = new();
@@ -97,7 +98,32 @@
             return;
         }
 
-        Logger.LogInformation("User created a new account with password.");
+        // Omvandla användarens valda roll till en sträng
+        string roleName = Input.SelectedUserRole.ToString();
+
+        // Kontrollera om rollen finns och om inte, skapa den
+        if (!await RoleManager.RoleExistsAsync(roleName))
+        {
+            var roleResult = await RoleManager.CreateAsync(new Role
+            {
+                Name = roleName
+            });
+            if (!roleResult.Succeeded)
+            {
+                identityErrors = roleResult.Errors;
+                return;
+            }
+        }
+
+        // Lägg till användaren i rollen och hantera resultatet av detta
+        var addToRoleResult = await UserManager.AddToRoleAsync(user, roleName);
+        if (!addToRoleResult.Succeeded)
+        {
+            identityErrors = addToRoleResult.Errors;
+            return;
+        }
+
+        Logger.LogInformation("User created a new account with password and assigned to role.");
 
         var userId = await UserManager.GetUserIdAsync(user);
         var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
