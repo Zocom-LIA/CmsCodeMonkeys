@@ -10,7 +10,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Entities
     public enum UserRole
     {
         Admin,
-        User,
-        Unicorn
+        User
     }
 }
