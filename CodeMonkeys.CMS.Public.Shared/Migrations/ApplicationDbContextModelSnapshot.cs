@@ -123,6 +123,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.Property<Guid?>("CreatorId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int?>("LandingPageId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("LastModifiedDate")
                         .HasColumnType("datetime2");
 
@@ -131,6 +134,8 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("SiteId");
+
+                    b.HasIndex("LandingPageId");
 
                     b.ToTable("Sites");
                 });
@@ -221,9 +226,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.Property<int?>("SiteId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("SiteId1")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -234,10 +236,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.HasKey("WebPageId");
 
                     b.HasIndex("SiteId");
-
-                    b.HasIndex("SiteId1")
-                        .IsUnique()
-                        .HasFilter("[SiteId1] IS NOT NULL");
 
                     b.HasIndex("UserId");
 
@@ -354,15 +352,20 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .HasForeignKey("WebPageId");
                 });
 
+            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Site", b =>
+                {
+                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", "LandingPage")
+                        .WithMany()
+                        .HasForeignKey("LandingPageId");
+
+                    b.Navigation("LandingPage");
+                });
+
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", b =>
                 {
                     b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.Site", null)
                         .WithMany("Pages")
                         .HasForeignKey("SiteId");
-
-                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.Site", null)
-                        .WithOne("LandingPage")
-                        .HasForeignKey("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", "SiteId1");
 
                     b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.User", null)
                         .WithMany("Pages")
@@ -422,8 +425,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Site", b =>
                 {
-                    b.Navigation("LandingPage");
-
                     b.Navigation("Pages");
                 });
 
