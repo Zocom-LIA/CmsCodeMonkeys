@@ -3,6 +3,7 @@
 @using System.ComponentModel.DataAnnotations
 @using System.Text
 @using System.Text.Encodings.Web
+@using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
 @using CodeMonkeys.CMS.Public.Shared.Data
@@ -43,6 +44,17 @@
                 <label for="confirm-password">Confirm Password</label>
                 <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
             </div>
+            <div class="form-floating mb-3">
+                <InputSelect @bind-Value="Input.SelectedUserRole" class="form-control">
+                    @foreach (UserRole role in Enum.GetValues(typeof(UserRole)))
+                    {
+                        <option value="@role">@role</option>
+                    }
+                </InputSelect>
+                <label for="role">Select Role</label>
+                <ValidationMessage For="() => Input.SelectedUserRole" class="text-danger" />
+            </div>
+
             <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </EditForm>
     </div>
@@ -73,6 +85,10 @@
         await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
         var emailStore = GetEmailStore();
         await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
+        // Sätt den valda rollen på användaren
+        user.UserRoles = Input.SelectedUserRole;
+
         var result = await UserManager.CreateAsync(user, Input.Password);
 
         if (!result.Succeeded)
@@ -102,6 +118,7 @@
         await SignInManager.SignInAsync(user, isPersistent: false);
         RedirectManager.RedirectTo(ReturnUrl);
     }
+
 
     private User CreateUser()
     {
@@ -142,5 +159,9 @@
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; } = "";
+
+        [Required]
+        [Display(Name = "User Role")]
+        public UserRole SelectedUserRole { get; set; }
     }
 }

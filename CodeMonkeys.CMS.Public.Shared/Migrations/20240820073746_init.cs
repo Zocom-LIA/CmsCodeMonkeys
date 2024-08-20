@@ -16,6 +16,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserRoles = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -30,6 +31,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserRoles = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -54,14 +56,30 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 name: "PageStats",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    PageStatsId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PageVisits = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PageStats", x => x.Id);
+                    table.PrimaryKey("PK_PageStats", x => x.PageStatsId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Sites",
+                columns: table => new
+                {
+                    SiteId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sites", x => x.SiteId);
                 });
 
             migrationBuilder.CreateTable(
@@ -171,48 +189,55 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Page",
+                name: "Pages",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    PageId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SiteId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    SiteId = table.Column<int>(type: "int", nullable: true),
+                    AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Page", x => x.Id);
+                    table.PrimaryKey("PK_Pages", x => x.PageId);
                     table.ForeignKey(
-                        name: "FK_Page_AspNetUsers_UserId",
+                        name: "FK_Pages_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Pages_Sites_SiteId",
+                        column: x => x.SiteId,
+                        principalTable: "Sites",
+                        principalColumn: "SiteId");
                 });
 
             migrationBuilder.CreateTable(
-                name: "Content",
+                name: "Contents",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    ContentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ContentType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Body = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PageId = table.Column<int>(type: "int", nullable: false)
+                    AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    WebPagePageId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Content", x => x.Id);
+                    table.PrimaryKey("PK_Contents", x => x.ContentId);
                     table.ForeignKey(
-                        name: "FK_Content_Page_PageId",
-                        column: x => x.PageId,
-                        principalTable: "Page",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_Contents_Pages_WebPagePageId",
+                        column: x => x.WebPagePageId,
+                        principalTable: "Pages",
+                        principalColumn: "PageId");
                 });
 
             migrationBuilder.CreateIndex(
@@ -255,13 +280,18 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Content_PageId",
-                table: "Content",
-                column: "PageId");
+                name: "IX_Contents_WebPagePageId",
+                table: "Contents",
+                column: "WebPagePageId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Page_UserId",
-                table: "Page",
+                name: "IX_Pages_SiteId",
+                table: "Pages",
+                column: "SiteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Pages_UserId",
+                table: "Pages",
                 column: "UserId");
         }
 
@@ -284,7 +314,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Content");
+                name: "Contents");
 
             migrationBuilder.DropTable(
                 name: "PageStats");
@@ -293,10 +323,13 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Page");
+                name: "Pages");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Sites");
         }
     }
 }
