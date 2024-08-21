@@ -1,0 +1,76 @@
+﻿@page "/PostConfirmation"
+@inherits BaseComponent<PostConfirmation>
+@using Microsoft.AspNetCore.Identity
+@using CodeMonkeys.CMS.Public.Shared.Entities;
+
+@inject UserManager<User> UserManager
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+@if (IsLoading)
+{
+    <Loading />
+}
+else
+{
+    <h3>Loading...</h3>
+    <p>@loadingMessage</p>
+}
+
+
+@code {
+    private string loadingMessage = "Kontrollerar och omdirigerar...";
+
+    protected override async Task OnInitializedAsync()
+    {
+        // ToDo: fix routing
+
+
+        // Hämta den inloggade användaren
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        // Hämta användaren från UserManager
+        var appUser = await UserManager.GetUserAsync(user);
+
+        if (appUser != null)
+        {
+            // Fördröjning för att säkerställa att meddelandet visas
+            await Task.Delay(500);
+
+            // Kontrollera om användaren är i rollen "Admin"
+            if (await UserManager.IsInRoleAsync(appUser, "Admin"))
+            {
+                loadingMessage = "Omdirigerar till adminpanelen...";
+                StateHasChanged();  // Uppdatera sidan med meddelandet
+                await Task.Delay(1000);  // Fördröjning för att visa meddelandet
+                NavigationManager.NavigateTo("/admin");
+            }
+            // Kontrollera om användaren är i rollen "User"
+            else if (await UserManager.IsInRoleAsync(appUser, "User"))
+            {
+                loadingMessage = "Omdirigerar till användarpanelen...";
+                StateHasChanged();  // Uppdatera sidan med meddelandet
+                await Task.Delay(1000);  // Fördröjning för att visa meddelandet
+                NavigationManager.NavigateTo("/user");
+            }
+            else
+            {
+                // Om ingen roll matchas, omdirigera till en standard sida
+                loadingMessage = "Omdirigerar till startsidan...";
+                StateHasChanged();  // Uppdatera sidan med meddelandet
+                await Task.Delay(1000);  // Fördröjning för att visa meddelandet
+                NavigationManager.NavigateTo("/");
+            }
+        }
+        else
+        {
+            // Om användaren inte hittas, omdirigera till en felsida eller startsida
+            loadingMessage = "Användare hittades inte. Omdirigerar till startsidan...";
+            StateHasChanged();  // Uppdatera sidan med meddelandet
+            await Task.Delay(1000);  // Fördröjning för att visa meddelandet
+            NavigationManager.NavigateTo("/");
+        }
+    }
+}
