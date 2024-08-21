@@ -1,0 +1,23 @@
+﻿@page "/admin"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+
+@attribute [Authorize(Roles = "Admin")]
+
+<h3>Admin Page</h3>
+
+<p>Välkommen, Admin! Här kan du hantera systemet.</p>
+
+<h1>You are authenticated</h1>
+
+<AuthorizeView>
+    Hello @context.User.Identity?.Name!
+</AuthorizeView>
+
+@code {
+    // Eventuell admin-specifik logik
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+}

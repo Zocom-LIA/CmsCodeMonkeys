@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeMonkeys.CMS.Public.Shared.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240813172013_init")]
+    [Migration("20240820095335_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -27,70 +27,50 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Content", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ContentId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ContentId"));
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("LastModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("PageId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PageId");
-
-                    b.ToTable("Content");
-                });
-
-            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Page", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("LastModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("SiteId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("AuthorId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("Id");
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("UserId");
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("Page");
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("WebPagePageId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ContentId");
+
+                    b.HasIndex("WebPagePageId");
+
+                    b.ToTable("Contents");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.PageStats", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("PageStatsId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PageStatsId"));
 
                     b.Property<string>("PageUrl")
                         .IsRequired()
@@ -99,7 +79,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.Property<int>("PageVisits")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("PageStatsId");
 
                     b.ToTable("PageStats");
                 });
@@ -130,6 +110,32 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+                });
+
+            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Site", b =>
+                {
+                    b.Property<int>("SiteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SiteId"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SiteId");
+
+                    b.ToTable("Sites");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.User", b =>
@@ -185,6 +191,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<int>("UserRoles")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -196,6 +205,42 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", b =>
+                {
+                    b.Property<int>("PageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PageId"));
+
+                    b.Property<Guid?>("AuthorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("SiteId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("PageId");
+
+                    b.HasIndex("SiteId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Pages");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -303,20 +348,20 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Content", b =>
                 {
-                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.Page", null)
+                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", null)
                         .WithMany("Contents")
-                        .HasForeignKey("PageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("WebPagePageId");
                 });
 
-            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Page", b =>
+            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", b =>
                 {
+                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.Site", null)
+                        .WithMany("Pages")
+                        .HasForeignKey("SiteId");
+
                     b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.User", null)
                         .WithMany("Pages")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -370,14 +415,19 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Page", b =>
+            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Site", b =>
                 {
-                    b.Navigation("Contents");
+                    b.Navigation("Pages");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.User", b =>
                 {
                     b.Navigation("Pages");
+                });
+
+            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", b =>
+                {
+                    b.Navigation("Contents");
                 });
 #pragma warning restore 612, 618
         }

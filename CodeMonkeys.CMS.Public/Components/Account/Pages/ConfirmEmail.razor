@@ -1,18 +1,27 @@
 ﻿@page "/Account/ConfirmEmail"
-
+@inherits BaseComponent<ConfirmEmail>
 @using System.Text
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
 @using CodeMonkeys.CMS.Public.Shared.Data
 @using CodeMonkeys.CMS.Public.Shared.Entities
 
+
 @inject UserManager<User> UserManager
 @inject IdentityRedirectManager RedirectManager
+@inject NavigationManager NavigationManager
 
 <PageTitle>Confirm email</PageTitle>
 
-<h1>Confirm email</h1>
-<StatusMessage Message="@statusMessage" />
+@if (IsLoading)
+{
+    <Loading />
+}
+else
+{
+    <h1>Confirm email</h1>
+    <StatusMessage Message="@statusMessage" />
+}
 
 @code {
     private string? statusMessage;
@@ -44,6 +53,8 @@
             var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(Code));
             var result = await UserManager.ConfirmEmailAsync(user, code);
             statusMessage = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
+            await Task.Delay(1000); // Väntar i 1 sekunder innan den går vidare
+            NavigationManager.NavigateTo("/PostConfirmation");
         }
     }
 }

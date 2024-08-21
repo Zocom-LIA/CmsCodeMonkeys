@@ -3,6 +3,7 @@
 @using System.ComponentModel.DataAnnotations
 @using System.Text
 @using System.Text.Encodings.Web
+@using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
 @using CodeMonkeys.CMS.Public.Shared.Data
@@ -43,6 +44,17 @@
                 <label for="confirm-password">Confirm Password</label>
                 <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
             </div>
+            <div class="form-floating mb-3">
+                <InputSelect @bind-Value="Input.SelectedUserRole" class="form-control">
+                    @foreach (UserRole role in Enum.GetValues(typeof(UserRole)))
+                    {
+                        <option value="@role">@role</option>
+                    }
+                </InputSelect>
+                <label for="role">Select Role</label>
+                <ValidationMessage For="() => Input.SelectedUserRole" class="text-danger" />
+            </div>
+
             <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </EditForm>
     </div>
@@ -57,6 +69,7 @@
 
 @code {
     private IEnumerable<IdentityError>? identityErrors;
+    [Inject] RoleManager<Role> RoleManager { get; set; }
 
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = new();
@@ -73,6 +86,10 @@
         await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
         var emailStore = GetEmailStore();
         await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
+        // Sätt den valda rollen på användaren
+        user.UserRoles = Input.SelectedUserRole;
+
         var result = await UserManager.CreateAsync(user, Input.Password);
 
         if (!result.Succeeded)
@@ -81,7 +98,32 @@
             return;
         }
 
-        Logger.LogInformation("User created a new account with password.");
+        // Omvandla användarens valda roll till en sträng
+        string roleName = Input.SelectedUserRole.ToString();
+
+        // Kontrollera om rollen finns och om inte, skapa den
+        if (!await RoleManager.RoleExistsAsync(roleName))
+        {
+            var roleResult = await RoleManager.CreateAsync(new Role
+            {
+                Name = roleName
+            });
+            if (!roleResult.Succeeded)
+            {
+                identityErrors = roleResult.Errors;
+                return;
+            }
+        }
+
+        // Lägg till användaren i rollen och hantera resultatet av detta
+        var addToRoleResult = await UserManager.AddToRoleAsync(user, roleName);
+        if (!addToRoleResult.Succeeded)
+        {
+            identityErrors = addToRoleResult.Errors;
+            return;
+        }
+
+        Logger.LogInformation("User created a new account with password and assigned to role.");
 
         var userId = await UserManager.GetUserIdAsync(user);
         var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
@@ -98,10 +140,14 @@
                 "Account/RegisterConfirmation",
                 new() { ["email"] = Input.Email, ["returnUrl"] = ReturnUrl });
         }
+        else
+        {
+            await SignInManager.SignInAsync(user, isPersistent: false);
+            RedirectManager.RedirectTo(ReturnUrl);
+        }
 
-        await SignInManager.SignInAsync(user, isPersistent: false);
-        RedirectManager.RedirectTo(ReturnUrl);
     }
+
 
     private User CreateUser()
     {
@@ -142,5 +188,9 @@
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; } = "";
+
+        [Required]
+        [Display(Name = "User Role")]
+        public UserRole SelectedUserRole { get; set; }
     }
 }
