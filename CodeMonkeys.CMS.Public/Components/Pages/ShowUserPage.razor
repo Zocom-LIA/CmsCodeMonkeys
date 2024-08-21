@@ -1,0 +1,53 @@
+﻿@page "/userPages/{SiteName}"
+@inherits BaseComponent<ShowUserPage>
+@using CodeMonkeys.CMS.Public.Components.Shared
+@using CodeMonkeys.CMS.Public.Components.Account.Shared
+@using CodeMonkeys.CMS.Public.Shared.Entities
+@using CodeMonkeys.CMS.Public.Shared.Repository
+
+@if (IsLoading ){
+    <p>Loading...</p>
+}
+
+else{
+    <PageTitle>@WebPage?.Title</PageTitle>
+    <StatusMessage/>
+    @foreach(Content content in (WebPage?.Contents??[]).OrderBy(c=>c.OrdinalNumber))
+    {
+        @content.Body
+    }
+}
+
+@code {
+    private Site? Site { get; set; }
+    private WebPage? WebPage { get; set; }
+    [Parameter] public required string SiteName { get; set; }
+    [Inject] public required ISiteRepository Repository { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        SetLoading(true);
+        await base.OnInitializedAsync();
+        Site = await Repository.GetSiteByNameAsync(SiteName);
+        if (Site == null)
+        {
+            SetError($"No such site: {SiteName}");
+            WebPage = NoSuchSitePage(SiteName);
+            // TODO return a 404
+            SetLoading(false);
+            return;
+        }
+        WebPage = Site.LandingPage ?? NoLandingPageConfiguredPage(SiteName);
+        SetLoading(false);//TODO handle exceptions
+    }
+
+    private WebPage NoSuchSitePage(string SiteName)
+    {
+        return new WebPage() { Contents = [new Content() { Body = $"No such site: {SiteName}" }] };
+    }
+
+    private WebPage NoLandingPageConfiguredPage(string SiteName)
+    {
+        return new WebPage() { Contents = [new Content() { Body = $"No landing page configured for site: {SiteName}" }] };
+    }
+}
