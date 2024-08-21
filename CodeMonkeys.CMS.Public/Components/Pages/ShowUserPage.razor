@@ -32,11 +32,22 @@ else{
         if (Site == null)
         {
             SetError($"No such site: {SiteName}");
+            WebPage = NoSuchSitePage(SiteName);
             // TODO return a 404
             SetLoading(false);
             return;
         }
-        WebPage = Site.LandingPage;
+        WebPage = Site.LandingPage ?? NoLandingPageConfiguredPage(SiteName);
         SetLoading(false);//TODO handle exceptions
+    }
+
+    private WebPage NoSuchSitePage(string SiteName)
+    {
+        return new WebPage() { Contents = [new Content() { Body = $"No such site: {SiteName}" }] };
+    }
+
+    private WebPage NoLandingPageConfiguredPage(string SiteName)
+    {
+        return new WebPage() { Contents = [new Content() { Body = $"No landing page configured for site: {SiteName}" }] };
     }
 }
