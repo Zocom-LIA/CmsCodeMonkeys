@@ -27,7 +27,7 @@
                 </div>
 
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="users">
+                    <NavLink class="nav-link" href="user" style="color: white;">
                         <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Users
                     </NavLink>
                 </div>
@@ -44,7 +44,6 @@
                     </NavLink>
                 </div>
 
-
                 <form action="Account/Logout" method="post" id="logout-form" class="d-inline">
                     <AntiforgeryToken />
                     <input type="hidden" name="ReturnUrl" value="@currentUrl" />
@@ -54,16 +53,17 @@
                 </form>
             </Authorized>
             <NotAuthorized>
-                <li class="nav-item">
+                <div class="nav-item">
                     <NavLink class="nav-link" href="Account/Register" style="color: white;">
                         Register
                     </NavLink>
-                </li>
-                <li class="nav-item">
+                </div>
+
+                <div class="nav-item">
                     <NavLink class="nav-link" href="Account/Login" style="color: white;">
                         Login
                     </NavLink>
-                </li>
+                </div>
             </NotAuthorized>
         </AuthorizeView>
     </div>
