@@ -87,9 +87,6 @@
         var emailStore = GetEmailStore();
         await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
-        // Sätt den valda rollen på användaren
-        user.UserRoles = Input.SelectedUserRole;
-
         var result = await UserManager.CreateAsync(user, Input.Password);
 
         if (!result.Succeeded)
@@ -108,6 +105,7 @@
             {
                 Name = roleName
             });
+
             if (!roleResult.Succeeded)
             {
                 identityErrors = roleResult.Errors;
