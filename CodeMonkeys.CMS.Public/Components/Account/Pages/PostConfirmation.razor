@@ -4,9 +4,6 @@
 @using CodeMonkeys.CMS.Public.Shared.Entities;
 
 @inject UserManager<User> UserManager
-@inject NavigationManager NavigationManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
-
 
 @if (IsLoading)
 {
@@ -17,7 +14,6 @@ else
     <h3>Loading...</h3>
     <p>@loadingMessage</p>
 }
-
 
 @code {
     private string loadingMessage = "Kontrollerar och omdirigerar...";
@@ -45,7 +41,7 @@ else
                 loadingMessage = "Omdirigerar till adminpanelen...";
                 StateHasChanged();  // Uppdatera sidan med meddelandet
                 await Task.Delay(1000);  // Fördröjning för att visa meddelandet
-                NavigationManager.NavigateTo("/admin");
+                Navigation.NavigateTo("/admin");
             }
             // Kontrollera om användaren är i rollen "User"
             else if (await UserManager.IsInRoleAsync(appUser, "User"))
@@ -53,7 +49,7 @@ else
                 loadingMessage = "Omdirigerar till användarpanelen...";
                 StateHasChanged();  // Uppdatera sidan med meddelandet
                 await Task.Delay(1000);  // Fördröjning för att visa meddelandet
-                NavigationManager.NavigateTo("/user");
+                Navigation.NavigateTo("/user");
             }
             else
             {
@@ -61,7 +57,7 @@ else
                 loadingMessage = "Omdirigerar till startsidan...";
                 StateHasChanged();  // Uppdatera sidan med meddelandet
                 await Task.Delay(1000);  // Fördröjning för att visa meddelandet
-                NavigationManager.NavigateTo("/");
+                Navigation.NavigateTo("/");
             }
         }
         else
@@ -70,7 +66,7 @@ else
             loadingMessage = "Användare hittades inte. Omdirigerar till startsidan...";
             StateHasChanged();  // Uppdatera sidan med meddelandet
             await Task.Delay(1000);  // Fördröjning för att visa meddelandet
-            NavigationManager.NavigateTo("/");
+            Navigation.NavigateTo("/");
         }
     }
 }
