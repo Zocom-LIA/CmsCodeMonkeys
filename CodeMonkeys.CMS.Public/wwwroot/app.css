@@ -3,7 +3,7 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
-    height: 100%; /* Full höjd på body och html */
+    height: 100%;
     display: flex;
     flex-direction: column;
 }
@@ -23,7 +23,7 @@ a, .btn-link {
 }
 
 .content {
-    flex: 1; /* Flexibelt innehåll för att ta upp resterande utrymme */
+    flex: 1;
     padding-top: 1.1rem;
 }
 
@@ -57,20 +57,72 @@ h1:focus {
     border-color: #929292;
 }
 
-.footer {
-    background-color: #343a40; /* Dark gray */
+/* Header styles */
+header {
+    background-color: #343a40;
     color: white;
-    text-align: center;
-    padding: 10px 0;
-    position: relative;
-    bottom: 0;
+    padding: 5px 20px;
+    position: fixed;
+    top: 0;
     left: 0;
     right: 0;
-    width: 100%;
-    margin-top: auto; /* Pushar footern till botten */
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 90px;
 }
 
-/* Specific container and layout styles */
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.header-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.header-divider {
+    border-top: 2px solid black;
+    margin-top: 10px;
+}
+
+/* Navigation styles */
+.navbar-nav {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+    .navbar-nav .nav-item {
+        margin-left: 800px;
+    }
+
+    .navbar-nav .nav-link {
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+        .navbar-nav .nav-link:hover {
+            color: #ffc107;
+        }
+
+/* Page layout */
+.page {
+    flex: 1;
+    padding-top: 90px; /* Adjust this value to match the height of the header */
+    padding-bottom: 40px; /* Padding for the footer */
+    background-color: white;
+}
+
 .container {
     display: flex;
     flex-wrap: wrap;
@@ -80,29 +132,11 @@ h1:focus {
     padding: 10px;
 }
 
+/* Section styles */
 .left-top, .left-bottom, .right-top, .right-bottom {
     box-sizing: border-box;
     padding: 20px;
     width: 48%;
-}
-
-/* Responsiva justeringar */
-@media (max-width: 768px) {
-    .left-top, .left-bottom, .right-top, .right-bottom {
-        width: 100%; /* Full bredd på mindre skärmar */
-        padding: 10px;
-    }
-
-    .left-bottom {
-        flex-direction: column;
-        height: auto;
-    }
-
-    .small-container {
-        width: 100%; /* Full bredd för små containrar på mindre skärmar */
-        height: 150px;
-        margin: 10px 0;
-    }
 }
 
 .left-top, .right-top, .right-bottom {
@@ -123,7 +157,7 @@ h1:focus {
     border: 2px solid #000;
 }
 
-/* Ändrade .h1 klass till att rikta sig till h1 element med specifik stil */
+/* Text and media styles */
 h1 {
     font-family: 'Baskervville', sans-serif;
     margin-bottom: 40px;
@@ -136,8 +170,64 @@ p {
 
 img {
     border-radius: 50%;
-    width: 100%; /* Anpassar bredden till sin container */
-    max-width: 300px; /* Maximal bredd */
-    height: auto; /* Bibehåller proportionerna */
+    width: 100%;
+    max-width: 300px;
+    height: auto;
     object-fit: cover;
+}
+
+/* Footer styles */
+footer, .footer {
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    margin-top: auto;
+    height: 50px;
+    justify-content: center;
+    align-items: center;
+}
+
+.info {
+    font-size: 14px;
+    margin: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .left-top, .left-bottom, .right-top, .right-bottom {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .left-bottom {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .small-container {
+        width: 100%;
+        height: 150px;
+        margin: 10px 0;
+    }
+}
+
+@media (max-width: 600px) {
+    .footer {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}
+
+/* Body styling to ensure the footer stays at the bottom */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
 }

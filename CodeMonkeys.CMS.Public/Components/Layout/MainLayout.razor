@@ -1,26 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 @inherits LayoutComponentBase
 
-<style>
-    body {
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-        margin: 0;
-    }
-
-    .header-divider {
-        border-top: 2px solid black; /* Black line under the header */
-        margin-top: 10px;
-    }
-
-    .page {
-        flex: 1;
-        padding-top: 90px; /* Adjust this value to match the height of the header */
-        padding-bottom: 40px; /* Padding for the footer */
-        background-color: white;
-    }
-</style>
 
 <CascadingAuthenticationState>
     <div class="page">
