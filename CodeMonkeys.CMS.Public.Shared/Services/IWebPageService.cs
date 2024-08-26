@@ -1,4 +1,4 @@
-﻿using CodeMonkeys.CMS.Public.Shared.DTOs;
+using CodeMonkeys.CMS.Public.Shared.DTOs;
 using CodeMonkeys.CMS.Public.Shared.Entities;
 using CodeMonkeys.CMS.Public.Shared.Repository;
 

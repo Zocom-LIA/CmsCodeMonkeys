@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CodeMonkeys.CMS.Public.Shared.Entities
 {
-    public class Site
+    public class Site : IEntity
     {
         [Key]
         public int SiteId { get; set; }
@@ -16,5 +16,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Entities
         public int? LandingPageId { get; set; }
         public WebPage? LandingPage { get; set; }
         public ICollection<WebPage> Pages { get; set; } = new List<WebPage>();
+
+        public object GetIdentifier() => SiteId;
     }
 }

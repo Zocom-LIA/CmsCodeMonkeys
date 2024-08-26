@@ -1,4 +1,5 @@
 ﻿@page "/users"
+<<<<<<< HEAD
 @inherits AuthenticationBaseComponent<Users>
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Authorization
@@ -91,3 +92,26 @@
 
     </div>
 </UserViewer>
+=======
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+
+@attribute [Authorize(Roles = "User, Admin")]
+
+<h3>User Page</h3>
+
+<p>Välkommen, användare! Här kan du hantera dina inställningar och se ditt innehåll.</p>
+
+<h1>You are authenticated</h1>
+
+<AuthorizeView>
+    Hello @context.User.Identity?.Name!
+
+    <p><a class="button-logout btn-primary" href="sites/create">Create a new site</a></p>
+    <p><a class="button-logout btn-primary" href="sites">View your sites</a></p>
+</AuthorizeView>
+
+@code {
+    // Eventuell användarspecifik logik
+}
+>>>>>>> 4c7438f (Added overview and update funcitonality to Sites.)

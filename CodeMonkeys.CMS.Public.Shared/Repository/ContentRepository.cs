@@ -14,8 +14,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 
         public ApplicationDbContext Context { get; }
 
-        public static object UpdateOrdinalNumbersAsync(IEnumerable<Content> contents, bool v) => throw new NotImplementedException();
-
         // Consider adding web page ID to the method signature
         public async Task DeleteContentAsync(int contentId)
         {
@@ -38,7 +36,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                 .Where(page => page.WebPageId == pageId)
                 .Include(page => page.Contents)
                 .SelectMany(page => page.Contents)
-                .Include(content => (User)content.Author)
+                .Include(content => content.Author)
                 .ToListAsync();
         }
     }

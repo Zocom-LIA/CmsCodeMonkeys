@@ -9,6 +9,18 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CodeMonkeys.CMS.Public.Components.Shared
 {
+<<<<<<< HEAD
+=======
+    using CodeMonkeys.CMS.Public.Components.Pages;
+    using CodeMonkeys.CMS.Public.Shared;
+    using CodeMonkeys.CMS.Public.Shared.Entities;
+    using CodeMonkeys.CMS.Public.Shared.Services;
+
+    using Microsoft.AspNetCore.Components;
+    using Microsoft.AspNetCore.Components.Authorization;
+    using Microsoft.AspNetCore.Identity;
+
+>>>>>>> 4c7438f (Added overview and update funcitonality to Sites.)
     public abstract partial class BaseComponent<T> : ComponentBase where T : class
     {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -16,6 +28,7 @@ namespace CodeMonkeys.CMS.Public.Components.Shared
         [Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; }
         [Inject] protected IHttpContextAccessor HttpContextAccessor { get; set; }
         [Inject] protected ILogger<T> Logger { get; set; }
+        [Inject] protected UserManager<User> UserManager { get; set; }
 
         private bool _isLoading = false;
         private string _errorMessage = string.Empty;
@@ -58,6 +71,19 @@ namespace CodeMonkeys.CMS.Public.Components.Shared
         protected void NavigateTo(string url)
         {
             Navigation.NavigateTo(url);
+        }
+
+        protected async Task<User?> GetCurrentUserAsync()
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (user?.Identity?.IsAuthenticated == true)
+            {
+                return await UserManager.GetUserAsync(user);
+            }
+
+            return null;
         }
 
         protected async Task ExecuteWithLoadingAsync(Func<Task> action)
