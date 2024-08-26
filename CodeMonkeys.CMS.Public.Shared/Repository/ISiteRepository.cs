@@ -9,6 +9,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 {
     public interface ISiteRepository
     {
-        public Task<Site?> GetSiteByNameAsync(string name);
+        Task CreateAsync(Site site);
+        Task UpdateSiteAsync(Site site);
+        Task<Site?> GetSiteAsync(Guid userId, int siteId);
+        Task<Site?> GetSiteByNameAsync(string name);
+        Task<IEnumerable<Site>> GetUserSitesAsync(Guid userId, int pageIndex = 0, int pageSize = 10);
     }
 }

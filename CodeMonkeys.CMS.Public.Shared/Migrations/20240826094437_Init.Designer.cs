@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeMonkeys.CMS.Public.Shared.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240826080822_Init")]
+    [Migration("20240826094437_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.7")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -50,16 +50,19 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.Property<DateTime>("LastModifiedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("OrdinalNumber")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("WebPagePageId")
+                    b.Property<int?>("WebPageId")
                         .HasColumnType("int");
 
                     b.HasKey("ContentId");
 
-                    b.HasIndex("WebPagePageId");
+                    b.HasIndex("WebPageId");
 
                     b.ToTable("Contents");
                 });
@@ -133,7 +136,12 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("WebPageId")
+                        .HasColumnType("int");
+
                     b.HasKey("SiteId");
+
+                    b.HasIndex("WebPageId");
 
                     b.ToTable("Sites");
                 });
@@ -206,11 +214,11 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", b =>
                 {
-                    b.Property<int>("PageId")
+                    b.Property<int>("WebPageId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PageId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WebPageId"));
 
                     b.Property<Guid?>("AuthorId")
                         .HasColumnType("uniqueidentifier");
@@ -231,7 +239,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("PageId");
+                    b.HasKey("WebPageId");
 
                     b.HasIndex("SiteId");
 
@@ -347,7 +355,16 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 {
                     b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", null)
                         .WithMany("Contents")
-                        .HasForeignKey("WebPagePageId");
+                        .HasForeignKey("WebPageId");
+                });
+
+            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Site", b =>
+                {
+                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", "LandingPage")
+                        .WithMany()
+                        .HasForeignKey("WebPageId");
+
+                    b.Navigation("LandingPage");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", b =>

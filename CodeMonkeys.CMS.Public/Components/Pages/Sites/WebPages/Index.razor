@@ -1,0 +1,10 @@
+﻿@page "/sites/{siteId:int}/webpages"
+@inherits BaseComponent<Index>
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "User, Admin")]
+
+<h3>Component</h3>
+
+@code {
+[Parameter] public int siteId { get; set; }
+}

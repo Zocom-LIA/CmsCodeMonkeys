@@ -1,10 +1,13 @@
 ﻿namespace CodeMonkeys.CMS.Public.Components.Shared
 {
+    using CodeMonkeys.CMS.Public.Components.Pages;
     using CodeMonkeys.CMS.Public.Shared;
+    using CodeMonkeys.CMS.Public.Shared.Entities;
     using CodeMonkeys.CMS.Public.Shared.Services;
 
     using Microsoft.AspNetCore.Components;
     using Microsoft.AspNetCore.Components.Authorization;
+    using Microsoft.AspNetCore.Identity;
 
     public abstract partial class BaseComponent<T> : ComponentBase where T : class
     {
@@ -14,6 +17,7 @@
         [Inject] protected IHttpContextAccessor HttpContextAccessor { get; set; }
         [Inject] protected IPageStatsService PageStatsService { get; set; }
         [Inject] protected ILogger<T> Logger { get; set; }
+        [Inject] protected UserManager<User> UserManager { get; set; }
 
         private bool _firstVisit = true;
         private bool _isLoading = false;
@@ -22,7 +26,7 @@
         private int _pageVisits;
 
         protected bool IsLoading => _isLoading;
-        protected string ErrorMessage => _errorMessage;
+        protected string ErrorMessage { get; set; }
         protected string SuccessMessage => _successMessage;
         protected int PageVisits => _pageVisits;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -72,6 +76,19 @@
         protected void NavigateTo(string url)
         {
             Navigation.NavigateTo(url);
+        }
+
+        protected async Task<User?> GetCurrentUserAsync()
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (user?.Identity?.IsAuthenticated == true)
+            {
+                return await UserManager.GetUserAsync(user);
+            }
+
+            return null;
         }
 
         protected async Task ExecuteWithLoadingAsync(Func<Task> action)

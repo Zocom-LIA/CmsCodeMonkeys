@@ -49,7 +49,12 @@ builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
 builder.Services.AddScoped<IPageStatsRepository, PageStatsRepository>();
 builder.Services.AddScoped<IPageStatsService, PageStatsService>();
 builder.Services.AddScoped<VisitCounterMiddleware>();
-builder.Services.AddScoped<ISiteRepository,SiteRepository>();
+builder.Services.AddScoped<ISiteRepository, SiteRepository>();
+builder.Services.AddScoped<IWebPageRepository, WebPageRepository>();
+builder.Services.AddScoped<IContentRepository, ContentRepository>();
+builder.Services.AddScoped<ISiteService, SiteService>();
+builder.Services.AddScoped<IWebPageService, WebPageService>();
+builder.Services.AddScoped<IContentService, ContentService>();
 
 var app = builder.Build();
 

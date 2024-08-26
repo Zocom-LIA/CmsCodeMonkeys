@@ -11,8 +11,5 @@ namespace CodeMonkeys.CMS.Public.Shared.Data
         public DbSet<Site> Sites => Set<Site>();
         public DbSet<WebPage> Pages => Set<WebPage>();
         public DbSet<Content> Contents => Set<Content>();
-
-        
-        
     }
 }

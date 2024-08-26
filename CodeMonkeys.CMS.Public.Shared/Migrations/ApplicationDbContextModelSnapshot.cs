@@ -126,9 +126,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.Property<Guid?>("CreatorId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("LandingPageId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("LastModifiedDate")
                         .HasColumnType("datetime2");
 
@@ -136,9 +133,12 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("WebPageId")
+                        .HasColumnType("int");
+
                     b.HasKey("SiteId");
 
-                    b.HasIndex("LandingPageId");
+                    b.HasIndex("WebPageId");
 
                     b.ToTable("Sites");
                 });
@@ -359,7 +359,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 {
                     b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", "LandingPage")
                         .WithMany()
-                        .HasForeignKey("LandingPageId");
+                        .HasForeignKey("WebPageId");
 
                     b.Navigation("LandingPage");
                 });

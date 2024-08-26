@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CodeMonkeys.CMS.Public.Shared.Entities
 {
-    public class WebPage
+    public class WebPage : IEntity
     {
         [Key]
         public int WebPageId { get; set; }
@@ -14,5 +13,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Entities
         public Guid? AuthorId { get; set; }
 
         public ICollection<Content> Contents { get; set; } = new List<Content>();
+
+        public object GetIdentifier() => WebPageId;
     }
 }

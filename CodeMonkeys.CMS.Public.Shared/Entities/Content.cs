@@ -2,7 +2,7 @@
 
 namespace CodeMonkeys.CMS.Public.Shared.Entities
 {
-    public class Content
+    public class Content : IEntity
     {
         [Key]
         public int ContentId { get; set; }
@@ -13,7 +13,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Entities
         public DateTime LastModifiedDate { get; set; }
 
         public Guid? AuthorId { get; set; }
+        public User? Author { get; set; }
 
         public int OrdinalNumber { get; set; }
+
+        public object GetIdentifier() => ContentId;
     }
 }
