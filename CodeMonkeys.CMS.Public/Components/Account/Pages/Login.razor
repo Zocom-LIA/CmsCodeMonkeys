@@ -1,4 +1,5 @@
 ﻿@page "/Account/Login"
+@inherits BaseComponent<Login>
 
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Authentication
@@ -10,6 +11,7 @@
 @inject ILogger<Login> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
+@inject UserManager<User> UserManager
 
 <PageTitle>Log in</PageTitle>
 
@@ -94,7 +96,28 @@
         if (result.Succeeded)
         {
             Logger.LogInformation("User logged in.");
-            RedirectManager.RedirectTo(ReturnUrl);
+            User? user = await UserManager.FindByEmailAsync(Input.Email);
+
+            if (user == null)
+            {
+                Logger.LogInformation($"Logged in user with email '{Input.Email}' not found by UserManager.");
+                errorMessage = "Error: Invalid login attempt.";
+                return;
+            }
+
+            if (await UserManager.IsInRoleAsync(user, "Admin"))
+            {
+                RedirectManager.RedirectTo("admin");
+            }
+            else if (await UserManager.IsInRoleAsync(user, "User"))
+            {
+                RedirectManager.RedirectTo("user");
+            }
+            else
+            {
+                Logger.LogInformation($"User '{Input.Email}' is not in either any role.");
+                RedirectManager.RedirectTo(ReturnUrl);
+            }
         }
         else if (result.RequiresTwoFactor)
         {

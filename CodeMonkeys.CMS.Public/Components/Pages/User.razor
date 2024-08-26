@@ -12,6 +12,9 @@
 
 <AuthorizeView>
     Hello @context.User.Identity?.Name!
+
+    <p><a class="button-logout btn-primary" href="sites/create">Create a new site</a></p>
+    <p><a class="button-logout btn-primary" href="sites">View your sites</a></p>
 </AuthorizeView>
 
 @code {
