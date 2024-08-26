@@ -30,7 +30,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserRoles = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -63,22 +62,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PageStats", x => x.PageStatsId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Sites",
-                columns: table => new
-                {
-                    SiteId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Sites", x => x.SiteId);
                 });
 
             migrationBuilder.CreateTable(
@@ -188,34 +171,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Pages",
-                columns: table => new
-                {
-                    PageId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SiteId = table.Column<int>(type: "int", nullable: true),
-                    AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Pages", x => x.PageId);
-                    table.ForeignKey(
-                        name: "FK_Pages_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Pages_Sites_SiteId",
-                        column: x => x.SiteId,
-                        principalTable: "Sites",
-                        principalColumn: "SiteId");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Contents",
                 columns: table => new
                 {
@@ -227,16 +182,57 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    WebPagePageId = table.Column<int>(type: "int", nullable: true)
+                    OrdinalNumber = table.Column<int>(type: "int", nullable: false),
+                    WebPageId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Contents", x => x.ContentId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Pages",
+                columns: table => new
+                {
+                    WebPageId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SiteId = table.Column<int>(type: "int", nullable: true),
+                    AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Pages", x => x.WebPageId);
                     table.ForeignKey(
-                        name: "FK_Contents_Pages_WebPagePageId",
-                        column: x => x.WebPagePageId,
+                        name: "FK_Pages_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Sites",
+                columns: table => new
+                {
+                    SiteId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LandingPageId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sites", x => x.SiteId);
+                    table.ForeignKey(
+                        name: "FK_Sites_Pages_LandingPageId",
+                        column: x => x.LandingPageId,
                         principalTable: "Pages",
-                        principalColumn: "PageId");
+                        principalColumn: "WebPageId");
                 });
 
             migrationBuilder.CreateIndex(
@@ -279,9 +275,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Contents_WebPagePageId",
+                name: "IX_Contents_WebPageId",
                 table: "Contents",
-                column: "WebPagePageId");
+                column: "WebPageId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Pages_SiteId",
@@ -292,11 +288,38 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 name: "IX_Pages_UserId",
                 table: "Pages",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sites_LandingPageId",
+                table: "Sites",
+                column: "LandingPageId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Contents_Pages_WebPageId",
+                table: "Contents",
+                column: "WebPageId",
+                principalTable: "Pages",
+                principalColumn: "WebPageId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Pages_Sites_SiteId",
+                table: "Pages",
+                column: "SiteId",
+                principalTable: "Sites",
+                principalColumn: "SiteId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Pages_AspNetUsers_UserId",
+                table: "Pages");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Sites_Pages_LandingPageId",
+                table: "Sites");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -322,10 +345,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Pages");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Pages");
 
             migrationBuilder.DropTable(
                 name: "Sites");
