@@ -82,11 +82,11 @@
                 <ValidationMessage For="() => Content.OrdinalNumber" class="text-danger" />
             </div>
             <div>
-                <button class="w-100 btn btn-lg btn-primary" @onclick="async () => await CreateOrUpdateContent()">Save Content!</button>
+                <button type="button" class="w-100 btn btn-lg btn-primary" @onclick="async () => await CreateOrUpdateContent()">Save Content!</button>
             </div>
     }
      <div>
-        <button type="submit" class="w-100 btn btn-lg btn-primary">Save Content</button>
+        <button type="submit" class="w-100 btn btn-lg btn-primary">Save Non-Content</button>
     </div>
 
 </EditForm>
