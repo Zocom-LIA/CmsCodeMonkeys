@@ -1,4 +1,4 @@
-﻿@page "/sites/{siteId}/webpages/create"
+﻿@page "/sites/{siteId:int}/webpages/create"
 @using System.ComponentModel.DataAnnotations
 @using CodeMonkeys.CMS.Public.Components.Account.Shared
 @using CodeMonkeys.CMS.Public.Shared.Services
@@ -79,7 +79,7 @@
 
         await WebPageService.CreateWebPageAsync(page);
 
-        Navigation.NavigateTo($"sites/{siteId}/webpages/{page.WebPageId}/Content");
+        Navigation.NavigateTo($"sites/{siteId}/webpages/{page.WebPageId}/edit");
     }
 
     private sealed class InputModel     

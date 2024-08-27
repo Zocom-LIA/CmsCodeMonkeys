@@ -1,0 +1,259 @@
+﻿@page "/sites/{siteId:int}/webpages/{webPageId:int}/edit"
+@using System.ComponentModel.DataAnnotations
+@using CodeMonkeys.CMS.Public.Shared.Services
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+
+@inherits BaseComponent<Edit>
+@inject UserManager<User> UserManager
+@inject ISiteService SiteService
+@inject IWebPageService WebPageService
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "User, Admin")]
+
+<h3>Edit page</h3>
+
+<EditForm Model="Input" method="post" OnValidSubmit="HandleValidSubmit" FormName="updatewebpage">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <StatusMessage Message="@ErrorMessage" />
+
+    <div class="form-floating mb-3">
+        <InputText @bind-Value="Input.Title" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" />
+        <label for="name" class="form-label">Site Name</label>
+        <ValidationMessage For="() => Input.Title" class="text-danger" />
+    </div>
+    @if (WebPage?.Contents != null && WebPage.Contents.Any())
+    {
+        <h4>Content</h4>
+        <table>
+            <thead>
+                <tr>
+                    <td>Content Title</td>
+                    <td>Content Type</td>
+                    <td>Content Body</td>
+                    <td>Created by</td>
+                    <td>Created Date</td>
+                    <td>LastModified</td>
+                    <td>Ordinal number</td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var content in WebPage.Contents)
+                {
+                    <tr>
+                        <td>@content.Title</td>
+                        <td>@content.Author?.Email</td>
+                        <td>@content.CreatedDate.ToString("yyyy-MM-dd")</td>
+                        <td>@content.LastModifiedDate.ToString("yyyy-MM-dd")</td>
+                        <td>@content.OrdinalNumber</td>
+                        <td>
+                            <a class="button-primary btn" href="/sites/@siteId/webpages/@webPageId/contents/@content.ContentId/edit">Edit</a>
+                            <a class="button-primary btn" href="/sites/@siteId/webpages/@webPageId/contents/@content.ContentId/delete">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if (Content != null)
+        {
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Content.Title" class="form-control" autocomplete="name" aria-required="true" placeholder="Content Title" />
+                <label for="name" class="form-label">Content Title</label>
+                <ValidationMessage For="() => Content.Title" class="text-danger" />
+            </div>
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Content.ContentType" class="form-control" autocomplete="name" aria-required="true" placeholder="Content Type" />
+                <label for="name" class="form-label">Content Type</label>
+                <ValidationMessage For="() => Content.ContentType" class="text-danger" />
+            </div>
+            <div class="form-floating mb-3">
+                <InputTextArea @bind-Value="Content.Body" class="form-control" autocomplete="name" aria-required="true" placeholder="Content Body" />
+                <label for="name" class="form-label">Content Body</label>
+                <ValidationMessage For="() => Content.Body" class="text-danger" />
+            </div>
+            <div class="form-floating mb-3">
+                <InputNumber @bind-Value="Content.OrdinalNumber" class="form-control" autocomplete="name" aria-required="true" placeholder="Ordinal Number" />
+                <label for="name" class="form-label">Ordinal Number</label>
+                <ValidationMessage For="() => Content.OrdinalNumber" class="text-danger" />
+            </div>
+            <div>
+                <button class="w-100 btn btn-lg btn-primary" @onclick="async () => await CreateOrUpdateContent()">Save Content!</button>
+            </div>
+        }
+    }
+     <div>
+        <button type="submit" class="w-100 btn btn-lg btn-primary">Save Content</button>
+    </div>
+
+</EditForm>
+<div>
+    <button type="button" class="w-100 btn btn-lg btn-primary" @onclick="async () => await AddContent()">Add Content!</button>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new InputModel();
+
+    [Parameter]
+    public int siteId { get; set; }
+    public Site? Site { get; set; }
+
+    [Parameter]
+    public int webPageId { get; set; }
+    public WebPage? WebPage { get; set; }
+
+    private ContentModel? Content { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        User? user = await GetCurrentUserAsync();
+        if (user == null)
+        {
+            Logger.LogDebug("Authenticated User is not authenticated");
+            return;
+        }
+
+        Site = await SiteService.GetUserSiteAsync(user.Id, siteId);
+        if (Site == null)
+        {
+            Logger.LogDebug($"Site with ID '{siteId}' for User with ID '{user.Id}' not found.");
+            ErrorMessage = "There is no such site available to edit";
+            return;
+        }
+
+        WebPage = await WebPageService.GetSiteWebPageAsync(siteId, webPageId);
+
+        if (WebPage == null)
+        {
+            Logger.LogDebug($"WebPage with ID '{webPageId}' for site with ID '{siteId}' not found.");
+            ErrorMessage = "There is no such webpage available to edit";
+            return;
+        }
+
+        Input.Title = WebPage.Title;
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (string.IsNullOrEmpty(Input.Title))
+        {
+            ErrorMessage = "Name is required";
+            return;
+        }
+
+        User? user = await GetCurrentUserAsync();
+        if (user == null)
+        {
+            Logger.LogDebug("Authenticated User is not authenticated");
+            return;
+        }
+
+        Site ??= await SiteService.GetUserSiteAsync(user.Id, siteId);
+
+        WebPage!.Title = Input.Title;
+        WebPage.LastModifiedDate = DateTime.Now;
+
+        await WebPageService.UpdateWebPageAsync(WebPage);
+
+        Navigation.NavigateTo($"sites/{siteId}/webpages");
+    }
+
+    private Task AddContent()
+    {
+        Content = new ContentModel()
+        {
+            OrdinalNumber = WebPage!.Contents.Count() + 1
+        };
+        return Task.CompletedTask;
+    }
+
+    private async Task CreateOrUpdateContent()
+    {
+        if (Content == null)
+        {
+            ErrorMessage = "Content is required";
+            return;
+        }
+
+        if (string.IsNullOrEmpty(Content.Title))
+        {
+            ErrorMessage = "Content Title is required";
+            return;
+        }
+
+        if (string.IsNullOrEmpty(Content.ContentType))
+        {
+            ErrorMessage = "Content Type is required";
+            return;
+        }
+
+        if (string.IsNullOrEmpty(Content.Body))
+        {
+            ErrorMessage = "Content Body is required";
+            return;
+        }
+
+        if (Content.OrdinalNumber <= 0 || Content.OrdinalNumber > WebPage.Contents.Count())
+        {
+            ErrorMessage = "Ordinal Number must be between 1 and the number of content sections.";
+            return;
+        }
+
+        if (Content.ContentId == null)
+        {
+            var content = new Content()
+            {
+                Title = Content.Title,
+                ContentType = Content.ContentType,
+                Body = Content.Body,
+                CreatedDate = DateTime.Now,
+                LastModifiedDate = DateTime.Now,
+                OrdinalNumber = Content.OrdinalNumber,
+                AuthorId = WebPage.AuthorId
+            };
+
+            WebPage.Contents.Add(content);
+            await WebPageService.CreateWebPageAsync(WebPage);
+        }
+        else
+        {
+            var content = WebPage.Contents.FirstOrDefault(c => c.ContentId == Content.ContentId);
+            if (content == null)
+            {
+                ErrorMessage = "Content not found";
+                return;
+            }
+
+            content.Title = Content.Title;
+            content.ContentType = Content.ContentType;
+            content.Body = Content.Body;
+            content.LastModifiedDate = DateTime.Now;
+            content.OrdinalNumber = Content.OrdinalNumber;
+
+            await WebPageService.UpdateWebPageAsync(WebPage);
+        }
+    }
+
+    private sealed class InputModel
+    {
+        [Required]
+        public string Title { get; set; } = string.Empty;
+    }
+
+    private sealed class ContentModel
+    {
+        public int? ContentId { get; set; }
+        [Required]
+        public string Title { get; set; } = string.Empty;
+        [Required]
+        public string ContentType { get; set; } = string.Empty;
+        [Required]
+        public string Body { get; set; } = string.Empty;
+        [Required]
+        public int OrdinalNumber { get; set; }
+    }
+}

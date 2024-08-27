@@ -1,5 +1,6 @@
-﻿@page "/sites/{siteId:int}/edit"
+﻿@page "/sites/{siteId:int}/webpages/{webPageId:int}/delete"
 @using System.ComponentModel.DataAnnotations
+@using CodeMonkeys.CMS.Public.Components.Account.Shared
 @using CodeMonkeys.CMS.Public.Shared.Services
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Identity
@@ -10,7 +11,7 @@
 @rendermode InteractiveServer
 @attribute [Authorize(Roles = "User, Admin")]
 
-<h3>Edit Site</h3>
+<h3>Create new Site</h3>
 
 <EditForm Model="Input" method="post" OnValidSubmit="HandleValidSubmit" FormName="createsite">
     <DataAnnotationsValidator />
@@ -23,7 +24,7 @@
         <ValidationMessage For="() => Input.Name" class="text-danger" />
     </div>
     <div>
-        <button type="submit" class="w-100 btn btn-lg btn-primary">Edit site</button>
+        <button type="submit" class="w-100 btn btn-lg btn-primary">Create site</button>
     </div>
 
 </EditForm>
@@ -34,26 +35,12 @@
 
     [Parameter]
     public int siteId { get; set; }
-    public Site? Site { get; set; }
+
+    private string ErrorMessage { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        User? user = await GetCurrentUserAsync();
-        if (user == null)
-        {
-            Logger.LogWarning("Authenticated User is not authenticated");
-            return;
-        }
-
-        Site = await SiteService.GetUserSiteAsync(user.Id, siteId);
-        if (Site == null)
-        {
-            Logger.LogWarning("Site not found");
-            ErrorMessage = "There is no such site available to edit";
-        }
-
-        Input.Name = Site.Name;
     }
 
     private async Task HandleValidSubmit()
@@ -71,14 +58,17 @@
             return;
         }
 
-        Site ??= await SiteService.GetUserSiteAsync(user.Id, siteId);
+        var site = new Site()
+            {
+                Name = Input.Name,
+                CreatedDate = DateTime.Now,
+                LastModifiedDate = DateTime.Now,
+                CreatorId = user.Id
+            };
 
-        Site.Name = Input.Name;
-        Site.LastModifiedDate = DateTime.Now;
+        await SiteService.CreateSiteAsync(site);
 
-        await SiteService.UpdateSiteAsync(Site);
-
-        Navigation.NavigateTo($"sites/{siteId}/webpages");
+        Navigation.NavigateTo($"sites/{site.SiteId}/webpages");
     }
 
     private sealed class InputModel
