@@ -1,10 +1,85 @@
 ﻿@page "/sites/{siteId:int}/webpages"
+@using CodeMonkeys.CMS.Public.Shared.Services
+@using Microsoft.AspNetCore.Identity
 @inherits BaseComponent<Index>
+
+@inject ISiteService SiteService
+@inject IWebPageService WebPageService
 @rendermode InteractiveServer
 @attribute [Authorize(Roles = "User, Admin")]
 
-<h3>Component</h3>
+<PageTitle>Sites Overview</PageTitle>
 
-@code {
-[Parameter] public int siteId { get; set; }
+@if (IsLoading)
+{
+    <Loading />
+}
+else
+{
+    <h1>Pages Overview for @Site?.Name </h1>
+    <StatusMessage Message="@ErrorMessage" />
+
+    <div>
+        <a class="button-primary btn" href="/sites/@siteId/webpages/create">Create new page</a>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <td>Page Title</td>
+                <td>Created by</td>
+                <td>Created Date</td>
+                <td>LastModified</td>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (WebPage webPage in Pages ?? [])
+            {
+                <tr>
+                    <td>@webPage.Title</td>
+                    <td>@webPage.Author?.Email</td>
+                    <td>@webPage.CreatedDate.ToString("yyyy-MM-dd")</td>
+                    <td>@webPage.LastModifiedDate.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        <a class="button-primary btn" href="/sites/@siteId/webpages/@webPage.WebPageId/edit">Edit</a>
+                        <a class="button-primary btn" href="/sites/@siteId/webpages/@webPage.WebPageId/delete">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div>
+        <a class="button-primary btn" href="/sites/@siteId/webpages/create">Create new page</a>
+    </div>
+}
+
+@code
+{
+    [Parameter]
+    public int siteId { get; set; }
+
+    public Site? Site { get; set; }
+
+    private IEnumerable<WebPage> Pages = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        User? user = await GetCurrentUserAsync();
+
+        if (user == null)
+        {
+            Logger.LogWarning("Authenticated User is not authenticated");
+            return;
+        }
+
+        Site = await SiteService.GetUserSiteAsync(user.Id, siteId);
+        if (Site == null)
+        {
+            Logger.LogWarning("Site not found");
+            ErrorMessage = "There is no such site";
+        }
+
+        Pages = await WebPageService.GetSiteWebPagesAsync(siteId);
+    }
 }

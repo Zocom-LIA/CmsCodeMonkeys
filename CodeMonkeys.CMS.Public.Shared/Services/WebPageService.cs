@@ -1,4 +1,5 @@
-﻿using CodeMonkeys.CMS.Public.Shared.Entities;
+﻿using CodeMonkeys.CMS.Public.Shared.DTOs;
+using CodeMonkeys.CMS.Public.Shared.Entities;
 
 namespace CodeMonkeys.CMS.Public.Shared.Services
 {
@@ -15,12 +16,28 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         {
             await Repository.CreateWebPageAsync(webPage);
         }
+
+        public async Task UpdateWebPageAsync(WebPage webPage)
+        {
+            await Repository.UpdateWebPageAsync(webPage);
+        }
+
         public async Task<IEnumerable<WebPage>> GetSiteWebPagesAsync(int siteId, int pageIndex = 0, int pageSize = 10)
         {
             if (pageIndex < 0) throw new ArgumentOutOfRangeException("PageIndex must be a positive number.");
             if (pageSize <= 0) throw new ArgumentOutOfRangeException("PageSize must be greater than zero.");
 
             return await Repository.GetSiteWebPagesAsync(siteId, pageIndex, pageSize);
+        }
+
+        public async Task<WebPage?> GetSiteWebPageAsync(int siteId, int pageId)
+        {
+            return await Repository.GetSiteWebPageAsync(siteId, pageId);
+        }
+
+        public async Task<IEnumerable<ContentDto>> GetWebPageContentsAsync(int pageId)
+        {
+            return await Repository.GetWebPageContentsAsync(pageId);
         }
     }
 }

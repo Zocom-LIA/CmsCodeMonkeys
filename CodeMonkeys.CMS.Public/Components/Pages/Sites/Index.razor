@@ -5,6 +5,7 @@
 
 @inject ISiteService SiteService
 @rendermode InteractiveServer
+@attribute [Authorize(Roles = "User, Admin")]
 
 <PageTitle>Sites Overview</PageTitle>
 
@@ -36,6 +37,7 @@ else
                 <td>@site.CreatedDate.ToString("yyyy-MM-dd")</td>
                 <td>@site.LastModifiedDate</td>
                 <td>
+                    <a class="button-primary btn" href="/sites/@site.SiteId/webpages">Overview</a>
                     <a class="button-primary btn" href="/sites/@site.SiteId/edit">Edit</a>
                     <a class="button-primary btn" href="/sites/@site.SiteId/delete">Delete</a>
                 </td>
@@ -60,6 +62,6 @@ else
             return;
         }
 
-        Sites = await SiteService.GetSitesAsync(user.Id);
+        Sites = await SiteService.GetUserSitesAsync(user.Id);
     }
 }

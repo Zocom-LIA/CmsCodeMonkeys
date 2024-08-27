@@ -21,13 +21,13 @@ public class SiteService : ISiteService
         await Repository.UpdateSiteAsync(site);
     }
 
-    public async Task<IEnumerable<Site>> GetSitesAsync(Guid userId, int pageIndex = 0, int pageSize = 10)
+    public async Task<IEnumerable<Site>> GetUserSitesAsync(Guid userId, int pageIndex = 0, int pageSize = 10)
     {
         return await Repository.GetUserSitesAsync(userId, pageIndex, pageSize);
     }
 
-    public async Task<Site?> GetSiteAsync(Guid userId, int siteId)
+    public async Task<Site?> GetUserSiteAsync(Guid userId, int siteId)
     {
-        return await Repository.GetSiteAsync(userId, siteId);
+        return await Repository.GetUserSiteAsync(userId, siteId);
     }
 }

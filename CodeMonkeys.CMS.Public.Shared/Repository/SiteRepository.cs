@@ -33,13 +33,18 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             if (pageIndex < 0) throw new ArgumentOutOfRangeException("PageIndex must be a positive number.");
             if (pageSize <= 0) throw new ArgumentOutOfRangeException("PageSize must be greater than zero.");
 
-            return await Context.Sites.Where(site => site.CreatorId.Equals(userId)).Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
+            return await Context.Sites
+                .Where(site => site.CreatorId.Equals(userId))
+                .Skip(pageIndex * pageSize)
+                .Take(pageSize)
+                .Include(site => site.LandingPage)
+                .Include(site => site.Pages)
+                //.ThenInclude(page => page.Contents)
+                .Include(site => site.Creator)
+                .ToListAsync();
         }
 
-        public Task<Site?> GetSiteAsync(Guid userId, int siteId)
-        {
-            return Context.Sites.Include(site => site.LandingPage).Include(site => site.Pages).FirstOrDefaultAsync(site => site.SiteId == siteId && site.CreatorId.Equals(userId));
-        }
+        public Task<Site?> GetUserSiteAsync(Guid userId, int siteId) => Context.Sites.Include(site => site.LandingPage).Include(site => site.Pages).FirstOrDefaultAsync(site => site.SiteId == siteId && site.CreatorId.Equals(userId));
 
         public Task UpdateSiteAsync(Site site)
         {
