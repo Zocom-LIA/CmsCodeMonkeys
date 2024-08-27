@@ -23,7 +23,7 @@
         <label for="name" class="form-label">Site Name</label>
         <ValidationMessage For="() => Input.Title" class="text-danger" />
     </div>
-    @if (true) //WebPage?.Contents != null && WebPage.Contents.Any())
+    @if (WebPage?.Contents != null && WebPage.Contents.Any())
     {
         <h4>Content</h4>
         <table>
@@ -58,9 +58,9 @@
                 }
             </tbody>
         </table>
-
-        @if (Content != null)
-        {
+    }
+    @if (Content != null)
+    {
             <div class="form-floating mb-3">
                 <InputText @bind-Value="Content.Title" class="form-control" autocomplete="name" aria-required="true" placeholder="Content Title" />
                 <label for="name" class="form-label">Content Title</label>
@@ -84,7 +84,6 @@
             <div>
                 <button class="w-100 btn btn-lg btn-primary" @onclick="async () => await CreateOrUpdateContent()">Save Content!</button>
             </div>
-        }
     }
      <div>
         <button type="submit" class="w-100 btn btn-lg btn-primary">Save Content</button>
@@ -219,6 +218,7 @@
             };
 
             WebPage.Contents.Add(content);
+            Content = null;
             await WebPageService.UpdateWebPageAsync(WebPage);
         }
         else
