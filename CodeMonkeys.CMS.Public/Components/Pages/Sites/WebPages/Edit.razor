@@ -23,7 +23,7 @@
         <label for="name" class="form-label">Site Name</label>
         <ValidationMessage For="() => Input.Title" class="text-danger" />
     </div>
-    @if (WebPage?.Contents != null && WebPage.Contents.Any())
+    @if (true) //WebPage?.Contents != null && WebPage.Contents.Any())
     {
         <h4>Content</h4>
         <table>
@@ -40,10 +40,12 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var content in WebPage.Contents)
+                @foreach (Content content in WebPage?.Contents ?? [])
                 {
                     <tr>
                         <td>@content.Title</td>
+                        <td>@content.ContentType</td>
+                        <td>@content.Body</td>
                         <td>@content.Author?.Email</td>
                         <td>@content.CreatedDate.ToString("yyyy-MM-dd")</td>
                         <td>@content.LastModifiedDate.ToString("yyyy-MM-dd")</td>
@@ -197,7 +199,7 @@
             return;
         }
 
-        if (Content.OrdinalNumber <= 0 || Content.OrdinalNumber > WebPage.Contents.Count())
+        if (Content.OrdinalNumber <= 0 || Content.OrdinalNumber > WebPage.Contents.Count()+1)
         {
             ErrorMessage = "Ordinal Number must be between 1 and the number of content sections.";
             return;
@@ -217,7 +219,7 @@
             };
 
             WebPage.Contents.Add(content);
-            await WebPageService.CreateWebPageAsync(WebPage);
+            await WebPageService.UpdateWebPageAsync(WebPage);
         }
         else
         {
