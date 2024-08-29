@@ -53,12 +53,17 @@ h1:focus {
     border-color: #929292;
 }
 
-/* Page layout */
-.page {
-    flex: 1;
-    padding-top: 90px; /* Adjust this value to match the height of the header */
-    padding-bottom: 40px; /* Padding for the footer */
-    background-color: white;
+.footer {
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: relative;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    margin-top: auto;
 }
 
 .container {
@@ -75,6 +80,24 @@ h1:focus {
     box-sizing: border-box;
     padding: 20px;
     width: 48%;
+}
+
+@media (max-width: 768px) {
+    .left-top, .left-bottom, .right-top, .right-bottom {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .left-bottom {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .small-container {
+        width: 100%;
+        height: 150px;
+        margin: 10px 0;
+    }
 }
 
 .left-top, .right-top, .right-bottom {
@@ -114,78 +137,151 @@ img {
     object-fit: cover;
 }
 
-/* Footer styles */
-footer, .footer {
-    background-color: #343a40;
-    color: white;
-    text-align: center;
-    padding: 10px 0;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    margin-top: auto;
-    height: 50px;
-    justify-content: center;
-    align-items: center;
-}
-
-.info {
-    font-size: 14px;
-    margin: auto;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .left-top, .left-bottom, .right-top, .right-bottom {
-        width: 100%;
-        padding: 10px;
-    }
-
-    .left-bottom {
-        flex-direction: column;
-        height: auto;
-    }
-
-    .small-container {
-        width: 100%;
-        height: 150px;
-        margin: 10px 0;
-    }
-}
-
-@media (max-width: 600px) {
-    .footer {
-        width: 100%;
-        margin-bottom: 20px;
-    }
-}
-
-/* Body styling to ensure the footer stays at the bottom */
-body {
+.admin-container {
     display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    margin: 0;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 20px;
+    font-family: Arial, sans-serif;
 }
 
-/* Blazor error UI */
-#blazor-error-ui {
-    background: lightyellow;
-    bottom: 0;
-    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
-    display: none;
-    left: 0;
-    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
-    position: fixed;
+.admin-profile-section {
+    background-color: #f0f0f0;
+    width: 25%;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.admin-profile-picture {
     width: 100%;
-    z-index: 1000;
+    max-width: 150px;
+    border-radius: 8px;
+    display: block;
+    margin: 0 auto;
 }
 
-    #blazor-error-ui .dismiss {
-        cursor: pointer;
-        position: absolute;
-        right: 0.75rem;
-        top: 0.5rem;
+.admin-profile-description {
+    margin: 20px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.admin-profile-details {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+    .admin-profile-details li {
+        margin-bottom: 10px;
     }
+
+.admin-edit-profile-button {
+    background-color: #e0e0e0;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.admin-templates-section {
+    background-color: #f0f0f0;
+    width: 70%;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.admin-templates-title {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.admin-templates-description {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: #666;
+}
+
+.admin-template-carousel {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.admin-carousel-control {
+    background-color: #e0e0e0;
+    border: none;
+    padding: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    border-radius: 50%;
+    margin: 0 10px;
+}
+
+.admin-template-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.admin-template-card {
+    background-color: #d3f1d8;
+    width: 22%;
+    height: 150px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+    .admin-template-card {
+        width: 48%;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-template-card {
+        width: 100%;
+    }
+
+    .admin-profile-section, .admin-templates-section {
+        width: 100%;
+    }
+
+    .admin-action-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .admin-create-page-button, .admin-existing-pages-button {
+        margin-bottom: 10px;
+        width: 100%;
+    }
+}
+
+.admin-action-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.admin-create-page-button, .admin-existing-pages-button {
+    background-color: #e0e0e0;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.admin-create-page-button {
+    margin-right: 20px;
+}
