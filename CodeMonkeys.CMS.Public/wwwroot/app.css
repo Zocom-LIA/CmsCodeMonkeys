@@ -314,7 +314,7 @@ body {
         align-items: center;
     }
 
-    .admin-create-page-button, .admin-existing-pages-button {
+    .admin-create-site-button, .admin-existing-sites-button, .admin-create-page-button, .admin-existing-pages-button {
         margin-bottom: 10px;
         width: 100%;
     }
@@ -325,7 +325,7 @@ body {
     justify-content: space-between;
 }
 
-.admin-create-page-button, .admin-existing-pages-button {
+.admin-create-site-button, .admin-existing-sites-button, .admin-create-page-button, .admin-existing-pages-button {
     background-color: #e0e0e0;
     border: none;
     padding: 10px 20px;
@@ -334,6 +334,6 @@ body {
     cursor: pointer;
 }
 
-.admin-create-page-button {
+.admin-create-page-button, .admin-create-site-button {
     margin-right: 20px;
 }
