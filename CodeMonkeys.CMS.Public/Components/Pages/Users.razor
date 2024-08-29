@@ -1,4 +1,8 @@
-﻿@page "/user"
+﻿@page "/users"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+
+@attribute [Authorize(Roles = "Admin, User")]
 
 <div class="admin-container">
 
