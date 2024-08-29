@@ -105,13 +105,9 @@
                 return;
             }
 
-            if (await UserManager.IsInRoleAsync(user, "Admin"))
+            if (await UserManager.IsInRoleAsync(user, "Admin") || await UserManager.IsInRoleAsync(user, "User"))
             {
-                RedirectManager.RedirectTo("admin");
-            }
-            else if (await UserManager.IsInRoleAsync(user, "User"))
-            {
-                RedirectManager.RedirectTo("user");
+                RedirectManager.RedirectTo("users");
             }
             else
             {

@@ -1,8 +1,12 @@
 ﻿@page "/users"
+@inherits BaseComponent<Users>
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Web
 
 @attribute [Authorize(Roles = "Admin, User")]
+@rendermode InteractiveServer
 
 <div class="admin-container">
 
@@ -78,9 +82,9 @@
 
         <div class="admin-action-buttons">
 
-            <button class="admin-create-page-button">Create new page</button>
+            <a href="/sites/create">Create new site</a>
 
-            <button class="admin-existing-pages-button">Go to existing pages</button>
+            <a href="/sites">Go to existing sites</a>
 
         </div>
 

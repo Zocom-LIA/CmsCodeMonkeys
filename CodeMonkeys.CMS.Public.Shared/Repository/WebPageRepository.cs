@@ -61,11 +61,11 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                 .ToListAsync();
         }
 
-        public Task UpdateWebPageAsync(WebPage webPage)
+        public async Task UpdateWebPageAsync(WebPage webPage)
         {
             Context.Pages.Update(webPage);
 
-            return Context.SaveChangesAsync();
+            await Context.SaveChangesAsync();
         }
     }
 }
