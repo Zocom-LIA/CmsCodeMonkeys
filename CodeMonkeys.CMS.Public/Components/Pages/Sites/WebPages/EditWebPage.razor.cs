@@ -88,6 +88,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
         {
             Content = new ContentModel()
             {
+                ContentType = ContentTypes.Text.ToString(),
                 OrdinalNumber = WebPage!.Contents.Count() + 1
             };
             return Task.CompletedTask;
