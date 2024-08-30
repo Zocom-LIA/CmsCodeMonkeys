@@ -1,5 +1,6 @@
 ﻿@page "/sites/{siteId:int}/webpages/{webPageId:int}/edit"
 @using System.ComponentModel.DataAnnotations
+@using CodeMonkeys.CMS.Public.Shared.Entities
 @using CodeMonkeys.CMS.Public.Shared.Services
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Identity
@@ -29,8 +30,13 @@
                 <ValidationMessage For="() => Content.Title" class="text-danger" />
             </div>
             <div class="form-floating mb-3">
-                <InputText @bind-Value="Content.ContentType" class="form-control" autocomplete="name" aria-required="true" placeholder="Content Type" />
-                <label for="name" class="form-label">Content Type</label>
+                <select class="form-select" @bind="Content.ContentType">
+                    @foreach (var type in Enum.GetValues(typeof(ContentTypes)))
+                    {
+                        <option Value="@type">@type.ToString()</option>
+                    }
+                </select>
+                <label for="contentType" class="form-label">Content Type</label>
                 <ValidationMessage For="() => Content.ContentType" class="text-danger" />
             </div>
             <div class="form-floating mb-3">
