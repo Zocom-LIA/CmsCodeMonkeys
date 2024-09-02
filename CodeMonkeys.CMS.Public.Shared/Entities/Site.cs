@@ -10,7 +10,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Entities
         public DateTime CreatedDate { get; set; }
         public DateTime LastModifiedDate { get; set; }
         public Guid? CreatorId { get; set; }
+        public User? Creator { get; set; }
 
+        public int? LandingPageId { get; set; }
+        public WebPage? LandingPage { get; set; }
         public ICollection<WebPage> Pages { get; set; } = new List<WebPage>();
     }
 }

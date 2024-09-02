@@ -1,16 +1,11 @@
 ﻿@page "/"
 @using CodeMonkeys.CMS.Public.Components.Shared
-@inherits BaseComponent<Home>
+@inherits AuthenticationBaseComponent<Home>
 @rendermode InteractiveServer
 
 <PageTitle>Home</PageTitle>
 
-@if (IsLoading)
-{
-    <p>Loading...</p>
-}
-else
-{
+<UserViewer>
     <div class="container">
 
         <div class="left-top">
@@ -33,5 +28,4 @@ else
             <p>Lorem ipsum dolor sit amet consectetur. Sed vestibulum suspendisse sollicitudin gravida id senectus. Eu amet ullamcorper eu et eget auctor. Dignissim aenean molestie vel amet turpis urna enim ultrices nisi. Eu vivamus sed ullamcorper amet praesent quam laoreet ac.</p>
         </div>
     </div>
-}
-
+</UserViewer>

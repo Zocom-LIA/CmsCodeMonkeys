@@ -13,5 +13,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Entities
         public DateTime LastModifiedDate { get; set; }
 
         public Guid? AuthorId { get; set; }
+        public User? Author { get; internal set; }
+        public int OrdinalNumber { get; set; }
     }
 }

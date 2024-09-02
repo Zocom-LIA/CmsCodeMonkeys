@@ -1,0 +1,20 @@
+@inherits BaseComponent<UserViewer>
+@rendermode InteractiveServer
+
+@if (IsLoading)
+{
+    <div class="loading">
+        <div class="spinner">Loading...</div>
+    </div>
+}
+else
+{
+    <div class="visitor-view">
+        <header>
+            <h1>@PageTitle</h1>
+        </header>
+        <div class="visitor-body">
+            @PageBody
+        </div>
+    </div>
+}

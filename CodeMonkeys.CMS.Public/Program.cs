@@ -6,6 +6,7 @@ using CodeMonkeys.CMS.Public.Shared.Entities;
 using CodeMonkeys.CMS.Public.Shared.Middleware;
 using CodeMonkeys.CMS.Public.Shared.Repository;
 using CodeMonkeys.CMS.Public.Shared.Services;
+
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -49,7 +50,12 @@ builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
 builder.Services.AddScoped<IPageStatsRepository, PageStatsRepository>();
 builder.Services.AddScoped<IPageStatsService, PageStatsService>();
 builder.Services.AddScoped<VisitCounterMiddleware>();
-
+builder.Services.AddScoped<ISiteRepository, SiteRepository>();
+builder.Services.AddScoped<IWebPageRepository, WebPageRepository>();
+builder.Services.AddScoped<IContentRepository, ContentRepository>();
+builder.Services.AddScoped<ISiteService, SiteService>();
+builder.Services.AddScoped<IWebPageService, WebPageService>();
+builder.Services.AddScoped<IContentService, ContentService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
