@@ -6,10 +6,9 @@
 
 @inject ISiteService SiteService
 @inject IWebPageService WebPageService
-@rendermode InteractiveServer
 @attribute [Authorize(Roles = "User, Admin")]
 
-<PageTitle>Sites Overview</PageTitle>
+<PageTitle>Pages Overview for @Site?.Name</PageTitle>
 
 @if (IsLoading)
 {
@@ -17,40 +16,40 @@
 }
 else
 {
-    <h1>Pages Overview for @Site?.Name </h1>
+    <h1>Pages Overview for @Site?.Name</h1>
     <StatusMessage Message="@ErrorMessage" />
 
     <div>
-        <a class="button-primary btn" href="/sites/@siteId/webpages/create">Create new page</a>
+        <a class="btn btn-primary" href="/sites/@siteId/webpages/create">Create new page</a>
     </div>
-    <table>
-        <thead>
-            <tr>
-                <td>Page Title</td>
-                <td>Created by</td>
-                <td>Created Date</td>
-                <td>LastModified</td>
-                <td></td>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (WebPage webPage in Pages ?? [])
-            {
-                <tr>
-                    <td>@webPage.Title</td>
-                    <td>@webPage.Author?.Email</td>
-                    <td>@webPage.CreatedDate.ToString("yyyy-MM-dd")</td>
-                    <td>@webPage.LastModifiedDate.ToString("yyyy-MM-dd")</td>
-                    <td>
-                        <a class="button-primary btn" href="/sites/@siteId/webpages/@webPage.WebPageId/edit">Edit</a>
-                        <a class="button-primary btn" href="/sites/@siteId/webpages/@webPage.WebPageId/delete">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+
+    <div class="webpages-row mt-4">
+        @foreach (var webPage in Pages ?? Enumerable.Empty<WebPage>())
+        {
+            <div class="webpages-col-md-4 webpages-mb-4">
+                <div class="webpages-card h-100">
+                    <div class="webpages-card-header text-center font-weight-bold">
+                        @webPage.Title
+                    </div>
+                    <div class="webpages-card-body">
+                        <div class="webpages-empty-box bg-light" style="height: 150px;">
+                            <!-- Additional content can go here -->
+                        </div>
+                    </div>
+                    <div class="webpages-card-actions">
+                        <a class="btn btn-primary webpages-btn webpages-btn-edit" href="/sites/@siteId/webpages/@webPage.WebPageId/edit">Edit</a>
+                        <a class="btn btn-danger webpages-btn webpages-btn-delete" href="/sites/@siteId/webpages/@webPage.WebPageId/delete">Delete</a>
+                    </div>
+                    <div class="webpages-card-footer text-muted">
+                        Last Modified: @webPage.LastModifiedDate.ToString("yyyy-MM-dd")
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
     <div>
-        <a class="button-primary btn" href="/sites/@siteId/webpages/create">Create new page</a>
+        <a class="btn btn-primary" href="/sites/@siteId/webpages/create">Create new page</a>
     </div>
 }
 
@@ -61,7 +60,7 @@ else
 
     public Site? Site { get; set; }
 
-    private IEnumerable<WebPage> Pages = [];
+    private IEnumerable<WebPage> Pages = Enumerable.Empty<WebPage>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -79,6 +78,7 @@ else
         {
             Logger.LogWarning("Site not found");
             ErrorMessage = "There is no such site";
+            return;
         }
 
         Pages = await WebPageService.GetSiteWebPagesAsync(siteId);
