@@ -1,0 +1,25 @@
+@using CodeMonkeys.CMS.Public.Components.Account.Shared
+@inherits BaseComponent<UserView>
+@rendermode InteractiveServer
+
+@if (IsLoading)
+{
+    <div class="loading">
+        <div class="spinner">Loading...</div>
+    </div>
+}
+else
+{
+    <div class="user-view">
+        <StatusMessage />
+
+        @if (UserViewHeader != null)
+        {
+            <div class="user-view-header">
+                @UserViewHeader
+            </div>
+        }
+
+        @ChildContent
+    </div>
+}

@@ -1,7 +1,6 @@
 ﻿using CodeMonkeys.CMS.Public.Components.Shared;
 using CodeMonkeys.CMS.Public.Shared.Entities;
 using CodeMonkeys.CMS.Public.Shared.Extensions;
-using CodeMonkeys.CMS.Public.Shared.Helpers;
 using CodeMonkeys.CMS.Public.Shared.Repository;
 using CodeMonkeys.CMS.Public.Shared.Services;
 
@@ -55,8 +54,6 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
                 ErrorMessage = "There is no such webpage available to edit";
                 return;
             }
-
-
 
             Input.Title = WebPage.Title;
         }

@@ -8,12 +8,12 @@
 @inherits AuthenticationBaseComponent<SiteEdit>
 @rendermode InteractiveServer
 
-<UserViewer>
-    <PageTitle>
+<UserView>
+    <UserViewHeader>
         <h1>Edit Site</h1>
-    </PageTitle>
+    </UserViewHeader>
 
-    <PageBody>
+    <ChildContent>
         <EditForm Model="Input" method="post" OnValidSubmit="HandleValidSubmit" FormName="createsite">
             <DataAnnotationsValidator />
             <ValidationSummary />
@@ -29,8 +29,8 @@
             </div>
 
         </EditForm>
-    </PageBody>
-</UserViewer>
+    </ChildContent>
+</UserView>
 
 @code {
     [SupplyParameterFromForm]

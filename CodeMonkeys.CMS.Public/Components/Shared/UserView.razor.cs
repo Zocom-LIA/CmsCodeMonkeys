@@ -2,10 +2,13 @@
 
 namespace CodeMonkeys.CMS.Public.Components.Shared
 {
-    public partial class UserViewer : BaseComponent<UserViewer>
+    public partial class UserView : BaseComponent<UserView>
     {
         [Parameter]
         public RenderFragment ChildContent { get; set; }
+
+        [Parameter]
+        public RenderFragment? UserViewHeader { get; set; }
 
         protected override async Task OnInitializedAsync()
         {

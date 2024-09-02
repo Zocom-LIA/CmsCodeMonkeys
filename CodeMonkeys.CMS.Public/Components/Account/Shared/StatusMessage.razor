@@ -17,13 +17,19 @@
 
     private string? DisplayMessage => Message ?? messageFromCookie;
 
-    protected override void OnInitialized()
+    protected override Task OnInitializedAsync()
     {
-        messageFromCookie = HttpContext.Request.Cookies[IdentityRedirectManager.StatusCookieName];
+        base.OnInitializedAsync();
 
-        if (messageFromCookie is not null)
+        if (HttpContext?.Request?.Cookies != null)
         {
-            HttpContext.Response.Cookies.Delete(IdentityRedirectManager.StatusCookieName);
+            messageFromCookie = HttpContext.Request.Cookies[IdentityRedirectManager.StatusCookieName];
         }
+        else
+        {
+            messageFromCookie = null; // or handle the null case appropriately
+        }
+
+        return Task.CompletedTask;
     }
 }

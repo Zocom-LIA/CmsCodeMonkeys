@@ -1,10 +1,11 @@
-﻿namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
+﻿namespace CodeMonkeys.CMS.Public
 {
     public enum NavigationActions
     {
         None,
         Add,
         Edit,
-        Delete
+        Delete,
+        Webpages
     }
 }

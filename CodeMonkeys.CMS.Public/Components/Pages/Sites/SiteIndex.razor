@@ -9,37 +9,19 @@
 
 <PageTitle>Sites Overview</PageTitle>
 
-<UserViewer>
-    <h1>Sites Overview</h1>
-    <table>
-        <thead>
-            <tr>
-                <td>Site Name</td>
-                <td>Created by</td>
-                <td>Created Date</td>
-                <td>LastModified</td>
-                <td></td>
-            </tr>
-        </thead>
-        <tbody>
-        @foreach(Site site in Sites ?? [])
-        {
-            <tr>
-                <td>@site.Name</td>
-                <td>@site.Creator?.Email</td>
-                <td>@site.CreatedDate.ToString("yyyy-MM-dd")</td>
-                <td>@site.CreatedDate.ToString("yyyy-MM-dd")</td>
-                <td>@site.LastModifiedDate</td>
-                <td>
-                    <a class="button-primary btn" href="/sites/@site.SiteId/webpages">Overview</a>
-                    <a class="button-primary btn" href="/sites/@site.SiteId/edit">Edit</a>
-                    <a class="button-primary btn" href="/sites/@site.SiteId/delete">Delete</a>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-</UserViewer>
+<UserView>
+    <UserViewHeader>
+        <h1>Sites Overview</h1>
+    </UserViewHeader>
+    <ChildContent>
+        <div class="sites-row">
+            @foreach(var site in Sites)
+            {
+            <SiteBoxComponent Site="@site" />
+            }
+        </div>
+    </ChildContent>
+</UserView>
 
 @code
 {

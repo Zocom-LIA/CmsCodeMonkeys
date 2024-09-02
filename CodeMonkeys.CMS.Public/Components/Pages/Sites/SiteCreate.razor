@@ -1,5 +1,6 @@
 ﻿@page "/sites/create"
 @using System.ComponentModel.DataAnnotations
+@using CodeMonkeys.CMS.Public.Components.Account.Shared
 @using CodeMonkeys.CMS.Public.Shared.Services
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Identity
@@ -7,11 +8,11 @@
 @inherits AuthenticationBaseComponent<SiteCreate>
 @rendermode InteractiveServer
 
-<UserViewer>
-    <PageTitle>
+<UserView>
+    <UserViewHeader>
         <h3>Create new Site</h3>
-    </PageTitle>
-    <PageBody>
+    </UserViewHeader>
+    <ChildContent>
         <EditForm Model="Input" method="post" OnValidSubmit="HandleValidSubmit" FormName="createsite">
             <DataAnnotationsValidator />
             <ValidationSummary />
@@ -23,18 +24,16 @@
                 <ValidationMessage For="() => Input.Name" class="text-danger" />
             </div>
             <div>
-                <button type="submit" class="w-100 btn btn-lg btn-primary">Create site</button>
+                <button type="submit" class="btn btn-sm btn-primary">Create site</button>
             </div>
 
         </EditForm>
-    </PageBody>
-</UserViewer>
+    </ChildContent>
+</UserView>
 
 @code {
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = new InputModel();
-
-    private string ErrorMessage { get; set; } = string.Empty;
 
     private async Task HandleValidSubmit()
     {
