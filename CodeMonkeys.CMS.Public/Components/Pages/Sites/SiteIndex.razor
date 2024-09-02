@@ -14,12 +14,7 @@
         <h1>Sites Overview</h1>
     </UserViewHeader>
     <ChildContent>
-        <div class="sites-row">
-            @foreach(var site in Sites)
-            {
-            <SiteBoxComponent Site="@site" />
-            }
-        </div>
+        <SiteBoxesComponent Sites="@Sites" />
     </ChildContent>
 </UserView>
 

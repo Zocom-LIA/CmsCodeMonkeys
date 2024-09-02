@@ -56,6 +56,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
             }
 
             Input.Title = WebPage.Title;
+            WebPage.Contents = WebPage.Contents.OrderBy(content => content.OrdinalNumber).ToList();
         }
 
         private async Task HandleValidSubmit()
@@ -193,7 +194,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
 
             if (Content.OrdinalNumber <= 0 || Content.OrdinalNumber > WebPage.Contents.Count() + 1)
             {
-                ErrorMessage = $"Ordinal Number must be between 1 and {WebPage.Contents.Count() + 1}.";
+                ErrorMessage = "Invalid data";
                 return;
             }
 
@@ -206,7 +207,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
                     Body = Content.Body,
                     CreatedDate = DateTime.Now,
                     LastModifiedDate = DateTime.Now,
-                    OrdinalNumber = Content.OrdinalNumber,
+                    OrdinalNumber = WebPage.Contents.Count(),
                     AuthorId = WebPage.AuthorId
                 };
 
@@ -243,130 +244,23 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
             Navigation.NavigateTo($"/sites/{siteId}");
         }
 
-        private void MoveUp(int ordinalNumber)
+        private async Task MoveUp(int ordinalNumber)
         {
-            var items = WebPage!.Contents.OrderBy(c => c.OrdinalNumber).ToArray();
-            var currentIndex = items.FindIndex(i => i.OrdinalNumber == ordinalNumber);
-            if (currentIndex > 0)
-            {
-                (items[currentIndex - 1], items[currentIndex]) = (items[currentIndex], items[currentIndex - 1]);
-
-                // Update ordinal numbers
-                items[currentIndex - 1].OrdinalNumber = ordinalNumber;
-                items[currentIndex].OrdinalNumber = ordinalNumber - 1;
-
-                // Re-sort the list
-                WebPage!.Contents = (ICollection<Content>)items.ToList().OrderBy(i => i.OrdinalNumber);
-            }
+            WebPage!.Contents = (await WebPageService.MoveContentUpAsync(WebPage!, ordinalNumber)).ToList();
         }
 
-        private void MoveDown(int ordinalNumber)
+        private async Task MoveDown(int ordinalNumber)
         {
-            var items = WebPage!.Contents.OrderBy(c => c.OrdinalNumber).ToArray();
-            var currentIndex = items.FindIndex(i => i.OrdinalNumber == ordinalNumber);
-            if (currentIndex < items.Length - 1)
-            {
-                (items[currentIndex + 1], items[currentIndex]) = (items[currentIndex], items[currentIndex + 1]);
-
-                // Update ordinal numbers
-                items[currentIndex + 1].OrdinalNumber = ordinalNumber;
-                items[currentIndex].OrdinalNumber = ordinalNumber + 1;
-
-                // Re-sort the list
-                WebPage!.Contents = (ICollection<Content>)items.ToList().OrderBy(i => i.OrdinalNumber);
-            }
+            WebPage!.Contents = (await WebPageService.MoveContentDownAsync(WebPage!, ordinalNumber)).ToList();
         }
 
-        // Move the content item up in order
-        private async Task MoveUp(Content movee)
-        {
-            var contents = WebPage!.Contents.OrderBy(c => c.OrdinalNumber).ToArray();
-            Content? previousContent = null;
-            Content? actualContent = null;
-            List<Content> updatedContents = new();
-
-            for (int i = 0; i < contents.Length; i++)
-            {
-                if (contents[i].ContentId == movee.ContentId)
-                {
-                    if (i == 0)
-                    {
-                        SetError("This message should never be seen. Content is already at the top.");
-                        Logger.LogDebug("Moving content up is not possible. Content is already at the top.");
-                        return;
-                    }
-
-                    previousContent = contents[i - 1];
-                    actualContent = contents[i];
-
-                    if (previousContent.OrdinalNumber == i - 1)
-                    {
-                        updatedContents.Add(previousContent);
-                    }
-
-                    updatedContents.Add(actualContent);
-                    (previousContent.OrdinalNumber, actualContent.OrdinalNumber) = (i, i - 1);
-                }
-                else if (contents[i].OrdinalNumber != i)
-                {
-                    contents[i].OrdinalNumber = i;
-                    updatedContents.Add(contents[i]);
-                }
-            }
-
-            WebPage!.Contents = updatedContents.OrderBy(content => content.OrdinalNumber).ToList();
-
-            await ContentService.UpdateOrdinalNumberAsync(WebPage.Contents, true);
-        }
-
-        private async Task MoveDown(Content movee)
-        {
-            var contents = WebPage!.Contents.OrderBy(c => c.OrdinalNumber).ToArray();
-            Content? nextContent = null;
-            Content? actualContent = null;
-            List<Content> updatedContents = new();
-
-            for (int i = 0; i < contents.Length; i++)
-            {
-                if (contents[i].ContentId == movee.ContentId)
-                {
-                    if (i == 0)
-                    {
-                        SetError("This message should never be seen. Content is already at the top.");
-                        Logger.LogDebug("Moving content up is not possible. Content is already at the top.");
-                        return;
-                    }
-
-                    actualContent = contents[i];
-                    nextContent = contents[i + 1];
-
-                    if (nextContent.OrdinalNumber == i + 1)
-                    {
-                        updatedContents.Add(nextContent);
-                    }
-
-                    updatedContents.Add(actualContent);
-                    (nextContent.OrdinalNumber, actualContent.OrdinalNumber) = (i, i + 1);
-                }
-                else if (contents[i].OrdinalNumber != i)
-                {
-                    contents[i].OrdinalNumber = i;
-                    updatedContents.Add(contents[i]);
-                }
-            }
-
-            WebPage!.Contents = updatedContents.OrderBy(content => content.OrdinalNumber).ToList();
-
-            await ContentService.UpdateOrdinalNumberAsync(WebPage.Contents, true);
-        }
-
-        private sealed class InputModel
+        public sealed class InputModel
         {
             [Required]
             public string Title { get; set; } = string.Empty;
         }
 
-        private sealed class ContentModel
+        public sealed class ContentModel
         {
             public int? ContentId { get; set; }
             [Required]

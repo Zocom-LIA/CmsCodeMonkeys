@@ -1,5 +1,6 @@
 ﻿using CodeMonkeys.CMS.Public.Shared.DTOs;
 using CodeMonkeys.CMS.Public.Shared.Entities;
+using CodeMonkeys.CMS.Public.Shared.Extensions;
 using CodeMonkeys.CMS.Public.Shared.Repository;
 
 namespace CodeMonkeys.CMS.Public.Shared.Services
@@ -46,90 +47,61 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
             return await Repository.GetVisitorWebPageAsync(pageId);
         }
 
-        public async Task<WebPage> UpdateOrdinalNumbersAsync(WebPage webPage, bool persist = true)
+        public async Task<IEnumerable<Content>> UpdateOrdinalNumbersAsync(WebPage webPage, bool persist = true)
         {
-            var contents = webPage.Contents
-                .OrderBy(c => c.OrdinalNumber)
-                .Select((c, i) =>
+            var contents = webPage.Contents.OrderBy(c => c.OrdinalNumber).ToArray();
+            List<Content> unorderedContents = new List<Content>();
+            for (int i = 0; i < contents.Count(); i++)
+            {
+                if (contents[i].OrdinalNumber != i)
                 {
-                    c.OrdinalNumber = i + 1;
-                    return c;
-                });
-
-            if (persist)
-            {
-                await Repository.UpdateWebPageContentsAsync(webPage);
+                    unorderedContents.Add(contents[i]);
+                    contents[i].OrdinalNumber = i;
+                }
             }
 
-            return webPage;
+
+            return (!persist || unorderedContents.Count() == 0)
+                ? contents
+                : await Repository.UpdateWebPageContentsAsync(webPage, unorderedContents);
         }
 
-
-        public async Task MoveUpAsync(int webPageId, int contentId)
+        public async Task<IEnumerable<Content>> MoveContentUpAsync(WebPage page, int ordinalNumber)
         {
-            // Get the content
-            // Get the content's ordinal number
-            // Get the content with the ordinal number one less than the current content
-            // Swap the ordinal numbers
-            // Update the contents
-            var items = await GetWebPageContentsAsync(webPageId);
-        }
+            if (page == null) throw new ArgumentNullException(nameof(page));
 
-        public Task<WebPage> MoveContentDownAsync(WebPage webPage, Content content, bool persist = true)
-        {
-            if (content.OrdinalNumber < 1) throw new InvalidOperationException($"Content with ID '{content.ContentId}' has an illegal state '{content.OrdinalNumber}'.");
-            if (content.OrdinalNumber == 1) return Task.FromResult(webPage);
+            var items = page.Contents.OrderBy(c => c.OrdinalNumber).ToArray();
+            var currentIndex = items.FindIndex(i => i.OrdinalNumber == ordinalNumber);
 
-            var contents = webPage.Contents;
-            var item = webPage.Contents.FirstOrDefault(c => c.ContentId == content.ContentId);
-
-            if (item == null)
+            if (currentIndex <= 0)
             {
-                throw new InvalidOperationException($"Attempting to move content with ID '{content.ContentId}' up from web page with ID '{webPage.WebPageId}', but it is not found in its contents.");
+                return await UpdateOrdinalNumbersAsync(page, true);
             }
 
-            content.OrdinalNumber--;
+            items[currentIndex - 1].OrdinalNumber = ordinalNumber;
+            items[currentIndex].OrdinalNumber = ordinalNumber - 1;
 
-            // Move previous content up
-            var previous = contents.FirstOrDefault(c => (int)c.OrdinalNumber == content.OrdinalNumber);
+            await UpdateOrdinalNumbersAsync(page, true);
 
-            if (previous == null) throw new InvalidOperationException("Should never happen.");
-
-            previous.OrdinalNumber++;
-
-            return UpdateOrdinalNumberAsync(webPage, contents, persist);
+            return await Repository.UpdateWebPageContentsAsync(page, [items[currentIndex], items[currentIndex - 1]]);
         }
 
-        private async Task<WebPage> UpdateOrdinalNumberAsync(WebPage webPage, ICollection<Content> contents, bool persist)
+        public async Task<IEnumerable<Content>> MoveContentDownAsync(WebPage page, int ordinalNumber)
         {
-            throw new NotImplementedException();
-        }
+            if (page == null) throw new ArgumentNullException(nameof(page));
 
-        public Task<WebPage> MoveContentUpAsync(WebPage webPage, Content content, bool persist = true)
-        {
-            var contents = webPage.Contents;
+            var items = page.Contents.OrderBy(c => c.OrdinalNumber).ToArray();
+            var currentIndex = items.FindIndex(i => i.OrdinalNumber == ordinalNumber);
 
-            if (content.OrdinalNumber > contents.Count()) throw new InvalidOperationException($"Content with ID '{content.ContentId}' has an illegal state '{content.OrdinalNumber}'.");
-            if (content.OrdinalNumber == contents.Count()) return Task.FromResult(webPage);
-
-            var item = webPage.Contents.FirstOrDefault(c => c.ContentId == content.ContentId);
-
-            if (item == null)
+            if (currentIndex < 0 || currentIndex >= items.Length - 1)
             {
-                throw new InvalidOperationException($"Attempting to move content with ID '{content.ContentId}' up from web page with ID '{webPage.WebPageId}', but it is not found in its contents.");
+                return await UpdateOrdinalNumbersAsync(page, true);
             }
 
-            content.OrdinalNumber++;
+            items[currentIndex + 1].OrdinalNumber = ordinalNumber;
+            items[currentIndex].OrdinalNumber = ordinalNumber + 1;
 
-            // Move next content down
-            var next = contents.FirstOrDefault(c => c.OrdinalNumber == content.OrdinalNumber);
-
-            if (next == null) throw new InvalidOperationException("Should never happen.");
-
-            next.OrdinalNumber--;
-            webPage.Contents = contents.OrderBy(c => c.OrdinalNumber).ToList();
-
-            return UpdateOrdinalNumberAsync(webPage, contents, persist);
+            return await Repository.UpdateWebPageContentsAsync(page, [items[currentIndex], items[currentIndex + 1]]);
         }
     }
 }
