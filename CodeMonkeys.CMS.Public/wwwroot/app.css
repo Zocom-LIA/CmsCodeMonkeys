@@ -257,34 +257,45 @@ img {
         width: 100%;
     }
 
-    .admin-action-buttons {
+    /*.admin-action-buttons {
         flex-direction: column;
         align-items: center;
     }
 
     .admin-create-site-button, .admin-existing-sites-button, .admin-create-page-button, .admin-existing-pages-button {
-        margin-bottom: 10px;
+        margin-bottom: 5px;
         width: 100%;
-    }
+    }*/
 }
 
+
+/*@page "/users"*/
 .admin-action-buttons {
     display: flex;
-    justify-content: space-between;
+    justify-content: start; /* Knapparna placeras nära varandra */
+    padding: 10px; /* Utrymme runt knapparna */
+    border-radius: 10px; /* Rundade hörn på containern */
 }
 
-.admin-create-site-button, .admin-existing-sites-button, .admin-create-page-button, .admin-existing-pages-button {
-    background-color: #e0e0e0;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 14px;
-    cursor: pointer;
+.admin-action-buttons a {
+text-decoration: none;
+color: #ffffff; /* Vit textfärg, för bättre synlighet på mörk bakgrund */
+background-color: #007bff; /* Bootstrap's standardblå färg för primary knappar */
+padding: 8px 16px; /* Padding runt texten */
+margin-right: 10px; /* Marginal mellan knapparna */
+border-radius: 5px; /* Rundade hörn för knapparna */
+transition: background-color 0.3s ease; /* Övergångseffekt för bakgrundsfärgen */
 }
 
-.admin-create-page-button, .admin-create-site-button {
-    margin-right: 20px;
+.admin-action-buttons a:hover {
+    background-color: #0056b3; /* En mörkare blå nyans för hover-effekt */
 }
+
+.admin-action-buttons a:last-child {
+    margin-right: 0; /* Ingen marginal på den sista knappen */
+}
+
+
 
 
 /*@page "/sites/create"*/
