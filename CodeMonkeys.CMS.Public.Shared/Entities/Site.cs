@@ -17,12 +17,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Entities
         public WebPage? LandingPage { get; set; }
         public ICollection<WebPage> Pages { get; set; } = new List<WebPage>();
 
-        // Explicit Foreign Key
-        public int? LandingPageId { get; set; }
-
-        [ForeignKey("LandingPageId")]
-        public WebPage? LandingPage { get; set; }
-
         public object GetIdentifier() => SiteId;
     }
 }

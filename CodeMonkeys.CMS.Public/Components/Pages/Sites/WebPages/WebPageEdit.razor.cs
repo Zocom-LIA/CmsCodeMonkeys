@@ -273,20 +273,4 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
             public int OrdinalNumber { get; set; }
         }
     }
-
-    public sealed class ConfirmationDialog
-    {
-        public ConfirmationDialog(string message, Func<Task> onConfirm, Func<Task> onCancel)
-        {
-            Message = message ?? throw new ArgumentNullException(nameof(message));
-            OnConfirm = onConfirm ?? throw new ArgumentNullException(nameof(onConfirm));
-            OnCancel = onCancel ?? throw new ArgumentNullException(nameof(onCancel));
-        }
-
-        public string Message { get; set; }
-
-        public Func<Task> OnConfirm { get; set; }
-
-        public Func<Task> OnCancel { get; set; }
-    }
 }

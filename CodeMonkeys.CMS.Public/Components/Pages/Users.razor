@@ -7,9 +7,6 @@
 @using Microsoft.AspNetCore.Components.Web
 
 <UserViewer>
-@attribute [Authorize(Roles = "Admin, User")]
-@rendermode InteractiveServer
-
     <div class="admin-container">
 
         <div class="admin-profile-section">
@@ -95,5 +92,6 @@
 
         </div>
 
+        </div>
     </div>
 </UserViewer>

@@ -4,7 +4,7 @@
 @rendermode InteractiveServer
 @attribute [Authorize(Roles = "User, Admin")]
  
-<UserView>
+<UserViewer>
  
     <div class="sites-row">
         @foreach (var Site in Sites)
@@ -29,7 +29,7 @@
         </div>
         }
     </div>
-</UserView>
+</UserViewer>
 
 @code
 {
