@@ -12,48 +12,48 @@
 
 <PageTitle>Sites Overview</PageTitle>
 
-@if (IsLoading)
-{
-    <Loading />
-}
-else
-{
-    <h1>Pages Overview for @Site?.Name </h1>
-    <StatusMessage Message="@ErrorMessage" />
+<UserViewer>
+    <UserViewHeader>
+        <h1>Pages Overview for @Site?.Name </h1>
+    </UserViewHeader>
+    <ChildContent>
+        <h1>Pages Overview for @Site?.Name </h1>
+        <StatusMessage Message="@ErrorMessage" />
 
-    <div>
-        <a class="button-primary btn" href="/sites/@siteId/webpages/create">Create new page</a>
-    </div>
-    <table>
-        <thead>
-            <tr>
-                <td>Page Title</td>
-                <td>Created by</td>
-                <td>Created Date</td>
-                <td>LastModified</td>
-                <td></td>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (WebPage webPage in Pages ?? [])
-            {
+        <div>
+            <a class="button-primary btn" href="/sites/@siteId/webpages/create">Create new page</a>
+        </div>
+        <table>
+            <thead>
                 <tr>
-                    <td>@webPage.Title</td>
-                    <td>@webPage.Author?.Email</td>
-                    <td>@webPage.CreatedDate.ToString("yyyy-MM-dd")</td>
-                    <td>@webPage.LastModifiedDate.ToString("yyyy-MM-dd")</td>
-                    <td>
-                        <a class="button-primary btn" href="/sites/@siteId/webpages/@webPage.WebPageId/edit">Edit</a>
-                        <a class="button-primary btn" href="/sites/@siteId/webpages/@webPage.WebPageId/delete">Delete</a>
-                    </td>
+                    <td>Page Title</td>
+                    <td>Created by</td>
+                    <td>Created Date</td>
+                    <td>LastModified</td>
+                    <td></td>
                 </tr>
-            }
-        </tbody>
-    </table>
-    <div>
-        <a class="button-primary btn" href="/sites/@siteId/webpages/create">Create new page</a>
-    </div>
-}
+            </thead>
+            <tbody>
+                @foreach (WebPage webPage in Pages ?? [])
+                {
+                    <tr>
+                        <td>@webPage.Title</td>
+                        <td>@webPage.Author?.Email</td>
+                        <td>@webPage.CreatedDate.ToString("yyyy-MM-dd")</td>
+                        <td>@webPage.LastModifiedDate.ToString("yyyy-MM-dd")</td>
+                        <td>
+                            <a class="button-primary btn" href="/sites/@siteId/webpages/@webPage.WebPageId/edit">Edit</a>
+                            <a class="button-primary btn" href="/sites/@siteId/webpages/@webPage.WebPageId/delete">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div>
+            <a class="button-primary btn" href="/sites/@siteId/webpages/create">Create new page</a>
+        </div>
+    </ChildContent>
+</UserViewer>
 
 @code
 {

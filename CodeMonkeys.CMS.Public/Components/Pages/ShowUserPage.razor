@@ -7,11 +7,13 @@
 @using CodeMonkeys.CMS.Public.Shared.Repository
 
 <UserViewer>
-    <PageTitle>@WebPage?.Title</PageTitle>
+    <UserViewHeader>@WebPage?.Title</UserViewHeader>
+    <ChildContent>
     @foreach(Content content in (WebPage?.Contents??[]).OrderBy(c=>c.OrdinalNumber))
     {
         @content.Body
     }
+    </ChildContent>
 </UserViewer>
 
 @code {

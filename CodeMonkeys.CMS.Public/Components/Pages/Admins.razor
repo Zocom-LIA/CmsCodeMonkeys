@@ -1,26 +1,28 @@
 ﻿@page "/admins"
 @using CodeMonkeys.CMS.Public.Components.Shared.UI
 
-<button @onclick="ShowAddContentModal">Add Content</button>
+<UserViewer>
+    <button @onclick="ShowAddContentModal">Add Content</button>
 
-<Modal Title="Add New Content" IsVisible="@isAddContentModalVisible" OnClose="@HideAddContentModal">
-    <EditForm Model="@newContent" OnValidSubmit="@HandleValidSubmit">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-        <div>
-            <label for="title">Title:</label>
-            <InputText id="title" class="form-control" @bind-Value="newContent.Title" />
-        </div>
-        <div>
-            <label for="body">Content:</label>
-            <InputTextArea id="body" class="form-control" @bind-Value="newContent.Body" />
-        </div>
-        <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Save</button>
-            <button type="button" class="btn btn-secondary" @onclick="HideAddContentModal">Cancel</button>
-        </div>
-    </EditForm>
-</Modal>
+    <Modal Title="Add New Content" IsVisible="@isAddContentModalVisible" OnClose="@HideAddContentModal">
+        <EditForm Model="@newContent" OnValidSubmit="@HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div>
+                <label for="title">Title:</label>
+                <InputText id="title" class="form-control" @bind-Value="newContent.Title" />
+            </div>
+            <div>
+                <label for="body">Content:</label>
+                <InputTextArea id="body" class="form-control" @bind-Value="newContent.Body" />
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-secondary" @onclick="HideAddContentModal">Cancel</button>
+            </div>
+        </EditForm>
+    </Modal>
+</UserViewer>
 
 @code {
     private bool isAddContentModalVisible = false;

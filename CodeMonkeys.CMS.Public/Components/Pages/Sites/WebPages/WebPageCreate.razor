@@ -11,23 +11,29 @@
 @rendermode InteractiveServer
 @attribute [Authorize(Roles = "User, Admin")]
 
-<h3>Create new Page</h3>
+<UserViewer>
 
-<EditForm Model="Input" method="post" OnValidSubmit="HandleValidSubmit" FormName="createwebpage">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <StatusMessage Message="@ErrorMessage" />
+<UserViewHeader>
+        <h3>Create WebPage</h3>
+    </UserViewHeader>
+    <ChildContent>
+        <EditForm Model="Input" method="post" OnValidSubmit="HandleValidSubmit" FormName="createwebpage">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <StatusMessage Message="@ErrorMessage" />
 
-    <div class="form-floating mb-3">
-        <InputText @bind-Value="Input.Title" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" />
-        <label for="name" class="form-label">Page title</label>
-        <ValidationMessage For="() => Input.Title" class="text-danger" />
-    </div>
-    <div>
-        <button type="submit" class="w-100 btn btn-lg btn-primary">Create page</button>
-    </div>
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Input.Title" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" />
+                <label for="name" class="form-label">Page title</label>
+                <ValidationMessage For="() => Input.Title" class="text-danger" />
+            </div>
+            <div>
+                <button type="submit" class="w-100 btn btn-lg btn-primary">Create page</button>
+            </div>
 
-</EditForm>
+        </EditForm>
+    </ChildContent>
+</UserViewer>
 
 @code {
     [SupplyParameterFromForm]

@@ -2,7 +2,7 @@
 
 namespace CodeMonkeys.CMS.Public.Components.Shared
 {
-    public partial class UserView : BaseComponent<UserView>
+    public partial class UserViewer : BaseComponent<UserViewer>
     {
         [Parameter]
         public RenderFragment ChildContent { get; set; }
