@@ -1,6 +1,8 @@
 ﻿using CodeMonkeys.CMS.Public.Shared.Data;
 using CodeMonkeys.CMS.Public.Shared.Entities;
+
 using Microsoft.EntityFrameworkCore;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +41,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                 .Take(pageSize)
                 .Include(site => site.LandingPage)
                 .Include(site => site.Pages)
-                //.ThenInclude(page => page.Contents)
+                .ThenInclude(page => page.Contents)
                 .Include(site => site.Creator)
                 .ToListAsync();
         }

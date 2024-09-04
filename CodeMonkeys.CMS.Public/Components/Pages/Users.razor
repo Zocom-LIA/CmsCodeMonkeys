@@ -1,96 +1,99 @@
 ﻿@page "/users"
-@inherits BaseComponent<Users>
+@inherits AuthenticationBaseComponent<Users>
+@rendermode InteractiveServer
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.Web
 
+<UserViewer>
 @attribute [Authorize(Roles = "Admin, User")]
 @rendermode InteractiveServer
 
-<div class="admin-container">
+    <div class="admin-container">
 
-    <div class="admin-profile-section">
+        <div class="admin-profile-section">
 
-        <img src="Image/Photo by Amy Santos.png" alt="Profile Picture" class="admin-profile-picture" />
+            <img src="Image/Photo by Amy Santos.png" alt="Profile Picture" class="admin-profile-picture" />
 
-        <p class="admin-profile-description">
+            <p class="admin-profile-description">
 
-            Lorem ipsum dolor sit amet consectetur. Sed ullamcorper elementum eu diam orci.
+                Lorem ipsum dolor sit amet consectetur. Sed ullamcorper elementum eu diam orci.
 
-            Adipiscing et pretium pretium proin adipiscing diam. Tristique in facilisi ac id in
+                Adipiscing et pretium pretium proin adipiscing diam. Tristique in facilisi ac id in
 
-            amet ante amet. Etiam aliquam tortor laoreet eget lobortis suspendisse.
+                amet ante amet. Etiam aliquam tortor laoreet eget lobortis suspendisse.
 
-        </p>
+            </p>
 
-        <ul class="admin-profile-details">
+            <ul class="admin-profile-details">
 
-            <li>Lorem ipsum</li>
+                <li>Lorem ipsum</li>
 
-            <li>Lorem ipsum</li>
+                <li>Lorem ipsum</li>
 
-            <li>Lorem ipsum</li>
+                <li>Lorem ipsum</li>
 
-            <li>Lorem ipsum</li>
+                <li>Lorem ipsum</li>
 
-            <li>Lorem ipsum</li>
+                <li>Lorem ipsum</li>
 
-            <li>Lorem ipsum</li>
+                <li>Lorem ipsum</li>
 
-            <li>Lorem ipsum</li>
+                <li>Lorem ipsum</li>
 
-            <li>Lorem ipsum</li>
+                <li>Lorem ipsum</li>
 
-        </ul>
+            </ul>
 
-        <button class="admin-edit-profile-button">Edit profile</button>
+            <button class="admin-edit-profile-button">Edit profile</button>
 
-    </div>
+        </div>
 
-    <div class="admin-templates-section">
+        <div class="admin-templates-section">
 
-        <h2 class="admin-templates-title">Available Templates</h2>
+            <h2 class="admin-templates-title">Available Templates</h2>
 
-        <p class="admin-templates-description">
+            <p class="admin-templates-description">
 
-            Lorem ipsum dolor sit amet consectetur. Varius amet velit suspendisse
+                Lorem ipsum dolor sit amet consectetur. Varius amet velit suspendisse
 
-            pretium sagittis congue vel.
+                pretium sagittis congue vel.
 
-        </p>
+            </p>
 
-        <div class="admin-template-carousel">
+            <div class="admin-template-carousel">
 
-            <button class="admin-carousel-control prev">&lt;</button>
+                <button class="admin-carousel-control prev">&lt;</button>
 
-            <div class="admin-template-cards">
+                <div class="admin-template-cards">
 
-                <div class="admin-template-card"></div>
+                    <div class="admin-template-card"></div>
 
-                <div class="admin-template-card"></div>
+                    <div class="admin-template-card"></div>
 
-                <div class="admin-template-card"></div>
+                    <div class="admin-template-card"></div>
 
-                <div class="admin-template-card"></div>
+                    <div class="admin-template-card"></div>
+
+                </div>
+
+                <button class="admin-carousel-control next">&gt;</button>
 
             </div>
 
-            <button class="admin-carousel-control next">&gt;</button>
+            <div class="admin-action-buttons">
 
-        </div>
-
-        <div class="admin-action-buttons">
-
-            <a href="/sites/create">Create new site</a>
+                <a href="/sites/create">Create new site</a>
             <a href="/sites">Go to existing sites</a>
 
-        </div>
+                <a href="/sites">Go to existing sites</a>
 
         <div>
              <CodeMonkeys.CMS.Public.Components.Pages.Sites.Index />
+            </div>
+
         </div>
 
     </div>
-
-</div>
+</UserViewer>

@@ -3,27 +3,38 @@
 @using CodeMonkeys.CMS.Public.Components.Shared
 @using CodeMonkeys.CMS.Public.Shared.Entities
 @using CodeMonkeys.CMS.Public.Shared.Services
-@inherits BaseComponent<Home>
+@inherits ContentBaseComponent<Home>
 @rendermode InteractiveServer
 
-@if (IsLoading)
-{
-    <p>Loading...</p>
-}
-else
-{
+<UserViewer>
     <h3>PageStats</h3>
 
     <p>This component demonstrates how to create a simple page that displays statistics about the pages.</p>
 
-    foreach(var pageStats in Pages)
-    {
-        <p>@pageStats.PageUrl: @pageStats.PageVisits</p>
-    }
-}
+    <table>
+        <thead>
+            <tr>
+                <td>Page Name</td>
+                <td>Visits</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (PageStats pageStats in Pages ?? [])
+            {
+                <tr>
+                    <td>@pageStats.PageUrl</td>
+                    <td>@pageStats.PageVisits</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
-@code {
-    private IEnumerable<PageStats> Pages { get; set; }
+
+</UserViewer>
+
+@code 
+{
+    private IEnumerable<PageStats>? Pages { get; set; }
 
     protected override async Task OnInitializedAsync()
     {

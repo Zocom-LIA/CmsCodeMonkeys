@@ -1,11 +1,19 @@
-﻿using CodeMonkeys.CMS.Public.Shared.DTOs;
+﻿using CodeMonkeys.CMS.Public.Shared.Data;
+using CodeMonkeys.CMS.Public.Shared.DTOs;
 using CodeMonkeys.CMS.Public.Shared.Entities;
 
-public interface IWebPageRepository
+namespace CodeMonkeys.CMS.Public.Shared.Repository
 {
-    Task CreateWebPageAsync(WebPage webPage);
-    Task<WebPage?> GetSiteWebPageAsync(int siteId, int pageId);
-    Task<IEnumerable<WebPage>> GetSiteWebPagesAsync(int siteId, int pageIndex = 0, int pageSize = 10);
-    Task<IEnumerable<ContentDto>> GetWebPageContentsAsync(int pageId);
-    Task UpdateWebPageAsync(WebPage webPage);
+    public interface IWebPageRepository
+    {
+        ApplicationDbContext Context { get; }
+
+        Task CreateWebPageAsync(WebPage webPage);
+        Task<WebPage?> GetSiteWebPageAsync(int siteId, int pageId);
+        Task<IEnumerable<WebPage>> GetSiteWebPagesAsync(int siteId, int pageIndex = 0, int pageSize = 10);
+        Task<IEnumerable<WebPageDto>> GetVisitorWebPageAsync(int? pageId);
+        Task<IEnumerable<ContentDto>> GetWebPageContentsAsync(int pageId, bool sortContent = false);
+        Task UpdateWebPageAsync(WebPage webPage);
+        Task<IEnumerable<Content>> UpdateWebPageContentsAsync(WebPage webPage, IEnumerable<Content> contents);
+    }
 }
