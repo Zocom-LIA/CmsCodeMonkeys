@@ -1,0 +1,66 @@
+﻿@page "/kladdkaka"
+
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        scroll-behavior: smooth;
+    }
+
+    .navbar {
+        background-color: #007bff;
+        padding: 10px 0;
+        text-align: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .navbar a {
+        color: white;
+        padding: 10px 15px;
+        text-decoration: none;
+    }
+
+    .footer {
+        background-color: #007bff;
+        color: white;
+        text-align: center;
+        padding: 20px 0;
+    }
+
+    .content-section {
+        padding: 20px;
+        min-height: 100vh;
+    }
+</style>
+
+<div>
+    <div class="navbar">
+        <!-- Ändra href till nya ankare -->
+        <a>Home</a>
+        <a>About</a>
+        <a>Contact</a>
+    </div>
+
+    <!-- Ändra id för varje sektion enligt nya ankare -->
+    <div class="content-section">
+        <h1>Welcome to this page</h1>
+    </div>
+
+    <div class="content-section">
+        <h1>About</h1>
+        <p>För att baka en kladdkaka börjar du med att smälta smör och blanda det med socker. Tillsätt sedan ägg, och slutligen mjöl och kakao. Baka i ugnen på 175 grader i cirka 20 minuter. Kom ihåg, kladdkakan ska vara lite kladdig i mitten!</p>
+    </div>
+
+    <div class="content-section">
+        <h1>Contact</h1>
+        <p>Du kan nå oss via e-post: <a href="mailto:info@zocome.se">info@zocome.se</a></p>
+    </div>
+
+    <footer class="footer">
+        &copy; Copyrighted by Zocom
+    </footer>
+</div>
+
