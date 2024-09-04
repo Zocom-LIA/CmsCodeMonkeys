@@ -79,7 +79,17 @@
 
         await SiteService.UpdateSiteAsync(Site);
 
-        Navigation.NavigateTo($"sites/{siteId}/webpages");
+        var page = new WebPage()
+            {
+                Title = Input.Name,
+                CreatedDate = DateTime.Now,
+                LastModifiedDate = DateTime.Now,
+                SiteId = siteId,
+                AuthorId = user.Id,
+
+            };
+
+        Navigation.NavigateTo($"sites/{siteId}/webpages/{page.WebPageId}/edit");
     }
 
     private sealed class InputModel

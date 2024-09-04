@@ -8,7 +8,7 @@
 @inject IWebPageService WebPageService
 @attribute [Authorize(Roles = "User, Admin")]
 
-<PageTitle>Pages Overview for @Site?.Name</PageTitle>
+<PageTitle>@Site?.Name</PageTitle>
 
 @if (IsLoading)
 {
@@ -16,7 +16,7 @@
 }
 else
 {
-    <h1>Pages Overview for @Site?.Name</h1>
+    <h1>Overview for @Site?.Name</h1>
     <StatusMessage Message="@ErrorMessage" />
 
     <div>
