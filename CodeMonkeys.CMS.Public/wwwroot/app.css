@@ -612,3 +612,47 @@ transition: background-color 0.3s ease; /* Övergångseffekt för bakgrundsfärgen *
 .backbutton{
     margin-top: 20px;
 }
+
+/*@page "/sites/{siteId:int}/webpages/{webPageId:int}/edit"*/
+/* General Form Styling */
+
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+    input:focus, select:focus, textarea:focus {
+        border-color: #007bff;
+    }
+
+/* Label Styling */
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background-color: #007bff;
+    color: white;
+}
+
+td {
+    background-color: #f9f9f9;
+}
