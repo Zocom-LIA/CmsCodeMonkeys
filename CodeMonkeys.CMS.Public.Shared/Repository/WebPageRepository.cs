@@ -56,6 +56,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                 .Where(page => page.SiteId == siteId)
                 .Skip(pageIndex * pageSize)
                 .Take(pageSize)
+                .OrderBy(page => page)
                 .Include(page => page.Contents)
                 .Include(page => page.Site)
                 .Include(page => page.Author)
@@ -71,7 +72,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 
         public async Task<IEnumerable<Content>> MoveContentDownAsync(WebPage webPage, int ordinalNumber)
         {
-            var contents = webPage.Contents.ToArray();
+            var contents = webPage.Contents.OrderBy(content => content.OrdinalNumber).ToArray();
             int index = Array.FindIndex(contents, c => c.OrdinalNumber == ordinalNumber);
 
             if (index < 0 || index >= contents.Length - 1)
