@@ -75,6 +75,8 @@ h1:focus {
     padding: 10px;
 }
 
+/*-------------------------------------------------------------*/
+
 /* Section styles */
 .left-top, .left-bottom, .right-top, .right-bottom {
     box-sizing: border-box;
@@ -117,6 +119,8 @@ h1:focus {
     background-color: #b0b0b0;
     border: 2px solid #000;
 }
+
+/*-------------------------------------------------------------*/
 
 /* Text and media styles */
 h1 {
@@ -261,17 +265,10 @@ img {
         width: 100%;
     }
 
-    /*.admin-action-buttons {
-        flex-direction: column;
-        align-items: center;
-    }
 
-    .admin-create-site-button, .admin-existing-sites-button, .admin-create-page-button, .admin-existing-pages-button {
-        margin-bottom: 5px;
-        width: 100%;
-    }*/
 }
 
+/*-------------------------------------------------------------*/
 
 /*@page "/users"*/
 .admin-action-buttons {
@@ -301,7 +298,7 @@ transition: background-color 0.3s ease; /* Övergångseffekt för bakgrundsfärgen *
 }
 
 
-
+/*-------------------------------------------------------------*/
 
 /*@page "/sites/create"*/
 .create-container {
@@ -428,9 +425,10 @@ transition: background-color 0.3s ease; /* Övergångseffekt för bakgrundsfärgen *
     color: #dc3545;
 }
 
-
+/*-------------------------------------------------------------*/
 
 /*@page "/sites"*/
+
 .sites-row {
     display: flex;
     flex-wrap: wrap;
@@ -520,9 +518,32 @@ transition: background-color 0.3s ease; /* Övergångseffekt för bakgrundsfärgen *
     padding: 0.75rem 1.25rem;
 }
 
+/* Responsiv design */
+@media (max-width: 1199.98px) {
+    .sites-col-md-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .sites-col-md-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .sites-btn {
+        margin-bottom: 5px;
+    }
+}
+
+/*-------------------------------------------------------------*/
 
 
 /*@page "/sites/{siteId:int}/webpages"*/
+/* Grundläggande stil */
 .webpages-card {
     background-color: #fff;
     border: 1px solid #dee2e6;
@@ -601,6 +622,65 @@ transition: background-color 0.3s ease; /* Övergångseffekt för bakgrundsfärgen *
     align-items: center;
 }
 
+/* Responsiv design */
+@media (max-width: 1199.98px) {
+    .webpages-col-md-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .webpages-btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .webpages-col-md-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .webpages-card-header {
+        font-size: 1.1rem;
+    }
+
+    .webpages-card-footer {
+        font-size: 0.8rem;
+    }
+
+    .webpages-btn {
+        width: 100%;
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .webpages-card {
+        box-shadow: none;
+        border: none;
+    }
+
+    .webpages-card-body {
+        padding: 1rem;
+    }
+
+    .webpages-card-actions {
+        flex-direction: column;
+        padding: 0.5rem 1rem;
+    }
+
+    .webpages-btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .webpages-empty-box {
+        height: 120px;
+    }
+}
+
+/*-------------------------------------------------------------*/
+
 
 /*Content_placment*/
 
@@ -608,14 +688,18 @@ transition: background-color 0.3s ease; /* Övergångseffekt för bakgrundsfärgen *
     padding-top: 30px;
 }
 
+/*-------------------------------------------------------------*/
+
 /*BackButton*/
 .backbutton{
     margin-top: 20px;
 }
 
+/*-------------------------------------------------------------*/
+
+
 /*@page "/sites/{siteId:int}/webpages/{webPageId:int}/edit"*/
 /* General Form Styling */
-
 
 input, select, textarea {
     width: 100%;
@@ -635,24 +719,84 @@ label {
     margin-bottom: 5px;
 }
 
+/*-------------------------------------------------------------*/
+
+
 /* Table Styling */
+/* Grundläggande tabellstil för felsökning */
 table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    background-color: white; /* Lägg till en synlig bakgrundsfärg */
 }
 
 th, td {
     padding: 8px;
     border: 1px solid #ddd;
     text-align: left;
+    word-wrap: break-word; /* Försäkra att lång text bryts */
+    word-break: break-word;
+    color: black; /* Gör textfärgen mycket tydlig för felsökning */
+    background-color: lightblue; /* Gör cellernas bakgrund tydlig */
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Använd ellips om texten är för lång */
 }
 
+/* Rubrikstilar */
 th {
     background-color: #007bff;
-    color: white;
+    color: black;
 }
 
-td {
-    background-color: #f9f9f9;
+/* Responsiv design för mindre skärmar */
+@media (max-width: 768px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+        width: 100%;
+    }
+
+    thead {
+        display: none;
+    }
+
+    tr {
+        margin-bottom: 10px;
+        border-bottom: 2px solid #ddd;
+    }
+
+    td {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border: none;
+        border-bottom: 1px solid #ddd;
+    }
+
+        td:before {
+            content: attr(data-label);
+            font-weight: bold;
+            flex-basis: 40%;
+            text-transform: capitalize;
+            padding-right: 10px;
+        }
 }
+
+/* För mindre skärmar */
+@media (max-width: 576px) {
+    td {
+        padding: 8px;
+        font-size: 0.85rem;
+    }
+
+        td:before {
+            font-size: 0.8rem;
+        }
+}
+
+/*@page "/sites/{siteId:int}/webpages/{webPageId:int}/edit"*/
+
+/*-------------------------------------------------------------*/
+
+
