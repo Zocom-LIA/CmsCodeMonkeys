@@ -10,8 +10,12 @@
 @rendermode InteractiveServer
 @attribute [Authorize(Roles = "User, Admin")]
 
-<div class="create-container">
 
+<div class="create-container">
+    <div class="backbutton">
+        @* Gå tillbaka *@
+        <a href="javascript:history.back()"><button>Gå tillbaka</button></a>
+    </div>
 
     <div class="create-main-content">
         <aside class="create-toolbar">

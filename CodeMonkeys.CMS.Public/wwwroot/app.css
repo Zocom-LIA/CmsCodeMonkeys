@@ -600,3 +600,15 @@ transition: background-color 0.3s ease; /* Övergångseffekt för bakgrundsfärgen *
     justify-content: center;
     align-items: center;
 }
+
+
+/*Content_placment*/
+
+.Content_Layout {
+    padding-top: 30px;
+}
+
+/*BackButton*/
+.backbutton{
+    margin-top: 20px;
+}
