@@ -39,5 +39,15 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         {
             return await Repository.GetWebPageContentsAsync(pageId);
         }
+
+        public async Task<IEnumerable<Content>> MoveContentUpAsync(WebPage webPage, int ordinalNumber)
+        {
+            return await Repository.MoveContentUpAsync(webPage, ordinalNumber);
+        }
+
+        public async Task<IEnumerable<Content>> MoveContentDownAsync(WebPage webPage, int ordinalNumber)
+        {
+            return await Repository.MoveContentDownAsync(webPage, ordinalNumber);
+        }
     }
 }
