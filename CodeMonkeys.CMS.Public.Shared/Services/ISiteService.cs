@@ -9,5 +9,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
 
         Task<IEnumerable<Site>> GetUserSitesAsync(Guid userId, int pageIndex = 0, int pageSize = 10);
         Task<Site?> GetUserSiteAsync(Guid userId, int siteId);
+        Task<Site?> GetSiteAsync(int siteId);
     }
 }

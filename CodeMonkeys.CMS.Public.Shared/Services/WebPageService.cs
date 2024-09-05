@@ -103,5 +103,11 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
 
             return await Repository.UpdateWebPageContentsAsync(page, [items[currentIndex], items[currentIndex + 1]]);
         }
+
+        // Used for testing purposes only
+        public async Task<WebPage?> GetWebPageAsync(int webPageId)
+        {
+            return await Repository.GetWebPageAsync(webPageId);
+        }
     }
 }

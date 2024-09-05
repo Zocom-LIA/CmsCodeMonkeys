@@ -87,5 +87,11 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 
             return webPage.Contents.OrderBy(content => content.OrdinalNumber);
         }
+
+        // Used for testing purposes only
+        public Task<WebPage?> GetWebPageAsync(int webPageId)
+        {
+            return Context.Pages.FirstOrDefaultAsync(page => page.WebPageId == webPageId);
+        }
     }
 }

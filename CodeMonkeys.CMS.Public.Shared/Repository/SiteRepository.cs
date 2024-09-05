@@ -39,6 +39,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                 .Where(site => site.CreatorId.Equals(userId))
                 .Skip(pageIndex * pageSize)
                 .Take(pageSize)
+                .OrderBy(site => site.CreatedDate)
                 .Include(site => site.LandingPage)
                 .Include(site => site.Pages)
                 .ThenInclude(page => page.Contents)
@@ -52,6 +53,12 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
         {
             Context.Sites.Update(site);
             return Context.SaveChangesAsync();
+        }
+
+        // Used for testing purposes only
+        public Task<Site?> GetSiteAsync(int siteId)
+        {
+            return Context.Sites.Include(site => site.LandingPage).Include(site => site.Pages).FirstOrDefaultAsync(site => site.SiteId == siteId);
         }
     }
 }

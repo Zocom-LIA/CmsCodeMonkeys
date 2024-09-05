@@ -72,55 +72,50 @@
            Home
             </NavLink>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/contents">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Contents
-            </NavLink>
-        </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="users">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Users
-            </NavLink>
-        </div>
+        <AuthorizeView>
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/contents">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Contents
+                    </NavLink>
+                </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="pagevisits">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Page Visits
-            </NavLink>
-        </div>
-       
-        <nav class="navbar-nav">
-            <ul class="navbar-nav">
-                <AuthorizeView>
-                    <Authorized>
-                        <form action="Account/Logout" method="post" id="logout-form" class="d-inline">
-                            <AntiforgeryToken />
-                            <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                            <button type="submit" class="nav-link button-logout">
-                                <span class="bi bi-box-arrow-right link-hover" aria-hidden="true">Logout</span>
-                            </button>
-                        </form>
-                    </Authorized>
-                    <NotAuthorized>
-                        <li class="nav-item">
-                            <NavLink class="nav-link" href="Account/Register">
-                                Register
-                            </NavLink>
-                        </li>
-                        <li class="nav-item">
-                            <NavLink class="nav-link" href="Account/Login">
-                                Login
-                            </NavLink>
-                        </li>
-                        </NotAuthorized>
-                </AuthorizeView>
-            </ul>
-        </nav>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="users">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Users
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="modal-test">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Modal Tests
+                    </NavLink>
+                </div>
+
+                <form action="Account/Logout" method="post" id="logout-form" class="d-inline">
+                    <AntiforgeryToken />
+                    <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                    <button type="submit" class="nav-link button-logout">
+                        <span class="bi bi-box-arrow-right link-hover" aria-hidden="true">Logout</span>
+                    </button>
+                </form>
+            </Authorized>
+            <NotAuthorized>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="Account/Register">
+                        Register
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="Account/Login">
+                        Login
+                    </NavLink>
+                </li>
+                </NotAuthorized>
+        </AuthorizeView>
     </div>
 </header>
-
-
 
 @code {
     private string? currentUrl;

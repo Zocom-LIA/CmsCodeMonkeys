@@ -1,14 +1,16 @@
-﻿@page "/sites/{siteId:int}/webpages/{webPageId:int}/edit"
+﻿@page "/modal-test"
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components
+@using CodeMonkeys.CMS.Public.Components.Shared
+@using CodeMonkeys.CMS.Public.Components.Shared.UI
 @using System.ComponentModel.DataAnnotations
 @using CodeMonkeys.CMS.Public.Components.Account.Shared
-@using CodeMonkeys.CMS.Public.Components.Shared.UI
 @using CodeMonkeys.CMS.Public.Shared.Entities
 @using CodeMonkeys.CMS.Public.Shared.Services
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Identity
-@using CodeMonkeys.CMS.Public.Components.Shared
 
-@inherits AuthenticationBaseComponent<WebPageEdit>
+@inherits AuthenticationBaseComponent<TestPageEdit>
 @rendermode InteractiveServer
 @attribute [Authorize(Roles = "User, Admin")]
 
@@ -62,7 +64,7 @@
                                     disabled="@(content.OrdinalNumber == WebPage!.Contents.Max(c => c.OrdinalNumber))">
                                     Down
                                 </button>
-                                <button type="button" class="btn btn-sm btn-primary" @onclick="async () => await AddOrUpdateContent(content.ContentId)">Edit</button>
+                                <button type="button" class="btn btn-sm btn-primary" @onclick="async () => await  AddOrUpdateContent(content.ContentId)">Edit</button>
                                 <button type="button" class="btn btn-sm btn-primary" @onclick="async () => await DeleteContent(content.ContentId)">Delete</button>
                             </td>
                         </tr>
@@ -75,22 +77,14 @@
         </div>
     </ChildContent>
 </UserViewer>
-<ConfirmationDialog @ref="Confirmation"
-                    Title="Confirm Delete"
-                    OnConfirm="() =>  {}"
-                    OnCancel="() => {}">
-@*     @if (Confirmation != null)
-    {
-        <div class="alert alert-alert" role="alert">
-            @Confirmation
-            <div>
-                <button type="button" class="w-100 btn btn-lg btn-alert" @onclick="@Confirmation.OnConfirm">Are you sure?</button>
-                <button type="button" class="w-100 btn btn-lg btn-info" @onclick="@Confirmation.OnCancel">Cancel</button>
-            </div>
-        </div>
-    }
-    else {
- *@    <EditForm Model="Input" method="post" OnValidSubmit="HandleValidSubmit" FormName="updatewebpage">
+
+<ConfirmationDialog @ref="Confirmation" Title="@ConfirmationTitle"
+                    ConfirmationButtonText="@ConfirmationButtonText"
+                    CancelButtonText="@CancelButtonText"
+                    ConfirmationMessage="@ConfirmationMessage"
+                    OnConfirm="OnConfirm"
+                    OnCancel="OnCancel">
+    <EditForm Model="Input" method="post" OnValidSubmit="() => HandleValidSubmit()" FormName="updatewebpage">
         <DataAnnotationsValidator />
         <ValidationSummary />
         <StatusMessage Message="@ErrorMessage" />
@@ -123,12 +117,11 @@
                 <ValidationMessage For="() => Content.Body" class="text-danger" />
             </div>
             <div>
-                <button type="button" class="w-100 btn btn-lg btn-primary" @onclick="async () => await CreateOrUpdateContent()">Save Content!</button>
+                <button type="button" class="w-100 btn btn-lg btn-primary" @onclick="async () => await AddOrUpdateContentConfirmed()">Save Content!</button>
             </div>
         }
         <div>
             <button type="submit" class="w-100 btn btn-lg btn-primary">Save Non-Content</button>
         </div>
     </EditForm>
-    @* } *@
 </ConfirmationDialog>

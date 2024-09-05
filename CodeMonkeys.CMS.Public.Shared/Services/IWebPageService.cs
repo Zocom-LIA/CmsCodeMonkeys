@@ -12,6 +12,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         Task<WebPage?> GetSiteWebPageAsync(int siteId, int pageId);
         Task<IEnumerable<WebPage>> GetSiteWebPagesAsync(int siteId, int pageIndex = 0, int pageSize = 10);
         Task<IEnumerable<WebPageDto>> GetVisitorPageAsync(int? pageId = null);
+        Task<WebPage?> GetWebPageAsync(int webPageId);
         Task<IEnumerable<ContentDto>> GetWebPageContentsAsync(int pageId);
         Task<IEnumerable<Content>> MoveContentDownAsync(WebPage page, int ordinalNumber);
         Task<IEnumerable<Content>> MoveContentUpAsync(WebPage page, int ordinalNumber);

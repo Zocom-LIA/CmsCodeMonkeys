@@ -1,4 +1,5 @@
 ﻿using CodeMonkeys.CMS.Public.Components.Shared;
+using CodeMonkeys.CMS.Public.Components.Shared.UI;
 using CodeMonkeys.CMS.Public.Shared.Entities;
 using CodeMonkeys.CMS.Public.Shared.Extensions;
 using CodeMonkeys.CMS.Public.Shared.Repository;
@@ -23,8 +24,9 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
         public int webPageId { get; set; }
         public WebPage? WebPage { get; set; }
 
+        //private EventCallback ConfirmedAction { get; set; }
+        //private EventCallback CanceledAction { get; set; }
 
-        private HashSet<Content> updatedItems = new();
         private ContentModel? Content { get; set; }
         private ConfirmationDialog? Confirmation { get; set; }
 
@@ -84,37 +86,48 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
             Navigation.NavigateTo($"sites/{siteId}/webpages");
         }
 
-        private Task AddContent()
+        private Task AddOrUpdateContent(int? contentId = null)
         {
-            Content = new ContentModel()
+            ContentModel? content = null;
+            if (contentId == null || !contentId.HasValue)
             {
-                ContentType = ContentTypes.Paragraph.ToString(),
-                OrdinalNumber = WebPage!.Contents.Count() + 1
-            };
-            return Task.CompletedTask;
-        }
-
-        private Task EditContent(int contentId)
-        {
-            var content = WebPage!.Contents.FirstOrDefault(c => c.ContentId == contentId);
-
-            if (content == null)
+                content = new ContentModel()
+                {
+                    ContentType = ContentTypes.Paragraph.ToString(),
+                    OrdinalNumber = WebPage!.Contents.Count()
+                };
+            }
+            else
             {
-                ErrorMessage = "Content not found";
-                return Task.CompletedTask;
+                var existingContent = WebPage!.Contents.FirstOrDefault(c => c.ContentId == contentId);
+
+                if (existingContent == null)
+                {
+                    ErrorMessage = "Content not found";
+                    return Task.CompletedTask;
+                }
+
+                content = new ContentModel()
+                {
+                    ContentId = existingContent.ContentId,
+                    Title = existingContent.Title,
+                    ContentType = existingContent.ContentType,
+                    Body = existingContent.Body,
+                    OrdinalNumber = existingContent.OrdinalNumber
+                };
             }
 
-            Content = new ContentModel()
-            {
-                ContentId = content.ContentId,
-                Title = content.Title,
-                ContentType = content.ContentType,
-                Body = content.Body,
-                OrdinalNumber = content.OrdinalNumber
-            };
+            // TODO: Add a modal dialog to edit content
+
+            ShowConfirmation(null,
+                EventCallback.Factory.Create(this, () => AddOrUpdateContentConfirmed(content)),
+                EventCallback.Factory.Create(this, () => AddOrUpdateContentCanceled(content)));
 
             return Task.CompletedTask;
         }
+
+        private object AddOrUpdateContentConfirmed(ContentModel content) => throw new NotImplementedException();
+        private object AddOrUpdateContentCanceled(ContentModel content) => throw new NotImplementedException();
 
         private Task DeleteContent(int contentId)
         {
@@ -126,38 +139,39 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
                 return Task.CompletedTask;
             }
 
-            ShowConfirmation("Are you sure you want to delete this content?", async () =>
-            {
-                await ContentService.DeleteContentAsync(contentId);
-
-                WebPage = await WebPageService.GetSiteWebPageAsync(siteId, webPageId);
-
-                if (WebPage?.Contents != null)
-                {
-                    WebPage.Contents = WebPage.Contents
-                        .OrderBy(c => c.OrdinalNumber)
-                        .Select((c, i) =>
-                        {
-                            c.OrdinalNumber = i + 1;
-                            return c;
-                        })
-                        .ToList();
-                }
-
-                Confirmation = null;
-            },
-            () =>
-            {
-                Confirmation = null;
-                return Task.CompletedTask;
-            });
+            ShowConfirmation("Are you sure you want to delete this content?",
+                EventCallback.Factory.Create(this, () => DeleteContentConfirmed(contentId)),
+                EventCallback.Factory.Create(this, () => DeleteContentCanceled(contentId)));
 
             return Task.CompletedTask;
         }
 
-        private void ShowConfirmation(string message, Func<Task> onConfirm, Func<Task> onCancel)
+        private object DeleteContentCanceled(int contentId)
         {
-            Confirmation = new ConfirmationDialog(message, onConfirm, onCancel);
+            Confirmation = null;
+            return Task.CompletedTask;
+        }
+
+        private object DeleteContentConfirmed(int contentId)
+        {
+            WebPage!.Contents = WebPage.Contents.Where(c => c.ContentId != contentId).ToList();
+            WebPageService.UpdateOrdinalNumbersAsync(WebPage, false);
+            Confirmation = null;
+            return Task.CompletedTask;
+        }
+
+        private void ShowConfirmation(string? message, EventCallback onConfirm, EventCallback onCancel)
+        {
+            Confirmation = new ConfirmationDialog()
+            {
+                ConfirmationMessage = message,
+                OnConfirm = onConfirm,
+                OnCancel = onCancel
+
+            };
+            //ConfirmedAction = onConfirm;
+            //CanceledAction = onCancel;
+            Confirmation.Show();
         }
 
         private async Task CreateOrUpdateContent()
@@ -272,21 +286,5 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
             [Required]
             public int OrdinalNumber { get; set; }
         }
-    }
-
-    public sealed class ConfirmationDialog
-    {
-        public ConfirmationDialog(string message, Func<Task> onConfirm, Func<Task> onCancel)
-        {
-            Message = message ?? throw new ArgumentNullException(nameof(message));
-            OnConfirm = onConfirm ?? throw new ArgumentNullException(nameof(onConfirm));
-            OnCancel = onCancel ?? throw new ArgumentNullException(nameof(onCancel));
-        }
-
-        public string Message { get; set; }
-
-        public Func<Task> OnConfirm { get; set; }
-
-        public Func<Task> OnCancel { get; set; }
     }
 }
