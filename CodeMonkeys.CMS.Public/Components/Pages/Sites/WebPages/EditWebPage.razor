@@ -1,5 +1,6 @@
 ﻿@page "/sites/{siteId:int}/webpages/{webPageId:int}/edit"
 @using System.ComponentModel.DataAnnotations
+@using CodeMonkeys.CMS.Public.Components.Account.Shared
 @using CodeMonkeys.CMS.Public.Shared.Entities
 @using CodeMonkeys.CMS.Public.Shared.Services
 @using Microsoft.AspNetCore.Authorization
@@ -96,6 +97,16 @@
                     <td>@content.LastModifiedDate.ToString("yyyy-MM-dd")</td>
                     <td>@content.OrdinalNumber</td>
                     <td>
+                        <button type="button" class="btn btn-sm btn-primary"
+                                @onclick="() => MoveUp(content.OrdinalNumber)"
+                                disabled="@(content.OrdinalNumber == 0)">
+                            Up
+                        </button>
+                        <button type="button" class="btn btn-sm btn-primary"
+                                @onclick="() => MoveDown(content.OrdinalNumber)"
+                                disabled="@(content.OrdinalNumber == WebPage!.Contents.Max(c => c.OrdinalNumber))">
+                            Down
+                        </button>
                         <button type="button" class="w-100 btn btn-lg btn-primary" @onclick="async () => await EditContent(content.ContentId)">Edit</button>
                         <button type="button" class="w-100 btn btn-lg btn-primary" @onclick="async () => await DeleteContent(content.ContentId)">Delete</button>
                     </td>
