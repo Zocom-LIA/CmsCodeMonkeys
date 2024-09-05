@@ -10,6 +10,13 @@
 @rendermode InteractiveServer
 @attribute [Authorize(Roles = "User, Admin")]
 
+<div class="backbutton">
+    @* Gå tillbaka *@
+    <a href="javascript:history.back()"><button>Gå tillbaka</button></a>
+</div>
+
+<div class="Content_Layout">
+
 <h3>Edit page</h3>
 
 <EditForm Model="Input" method="post" OnValidSubmit="HandleValidSubmit" FormName="updatewebpage">
@@ -58,6 +65,13 @@
     </div>
 
 </EditForm>
+
+</div>
+
+
+
+
+
 @if (Confirmation != null)
 {
     <div class="alert alert-alert" role="alert">
