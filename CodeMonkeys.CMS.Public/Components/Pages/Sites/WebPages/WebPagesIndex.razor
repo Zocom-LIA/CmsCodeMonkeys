@@ -3,9 +3,7 @@
 @using CodeMonkeys.CMS.Public.Shared.Services
 @using Microsoft.AspNetCore.Identity
 @inherits AuthenticationBaseComponent<WebPagesIndex>
-
-@inject ISiteService SiteService
-@inject IWebPageService WebPageService
+@rendermode InteractiveServer
 @attribute [Authorize(Roles = "User, Admin")]
 
 <PageTitle>@Site?.Name</PageTitle>
@@ -13,6 +11,7 @@
 <UserViewer>
     <div class="backbutton">
         @* Gå tillbaka *@
+        @* TODO: Fix the html anchor/button *@
         <a href="javascript:history.back()"><button>Gå tillbaka</button></a>
     </div>
 
