@@ -17,57 +17,56 @@
 </div>
 
 <div class="Content_Layout">
+    <h3>Edit page</h3>
 
-<h3>Edit page</h3>
+    <EditForm Model="Input" method="post" OnValidSubmit="HandleValidSubmit" FormName="updatewebpage">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <StatusMessage Message="@ErrorMessage" />
 
-<EditForm Model="Input" method="post" OnValidSubmit="HandleValidSubmit" FormName="updatewebpage">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <StatusMessage Message="@ErrorMessage" />
-
-        <div class="form-floating mb-3">
-            <InputText @bind-Value="Input.Title" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" hidden="@(Content != null)" />
-            <label for="name" class="form-label">Site Name</label>
-            <ValidationMessage For="() => Input.Title" class="text-danger" />
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Input.Title" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" hidden="@(Content != null)" />
+                <label for="name" class="form-label">Site Name</label>
+                <ValidationMessage For="() => Input.Title" class="text-danger" />
+            </div>
+        @if (Content != null)
+        {
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="Content.Title" class="form-control" autocomplete="name" aria-required="true" placeholder="Content Title" />
+                    <label for="name" class="form-label">Content Title</label>
+                    <ValidationMessage For="() => Content.Title" class="text-danger" />
+                </div>
+                <div class="form-floating mb-3">
+                    <select class="form-select" @bind="Content.ContentType">
+                        @foreach (var type in Enum.GetValues(typeof(ContentTypes)))
+                        {
+                            <option Value="@type">@type.ToString()</option>
+                        }
+                    </select>
+                    <label for="contentType" class="form-label">Content Type</label>
+                    <ValidationMessage For="() => Content.ContentType" class="text-danger" />
+                </div>
+                <div class="form-floating mb-3">
+                    <InputTextArea @bind-Value="Content.Body" class="form-control" autocomplete="name" aria-required="true" placeholder="Content Body" />
+                    <label for="name" class="form-label">Content Body</label>
+                    <ValidationMessage For="() => Content.Body" class="text-danger" />
+                </div>
+                <div class="form-floating mb-3">
+                    <InputNumber @bind-Value="Content.OrdinalNumber" class="form-control" autocomplete="name" aria-required="true" placeholder="Ordinal Number" />
+                    <label for="name" class="form-label">Ordinal Number</label>
+                    <ValidationMessage For="() => Content.OrdinalNumber" class="text-danger" />
+                </div>
+                <div>
+                    <button type="button" class="w-100 btn btn-lg btn-primary" @onclick="async () => await CreateOrUpdateContent()">Save Content!</button>
+                </div>
+        }
+         <div>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Save Non-Content</button>
         </div>
-    @if (Content != null)
-    {
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Content.Title" class="form-control" autocomplete="name" aria-required="true" placeholder="Content Title" />
-                <label for="name" class="form-label">Content Title</label>
-                <ValidationMessage For="() => Content.Title" class="text-danger" />
-            </div>
-            <div class="form-floating mb-3">
-                <select class="form-select" @bind="Content.ContentType">
-                    @foreach (var type in Enum.GetValues(typeof(ContentTypes)))
-                    {
-                        <option Value="@type">@type.ToString()</option>
-                    }
-                </select>
-                <label for="contentType" class="form-label">Content Type</label>
-                <ValidationMessage For="() => Content.ContentType" class="text-danger" />
-            </div>
-            <div class="form-floating mb-3">
-                <InputTextArea @bind-Value="Content.Body" class="form-control" autocomplete="name" aria-required="true" placeholder="Content Body" />
-                <label for="name" class="form-label">Content Body</label>
-                <ValidationMessage For="() => Content.Body" class="text-danger" />
-            </div>
-            <div class="form-floating mb-3">
-                <InputNumber @bind-Value="Content.OrdinalNumber" class="form-control" autocomplete="name" aria-required="true" placeholder="Ordinal Number" />
-                <label for="name" class="form-label">Ordinal Number</label>
-                <ValidationMessage For="() => Content.OrdinalNumber" class="text-danger" />
-            </div>
-            <div>
-                <button type="button" class="w-100 btn btn-lg btn-primary" @onclick="async () => await CreateOrUpdateContent()">Save Content!</button>
-            </div>
-    }
-     <div>
-        <button type="submit" class="w-100 btn btn-lg btn-primary">Save Non-Content</button>
-    </div>
 
-</EditForm>
+    </EditForm>
 
-</div>
+ </div>
 
 
 

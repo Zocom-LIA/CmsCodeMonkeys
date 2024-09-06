@@ -11,23 +11,30 @@
 @rendermode InteractiveServer
 @attribute [Authorize(Roles = "User, Admin")]
 
-<h3>Create new Site</h3>
+<div class="backbutton">
+    @* Gå tillbaka *@
+    <a href="javascript:history.back()"><button>Gå tillbaka</button></a>
+</div>
 
-<EditForm Model="Input" method="post" OnValidSubmit="HandleValidSubmit" FormName="createsite">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <StatusMessage Message="@ErrorMessage" />
+<div class="Content_Layout">
+    <h3>Create new Site</h3>
 
-    <div class="form-floating mb-3">
-        <InputText @bind-Value="Input.Name" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" />
-        <label for="name" class="form-label">Site Name</label>
-        <ValidationMessage For="() => Input.Name" class="text-danger" />
-    </div>
-    <div>
-        <button type="submit" class="w-100 btn btn-lg btn-primary">Create site</button>
-    </div>
+    <EditForm Model="Input" method="post" OnValidSubmit="HandleValidSubmit" FormName="createsite">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <StatusMessage Message="@ErrorMessage" />
 
-</EditForm>
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="Input.Name" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" />
+            <label for="name" class="form-label">Site Name</label>
+            <ValidationMessage For="() => Input.Name" class="text-danger" />
+        </div>
+        <div>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Create site</button>
+        </div>
+
+    </EditForm>
+</div>
 
 @code {
     [SupplyParameterFromForm]

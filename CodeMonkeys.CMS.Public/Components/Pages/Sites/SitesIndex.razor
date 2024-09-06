@@ -16,7 +16,12 @@
 }
 else
 {
+<div class="backbutton">
+    @* Gå tillbaka *@
+    <a href="javascript:history.back()"><button>Gå tillbaka</button></a>
+</div>
 
+<div class="Content_Layout">
     <div class="sites-row">
         @foreach (Site site in Sites ?? [])
         {
@@ -42,6 +47,7 @@ else
             </div>
         }
     </div>
+</div>
 }
 
 @code
