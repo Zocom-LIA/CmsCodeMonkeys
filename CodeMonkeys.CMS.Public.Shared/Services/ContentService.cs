@@ -12,6 +12,11 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
 
         public IContentRepository Repository { get; }
 
+        public async Task<Content> CreateContentAsync(Content content)
+        {
+            return await Repository.CreateContentAsync(content);
+        }
+
         public Task DeleteContentAsync(int contentId)
         {
             return Repository.DeleteContentAsync(contentId);
@@ -23,6 +28,11 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
             if (pageSize <= 0) throw new ArgumentOutOfRangeException("PageSize must be greater than zero.");
 
             return await Repository.GetWebPageContentsAsync(pageId, pageIndex, pageSize);
+        }
+
+        public async Task<IEnumerable<Content>> UpdateOrdinalNumberAsync(ICollection<Content> contents, bool persist = true)
+        {
+            return await Repository.UpdateOrdinalNumbersAsync(contents, persist);
         }
     }
 }
