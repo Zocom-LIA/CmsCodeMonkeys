@@ -10,24 +10,19 @@
 
 <PageTitle>@Site?.Name</PageTitle>
 
-@if (IsLoading)
-{
-    <Loading />
-}
-else
-{
+<UserViewer>
     <div class="backbutton">
         @* Gå tillbaka *@
         <a href="javascript:history.back()"><button>Gå tillbaka</button></a>
     </div>
 
     <div class="Content_Layout">
-    <StatusMessage Message="@ErrorMessage" />
+        <StatusMessage Message="@ErrorMessage" />
 
-    <div>
-        <h3>Overview for @Site?.Name</h3>
-        <a class="btn btn-primary" href="/sites/@siteId/webpages/create">Create new page</a>
-    </div>
+        <div>
+            <h3>Overview for @Site?.Name</h3>
+            <a class="btn btn-primary" href="/sites/@siteId/webpages/create">Create new page</a>
+        </div>
 
         <div class="webpages-row mt-4">
             @foreach (var webPage in Pages ?? Enumerable.Empty<WebPage>())
@@ -58,7 +53,7 @@ else
     <div>
         <a class="btn btn-primary" href="/sites/@siteId/webpages/create">Create new page</a>
     </div>
-}
+</UserViewer>
 
 @code
 {

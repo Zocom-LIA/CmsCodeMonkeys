@@ -10,45 +10,40 @@
 
 <PageTitle>Sites Overview</PageTitle>
 
-@if (IsLoading)
-{
-    <Loading />
-}
-else
-{
-<div class="backbutton">
-    @* Gå tillbaka *@
-    <a href="javascript:history.back()"><button>Gå tillbaka</button></a>
-</div>
+<UserViewer>
+    <div class="backbutton">
+        @* Gå tillbaka *@
+        <a href="javascript:history.back()"><button>Gå tillbaka</button></a>
+    </div>
 
-<div class="Content_Layout">
-    <div class="sites-row">
-        @foreach (Site site in Sites ?? [])
-        {
-            <div class="sites-col-md-4 sites-mb-4">
-                <div class="sites-card h-100">
-                    <div class="sites-card-header text-center font-weight-bold">
-                        @site.Name
-                    </div>
-                    <div class="sites-card-body">
-                        <div class="sites-empty-box bg-light" style="height: 150px;">
-                            <!-- Bild kommer här senare -->
+    <div class="Content_Layout">
+        <div class="sites-row">
+            @foreach (Site site in Sites ?? [])
+            {
+                <div class="sites-col-md-4 sites-mb-4">
+                    <div class="sites-card h-100">
+                        <div class="sites-card-header text-center font-weight-bold">
+                            @site.Name
+                        </div>
+                        <div class="sites-card-body">
+                            <div class="sites-empty-box bg-light" style="height: 150px;">
+                                <!-- Bild kommer här senare -->
+                            </div>
+                        </div>
+                        <div class="sites-card-actions">
+                            <a class="btn btn-primary sites-btn sites-btn-edit" href="/sites/@site.SiteId/edit">Edit Title</a>
+                            <a class="btn btn-secondary sites-btn sites-btn-overview" href="/sites/@site.SiteId/webpages">Preview</a>
+                            <a class="btn btn-danger sites-btn sites-btn-delete" href="/sites">Delete</a> 
+                        </div>
+                        <div class="sites-card-footer text-muted">
+                            Last Modified: @site.LastModifiedDate.ToString("yyyy-MM-dd")
                         </div>
                     </div>
-                    <div class="sites-card-actions">
-                        <a class="btn btn-primary sites-btn sites-btn-edit" href="/sites/@site.SiteId/edit">Edit Title</a>
-                        <a class="btn btn-secondary sites-btn sites-btn-overview" href="/sites/@site.SiteId/webpages">Preview</a>
-                        <a class="btn btn-danger sites-btn sites-btn-delete" href="/sites">Delete</a> 
-                    </div>
-                    <div class="sites-card-footer text-muted">
-                        Last Modified: @site.LastModifiedDate.ToString("yyyy-MM-dd")
-                    </div>
                 </div>
-            </div>
-        }
+            }
+        </div>
     </div>
-</div>
-}
+</UserViewer>
 
 @code
 {
