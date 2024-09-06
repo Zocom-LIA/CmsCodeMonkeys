@@ -53,17 +53,12 @@ h1:focus {
     border-color: #929292;
 }
 
-.footer {
-    background-color: #343a40;
-    color: white;
-    text-align: center;
-    padding: 10px 0;
-    position: relative;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    margin-top: auto;
+/* Page layout */
+.page {
+    flex: 1;
+    padding-top: 90px; /* Adjust this value to match the height of the header */
+    padding-bottom: 40px; /* Padding for the footer */
+    background-color: white;
 }
 
 .container {
@@ -80,24 +75,6 @@ h1:focus {
     box-sizing: border-box;
     padding: 20px;
     width: 48%;
-}
-
-@media (max-width: 768px) {
-    .left-top, .left-bottom, .right-top, .right-bottom {
-        width: 100%;
-        padding: 10px;
-    }
-
-    .left-bottom {
-        flex-direction: column;
-        height: auto;
-    }
-
-    .small-container {
-        width: 100%;
-        height: 150px;
-        margin: 10px 0;
-    }
 }
 
 .left-top, .right-top, .right-bottom {
@@ -137,6 +114,81 @@ img {
     object-fit: cover;
 }
 
+/* Footer styles */
+footer, .footer {
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    margin-top: auto;
+    height: 50px;
+    justify-content: center;
+    align-items: center;
+}
+
+.info {
+    font-size: 14px;
+    margin: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .left-top, .left-bottom, .right-top, .right-bottom {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .left-bottom {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .small-container {
+        width: 100%;
+        height: 150px;
+        margin: 10px 0;
+    }
+}
+
+@media (max-width: 600px) {
+    .footer {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}
+
+/* Body styling to ensure the footer stays at the bottom */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Blazor error UI */
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }
 .admin-container {
     display: flex;
     flex-wrap: wrap;

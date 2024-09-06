@@ -1,9 +1,7 @@
 ﻿using CodeMonkeys.CMS.Public.Components.Shared;
 using CodeMonkeys.CMS.Public.Shared.Entities;
 using CodeMonkeys.CMS.Public.Shared.Services;
-
 using Microsoft.AspNetCore.Components;
-
 using System.ComponentModel.DataAnnotations;
 
 namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
@@ -221,16 +219,6 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
 
                 Content = null;
             }
-        }
-
-        private async Task MoveUp(int ordinalNumber)
-        {
-            WebPage!.Contents = (await WebPageService.MoveContentUpAsync(WebPage!, ordinalNumber)).ToList();
-        }
-
-        private async Task MoveDown(int ordinalNumber)
-        {
-            WebPage!.Contents = (await WebPageService.MoveContentDownAsync(WebPage!, ordinalNumber)).ToList();
         }
 
         private sealed class InputModel

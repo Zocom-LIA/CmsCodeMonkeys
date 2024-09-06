@@ -9,8 +9,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Entities
         public string Title { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime LastModifiedDate { get; set; }
+
         public int? SiteId { get; set; }
         public Site? Site { get; set; }
+
         public Guid? AuthorId { get; set; }
         public User? Author { get; set; }
 

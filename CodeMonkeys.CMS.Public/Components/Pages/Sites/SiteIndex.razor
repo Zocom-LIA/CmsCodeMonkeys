@@ -1,0 +1,31 @@
+﻿@page "/sites"
+@using CodeMonkeys.CMS.Public.Shared.Services
+@using CodeMonkeys.CMS.Public.Components.Shared
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+
+@inherits AuthenticationBaseComponent<SiteIndex>
+@rendermode InteractiveServer
+
+<PageTitle>Sites Overview</PageTitle>
+
+<UserViewer>
+    <UserViewHeader>
+        <h1>Sites Overview</h1>
+    </UserViewHeader>
+    <ChildContent>
+        <SiteBoxesComponent Sites="@Sites" />
+    </ChildContent>
+</UserViewer>
+
+@code
+{
+    private IEnumerable<Site> Sites = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        Sites = await SiteService.GetUserSitesAsync(User!.Id);
+    }
+}

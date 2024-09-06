@@ -30,4 +30,10 @@ public class SiteService : ISiteService
     {
         return await Repository.GetUserSiteAsync(userId, siteId);
     }
+
+    // Used for testing purposes only
+    public async Task<Site?> GetSiteAsync(int siteId)
+    {
+        return await Repository.GetSiteAsync(siteId);
+    }
 }

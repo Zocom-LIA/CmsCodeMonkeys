@@ -396,3 +396,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/CodeMonkeys.CMS.Public.Shared/Helpers/Class1.cs

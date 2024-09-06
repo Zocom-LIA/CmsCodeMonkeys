@@ -18,12 +18,6 @@
             </NavLink>
         </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="pagevisits" style="color: white;">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Page Visits
-            </NavLink>
-        </div>
-
         <AuthorizeView>
             <Authorized>
                 <div class="nav-item px-3">
@@ -33,8 +27,20 @@
                 </div>
 
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="users" style="color: white;">
-                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> user
+                    <NavLink class="nav-link" href="user" style="color: white;">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Users
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="modal-test">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Modal Tests
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="pagevisits" style="color: white;">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Page Visits
                     </NavLink>
                 </div>
 
@@ -46,25 +52,22 @@
                     </button>
                 </form>
             </Authorized>
-         
             <NotAuthorized>
                 <div class="nav-item">
-                        <NavLink class="nav-link" href="Account/Register" style="color: white;">
-                            Register
-                        </NavLink>
-                    </div>
+                    <NavLink class="nav-link" href="Account/Register" style="color: white;">
+                        Register
+                    </NavLink>
+                </div>
 
                 <div class="nav-item">
-                        <NavLink class="nav-link" href="Account/Login" style="color: white;">
-                            Login
-                        </NavLink>
-                    </div>
+                    <NavLink class="nav-link" href="Account/Login" style="color: white;">
+                        Login
+                    </NavLink>
+                </div>
             </NotAuthorized>
         </AuthorizeView>
     </div>
 </header>
-
-
 
 @code {
     private string? currentUrl;

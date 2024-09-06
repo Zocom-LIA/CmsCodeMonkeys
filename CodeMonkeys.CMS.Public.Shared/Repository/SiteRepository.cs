@@ -1,11 +1,9 @@
 ﻿using CodeMonkeys.CMS.Public.Shared.Data;
 using CodeMonkeys.CMS.Public.Shared.Entities;
+
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CodeMonkeys.CMS.Public.Shared.Repository
 {
@@ -37,9 +35,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                 .Where(site => site.CreatorId.Equals(userId))
                 .Skip(pageIndex * pageSize)
                 .Take(pageSize)
+                .OrderBy(site => site.CreatedDate)
                 .Include(site => site.LandingPage)
                 .Include(site => site.Pages)
-                //.ThenInclude(page => page.Contents)
+                .ThenInclude(page => page.Contents)
                 .Include(site => site.Creator)
                 .ToListAsync();
         }
@@ -50,6 +49,12 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
         {
             Context.Sites.Update(site);
             return Context.SaveChangesAsync();
+        }
+
+        // Used for testing purposes only
+        public Task<Site?> GetSiteAsync(int siteId)
+        {
+            return Context.Sites.Include(site => site.LandingPage).Include(site => site.Pages).FirstOrDefaultAsync(site => site.SiteId == siteId);
         }
     }
 }

@@ -1,0 +1,15 @@
+@using CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
+@using CodeMonkeys.CMS.Public.Shared.DTOs
+
+@code {
+    [Parameter]
+    public WebPageEdit.ContentModel Content { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<WebPageEdit.ContentModel> OnSaveContent { get; set; }
+
+    private async Task CreateOrUpdateContent()
+    {
+        await OnSaveContent.InvokeAsync(Content);
+    }
+}

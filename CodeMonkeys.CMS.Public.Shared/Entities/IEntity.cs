@@ -1,4 +1,4 @@
-﻿namespace CodeMonkeys.CMS.Public.Shared.Entities
+namespace CodeMonkeys.CMS.Public.Shared.Entities
 {
     public interface IEntity
     {

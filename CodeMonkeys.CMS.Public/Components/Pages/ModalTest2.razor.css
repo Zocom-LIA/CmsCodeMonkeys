@@ -1,0 +1,80 @@
+﻿.testmodal-backdrop {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    background-color: #000;
+    background-color: rgba(0,0,0,.4);
+}
+
+.testmodal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 101;
+    /*display: none;*/
+    overflow: hidden;
+    -webkit-overflow-scrolling: touch;
+    outline: 0;
+    border-radius: 5px;
+    /* inner shadow */
+    /*border-inline-style: inset;*/
+    border-style: double;
+    border-width: 1px;
+    background-color: #f8fafc;
+}
+
+.testmodal, .testmodal-content {
+    border-style: double;
+    border-width: 1px;
+    background-color: #f8fafc;
+    margin: 2px;
+}
+
+.testmodal-header {
+    padding: 1rem;
+    text-align: center;
+}
+
+
+
+    .testmodal-header button {
+        border-radius: 5px;
+        float: right;
+    }
+
+.testmodal-content {
+    z-index: 102;
+    background-color: rgba(0,0,0,0.05);
+    border-radius:5px;
+}
+
+.testmodal-title {
+}
+
+.testmodal-body {
+    padding: 1rem;
+    text-align: center;
+}
+
+.testmodal-footer {
+    padding: 1rem;
+    text-align: right;
+}
+button:focus {
+    outline: 2px solid #0091ff;
+}
+.btn-secondary {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+    .btn-secondary:hover {
+        color: #fff;
+        background-color: #5a6268;
+        border-color: #545b62;
+    }
