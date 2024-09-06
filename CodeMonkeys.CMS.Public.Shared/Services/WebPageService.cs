@@ -109,5 +109,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         {
             return await Repository.GetWebPageAsync(webPageId);
         }
+
+        public async Task<IEnumerable<Content>> UpdateWebPageContentsAsync(WebPage webPage, IEnumerable<Content> contents)
+        {
+            return await Repository.UpdateWebPageContentsAsync(webPage, contents);
+        }
     }
 }

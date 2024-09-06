@@ -182,6 +182,8 @@ namespace CodeMonkeys.CMS.Public.Components.Pages
                 };
 
                 WebPage!.Contents.Add(content);
+
+                WebPage!.Contents = (await WebPageService.UpdateWebPageContentsAsync(WebPage!, WebPage!.Contents)).ToList();
             }
             else
             {
