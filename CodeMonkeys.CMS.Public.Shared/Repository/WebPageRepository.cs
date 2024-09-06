@@ -95,6 +95,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
         public async Task<IEnumerable<Content>> UpdateWebPageContentsAsync(WebPage webPage, IEnumerable<Content> contents)
         {
             Context.Contents.UpdateRange(contents);
+            Context.Pages.Update(webPage);
             await Context.SaveChangesAsync();
 
             return webPage.Contents.OrderBy(content => content.OrdinalNumber);

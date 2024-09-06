@@ -12,6 +12,11 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
 
         public IContentRepository Repository { get; }
 
+        public async Task<Content> CreateContentAsync(Content content)
+        {
+            return await Repository.CreateContentAsync(content);
+        }
+
         public Task DeleteContentAsync(int contentId)
         {
             return Repository.DeleteContentAsync(contentId);
@@ -25,6 +30,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
             return await Repository.GetWebPageContentsAsync(pageId, pageIndex, pageSize);
         }
 
-        public Task UpdateOrdinalNumberAsync(ICollection<Content> contents, bool persist) => throw new NotImplementedException();
+        public async Task<IEnumerable<Content>> UpdateOrdinalNumberAsync(ICollection<Content> contents, bool persist)
+        {
+            return await Repository.UpdateOrdinalNumbersAsync(contents, persist);
+        }
     }
 }

@@ -18,5 +18,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         Task<IEnumerable<Content>> MoveContentUpAsync(WebPage page, int ordinalNumber);
         Task<IEnumerable<Content>> UpdateOrdinalNumbersAsync(WebPage webPage, bool persist = true);
         Task UpdateWebPageAsync(WebPage webPage);
+        Task<IEnumerable<Content>> UpdateWebPageContentsAsync(WebPage webPage, IEnumerable<Content> contents);
     }
 }
