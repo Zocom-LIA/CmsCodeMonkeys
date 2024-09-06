@@ -10,6 +10,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         Task<Content> CreateContentAsync(Content content);
         Task DeleteContentAsync(int contentId);
         Task<IEnumerable<Content>> GetWebPageContentsAsync(int pageId, int pageIndex = 0, int pageSize = 10);
-        Task<IEnumerable<Content>> UpdateOrdinalNumberAsync(ICollection<Content> contents, bool persist);
+        Task<IEnumerable<Content>> UpdateOrdinalNumberAsync(ICollection<Content> contents, bool persist = false);
     }
 }

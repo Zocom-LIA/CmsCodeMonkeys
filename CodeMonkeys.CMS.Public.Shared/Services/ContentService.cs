@@ -30,7 +30,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
             return await Repository.GetWebPageContentsAsync(pageId, pageIndex, pageSize);
         }
 
-        public async Task<IEnumerable<Content>> UpdateOrdinalNumberAsync(ICollection<Content> contents, bool persist)
+        public async Task<IEnumerable<Content>> UpdateOrdinalNumberAsync(ICollection<Content> contents, bool persist = true)
         {
             return await Repository.UpdateOrdinalNumbersAsync(contents, persist);
         }

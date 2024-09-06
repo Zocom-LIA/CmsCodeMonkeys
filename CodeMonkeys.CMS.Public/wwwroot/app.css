@@ -1,4 +1,4 @@
-/* Global styles */
+/* Global styles update fungerar du?*/
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     margin: 0;
@@ -201,17 +201,21 @@ img {
 .admin-templates-title {
     font-size: 24px;
     margin-bottom: 10px;
+    padding-top: 15px;
+    padding-left: 30px;
 }
 
 .admin-templates-description {
     font-size: 16px;
-    margin-bottom: 20px;
+    padding-left: 30px;
+    margin-bottom: 10px;
     color: #666;
 }
 
 .admin-template-carousel {
     display: flex;
     align-items: center;
+    padding-top: 40px;
     margin-bottom: 20px;
 }
 
@@ -257,31 +261,398 @@ img {
         width: 100%;
     }
 
-    .admin-action-buttons {
+    /*.admin-action-buttons {
         flex-direction: column;
         align-items: center;
     }
 
     .admin-create-site-button, .admin-existing-sites-button, .admin-create-page-button, .admin-existing-pages-button {
-        margin-bottom: 10px;
+        margin-bottom: 5px;
         width: 100%;
-    }
+    }*/
 }
 
+
+/*@page "/users"*/
 .admin-action-buttons {
     display: flex;
+    justify-content: start; /* Knapparna placeras nära varandra */
+    padding: 10px; /* Utrymme runt knapparna */
+    padding-left: 50px;
+    border-radius: 10px; /* Rundade hörn på containern */
+}
+
+.admin-action-buttons a {
+text-decoration: none;
+color: #ffffff; /* Vit textfärg, för bättre synlighet på mörk bakgrund */
+background-color: #007bff; /* Bootstrap's standardblå färg för primary knappar */
+padding: 8px 16px; /* Padding runt texten */
+margin-right: 10px; /* Marginal mellan knapparna */
+border-radius: 5px; /* Rundade hörn för knapparna */
+transition: background-color 0.3s ease; /* Övergångseffekt för bakgrundsfärgen */
+}
+
+.admin-action-buttons a:hover {
+    background-color: #0056b3; /* En mörkare blå nyans för hover-effekt */
+}
+
+.admin-action-buttons a:last-child {
+    margin-right: 0; /* Ingen marginal på den sista knappen */
+}
+
+
+
+
+/*@page "/sites/create"*/
+.create-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 100%;
+}
+
+.create-navbar {
+    display: flex;
     justify-content: space-between;
-}
-
-.admin-create-site-button, .admin-existing-sites-button, .admin-create-page-button, .admin-existing-pages-button {
-    background-color: #e0e0e0;
-    border: none;
+    align-items: center;
+    background-color: #ccc;
     padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 14px;
-    cursor: pointer;
+    flex-shrink: 0;
 }
 
-.admin-create-page-button, .admin-create-site-button {
-    margin-right: 20px;
+.create-navbar-list {
+    list-style-type: none;
+    display: flex;
+    gap: 20px;
+}
+
+    .create-navbar-list li {
+        margin: 0;
+    }
+
+.create-navbar a {
+    text-decoration: none;
+    color: black;
+}
+
+.create-main-content {
+    display: flex;
+    flex: 1;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.create-toolbar {
+    width: 20%;
+    background-color: #e0e0e0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.create-toolbar-list {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.create-preview {
+    width: 100%;
+    background-color: #e0e0e0;
+    margin-left: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+    border: 2px solid #007bff;
+}
+
+.create-footer {
+    background-color: #ccc;
+    padding: 10px 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.create-form-floating {
+    position: relative;
+}
+
+    .create-form-floating label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 1rem;
+        pointer-events: none;
+        transition: all 0.2s ease;
+    }
+
+.create-form-control:focus ~ .create-form-label,
+.create-form-control:not(:placeholder-shown) ~ .create-form-label {
+    top: -0.75rem;
+    left: 0.75rem;
+    font-size: 0.75rem;
+    opacity: 0.65;
+}
+
+.create-mb-3 {
+    margin-bottom: 1rem;
+}
+
+.create-w-100 {
+    width: 100%;
+}
+
+.create-btn {
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid transparent;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.create-btn-primary {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.create-btn-lg {
+    padding: 0.5rem 1rem;
+    font-size: 1.25rem;
+    border-radius: 0.3rem;
+}
+
+.create-text-danger {
+    color: #dc3545;
+}
+
+
+
+/*@page "/sites"*/
+.sites-row {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 50px;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.sites-col-md-4 {
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    flex: 0 0 33.3333%;
+    max-width: 33.3333%;
+}
+
+.sites-mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.sites-card {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.sites-card-header {
+    font-size: 1.25rem;
+    font-weight: bold;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.sites-card-body {
+    flex: 1 1 auto;
+    padding: 1.25rem;
+}
+
+.sites-empty-box {
+    background-color: #f8f9fa;
+    border: 1px dashed #6c757d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sites-card-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+    border-top: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+}
+
+.sites-btn {
+    width: 100%;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.sites-btn-delete {
+    background-color: #dc3545;
+    color: white;
+}
+
+.sites-btn-edit {
+    background-color: #007bff;
+    color: white;
+    margin-top: 10px;
+}
+
+.sites-btn-overview {
+    background-color: #6c757d;
+    color: white;
+    margin-top: 10px;
+}
+
+.sites-card-footer {
+    font-size: 0.85rem;
+    text-align: right;
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    padding: 0.75rem 1.25rem;
+}
+
+
+
+/*@page "/sites/{siteId:int}/webpages"*/
+.webpages-card {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+}
+
+    .webpages-card:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+.webpages-card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    font-size: 1.25rem;
+    font-weight: bold;
+    padding: 0.75rem 1.25rem;
+    text-align: center;
+}
+
+.webpages-card-body {
+    flex: 1 1 auto;
+    padding: 1.25rem;
+}
+
+.webpages-card-footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 0.75rem 1.25rem;
+}
+
+.webpages-card-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 1.25rem;
+}
+
+.webpages-btn {
+    width: 48%;
+    text-align: center;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+}
+
+.webpages-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.webpages-col-md-4 {
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    flex: 0 0 33.3333%;
+    max-width: 33.3333%;
+}
+
+.webpages-mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.webpages-empty-box {
+    background-color: #f8f9fa;
+    border: 1px dashed #dee2e6;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/*Content_placment*/
+
+.Content_Layout {
+    padding-top: 30px;
+}
+
+/*BackButton*/
+.backbutton{
+    margin-top: 20px;
+}
+
+/*@page "/sites/{siteId:int}/webpages/{webPageId:int}/edit"*/
+/* General Form Styling */
+
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+    input:focus, select:focus, textarea:focus {
+        border-color: #007bff;
+    }
+
+/* Label Styling */
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background-color: #007bff;
+    color: white;
+}
+
+td {
+    background-color: #f9f9f9;
 }
