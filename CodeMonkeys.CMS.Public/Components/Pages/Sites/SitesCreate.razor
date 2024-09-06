@@ -11,47 +11,49 @@
 @attribute [Authorize(Roles = "User, Admin")]
 
 
-<div class="create-container">
-    <div class="backbutton">
-        @* Gå tillbaka *@
-        <a href="javascript:history.back()"><button>Gå tillbaka</button></a>
+<UserViewer>
+    <div class="create-container">
+        <div class="backbutton">
+            @* Gå tillbaka *@
+            <a href="javascript:history.back()"><button>Gå tillbaka</button></a>
+        </div>
+
+        <div class="create-main-content">
+            <aside class="create-toolbar">
+                <tbody>
+                    @foreach (Site site in Sites ?? [])
+                    {
+                        <tr>
+                            <td style="font-weight: bold; text-decoration: underline;">@site.Name</td>
+                            <td>
+                                <a class="btn btn-success" href="/sites/@site.SiteId/edit">Edit</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </aside>
+
+            <section class="create-preview">
+                <h3>Create new Site</h3>
+
+                <EditForm Model="Input" method="post" OnValidSubmit="HandleValidSubmit" FormName="createsite">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <StatusMessage Message="@ErrorMessage" />
+
+                    <div class="create-form-floating create-mb-3">
+                        <InputText @bind-Value="Input.Name" class="create-form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" />
+                        <label for="name" class="create-form-label"></label>
+                        <ValidationMessage For="() => Input.Name" class="create-text-danger" />
+                    </div>
+                    <div>
+                        <button type="submit" class="create-w-100 create-btn create-btn-lg create-btn-primary">Create site</button>
+                    </div>
+                </EditForm>
+            </section>
+        </div>
     </div>
-
-    <div class="create-main-content">
-        <aside class="create-toolbar">
-            <tbody>
-                @foreach (Site site in Sites ?? [])
-                {
-                    <tr>
-                        <td style="font-weight: bold; text-decoration: underline;">@site.Name</td>
-                        <td>
-                            <a class="btn btn-success" href="/sites/@site.SiteId/edit">Edit</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </aside>
-
-        <section class="create-preview">
-            <h3>Create new Site</h3>
-
-            <EditForm Model="Input" method="post" OnValidSubmit="HandleValidSubmit" FormName="createsite">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-                <StatusMessage Message="@ErrorMessage" />
-
-                <div class="create-form-floating create-mb-3">
-                    <InputText @bind-Value="Input.Name" class="create-form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" />
-                    <label for="name" class="create-form-label"></label>
-                    <ValidationMessage For="() => Input.Name" class="create-text-danger" />
-                </div>
-                <div>
-                    <button type="submit" class="create-w-100 create-btn create-btn-lg create-btn-primary">Create site</button>
-                </div>
-            </EditForm>
-        </section>
-    </div>
-</div>
+</UserViewer>
 
 @code {
     [SupplyParameterFromForm]
