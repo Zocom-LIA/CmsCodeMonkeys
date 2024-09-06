@@ -31,20 +31,22 @@ namespace CodeMonkeys.CMS.Public.Shared.Middleware
             {
                 try
                 {
-                    var header = context.Response.Headers["Content-Type"].ToString();
-                    if (string.IsNullOrEmpty(header) || header.Contains("text/html"))
-                    {
-                        var pageUrl = context.Request.Path.Value;
-
-                        if (pageUrl != null)
+                    if (context.Request.Path.StartsWithSegments("/content"))
+                    { 
+                        var header = context.Response.Headers["Content-Type"].ToString();
+                        if (string.IsNullOrEmpty(header) || header.Contains("text/html"))
                         {
-                            await _repository.UpdatePageCountAsync(pageUrl);
+                            var pageUrl = context.Request.Path.Value;
+
+                            if (pageUrl != null)
+                            {
+                                await _repository.UpdatePageCountAsync(pageUrl);
+                            }
                         }
                     }
                 }
                 catch (Exception)
                 {
-
                     throw;
                 }
             }

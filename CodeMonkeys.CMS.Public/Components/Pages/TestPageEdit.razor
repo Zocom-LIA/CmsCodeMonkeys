@@ -1,0 +1,120 @@
+﻿@page "/modal-test"
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components
+@using CodeMonkeys.CMS.Public.Components.Shared
+@using CodeMonkeys.CMS.Public.Components.Shared.UI
+@using System.ComponentModel.DataAnnotations
+@using CodeMonkeys.CMS.Public.Components.Account.Shared
+@using CodeMonkeys.CMS.Public.Shared.Entities
+@using CodeMonkeys.CMS.Public.Shared.Services
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+
+@inherits AuthenticationBaseComponent<TestPageEdit>
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "User, Admin")]
+
+@*
+    TODO:
+    - Add button to cancel the changes.
+    - Don't commit the changes before the button to save the changes is clicked
+*@
+
+<UserViewer>
+    <UserViewHeader>
+        <h1>Edit Page</h1>
+    </UserViewHeader>
+    <ChildContent>
+        @if (WebPage?.Contents != null && WebPage.Contents.Any())
+        {
+            <h4>Content</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <td>Content Title</td>
+                        <td>Content Type</td>
+                        <td>Content Body</td>
+                        <td>Created by</td>
+                        <td>Created Date</td>
+                        <td>LastModified</td>
+                        <td>Ordinal number</td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (Content content in WebPage?.Contents ?? [])
+                    {
+                        <tr>
+                            <td>@content.Title</td>
+                            <td>@content.ContentType</td>
+                            <td>@content.Body</td>
+                            <td>@content.Author?.Email</td>
+                            <td>@content.CreatedDate.ToString("yyyy-MM-dd")</td>
+                            <td>@content.LastModifiedDate.ToString("yyyy-MM-dd")</td>
+                            <td>@content.OrdinalNumber</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-primary"
+                                    @onclick="() => MoveUp(content.OrdinalNumber)"
+                                        disabled="@(content.OrdinalNumber == 0)">
+                                    Up
+                                </button>
+                                <button type="button" class="btn btn-sm btn-primary" 
+                                    @onclick="() => MoveDown(content.OrdinalNumber)" 
+                                    disabled="@(content.OrdinalNumber == WebPage!.Contents.Max(c => c.OrdinalNumber))">
+                                    Down
+                                </button>
+                                <button type="button" class="btn btn-sm btn-primary" @onclick="async () => await  AddOrUpdateContent(content.ContentId)">Edit</button>
+                                <button type="button" class="btn btn-sm btn-primary" @onclick="async () => await DeleteContent(content.ContentId)">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        <div>
+            <button type="button" class="w-100 btn btn-lg btn-primary" @onclick="async () => await AddOrUpdateContent()">Add Content!</button>
+        </div>
+    </ChildContent>
+</UserViewer>
+
+<ConfirmationDialog @ref="Confirmation" Title="@ConfirmationTitle"
+                    ConfirmationButtonText="@ConfirmationButtonText"
+                    CancelButtonText="@CancelButtonText"
+                    ConfirmationMessage="@ConfirmationMessage"
+                    OnConfirm="OnConfirm"
+                    OnCancel="OnCancel">
+    <EditForm Model="Input" method="post" OnValidSubmit="() => HandleValidSubmit()" FormName="updatewebpage">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <StatusMessage Message="@ErrorMessage" />
+
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="Input.Title" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" hidden="@(Content != null)" />
+            <label for="name" class="form-label">Site Name</label>
+            <ValidationMessage For="() => Input.Title" class="text-danger" />
+        </div>
+        @if (Content != null)
+        {
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Content.Title" class="form-control" autocomplete="name" aria-required="true" placeholder="Content Title" />
+                <label for="name" class="form-label">Content Title</label>
+                <ValidationMessage For="() => Content.Title" class="text-danger" />
+            </div>
+            <div class="form-floating mb-3">
+                <select class="form-select" @bind="Content.ContentType">
+                    @foreach (var type in Enum.GetValues(typeof(ContentTypes)))
+                    {
+                        <option Value="@type">@type.ToString()</option>
+                    }
+                </select>
+                <label for="contentType" class="form-label">Content Type</label>
+                <ValidationMessage For="() => Content.ContentType" class="text-danger" />
+            </div>
+            <div class="form-floating mb-3">
+                <InputTextArea @bind-Value="Content.Body" class="form-control" autocomplete="name" aria-required="true" placeholder="Content Body" />
+                <label for="name" class="form-label">Content Body</label>
+                <ValidationMessage For="() => Content.Body" class="text-danger" />
+            </div>
+        }
+    </EditForm>
+</ConfirmationDialog>
