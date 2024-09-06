@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
 {
-    public partial class EditWebPage : BaseComponent<EditWebPage>
+    public partial class WebPagesEdit : BaseComponent<WebPagesEdit>
     {
         [Inject]
         public ISiteService SiteService { get; set; }

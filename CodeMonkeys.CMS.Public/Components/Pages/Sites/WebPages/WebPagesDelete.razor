@@ -1,11 +1,11 @@
-﻿@page "/sites/{siteId:int}/delete"
+﻿@page "/sites/{siteId:int}/webpages/{webPageId:int}/delete"
 @using System.ComponentModel.DataAnnotations
 @using CodeMonkeys.CMS.Public.Components.Account.Shared
 @using CodeMonkeys.CMS.Public.Shared.Services
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Identity
 
-@inherits BaseComponent<Create>
+@inherits AuthenticationBaseComponent<WebPagesDelete>
 @inject UserManager<User> UserManager
 @inject ISiteService SiteService
 @rendermode InteractiveServer
@@ -37,7 +37,7 @@
     public int siteId { get; set; }
 
     private string ErrorMessage { get; set; } = string.Empty;
-    
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -59,19 +59,19 @@
         }
 
         var site = new Site()
-        {
-            Name = Input.Name,
-            CreatedDate = DateTime.Now,
-            LastModifiedDate = DateTime.Now,
-            CreatorId = user.Id
-        };
+            {
+                Name = Input.Name,
+                CreatedDate = DateTime.Now,
+                LastModifiedDate = DateTime.Now,
+                CreatorId = user.Id
+            };
 
         await SiteService.CreateSiteAsync(site);
 
         Navigation.NavigateTo($"sites/{site.SiteId}/webpages");
     }
 
-    private sealed class InputModel     
+    private sealed class InputModel
     {
         [Required]
         public string Name { get; set; } = string.Empty;
