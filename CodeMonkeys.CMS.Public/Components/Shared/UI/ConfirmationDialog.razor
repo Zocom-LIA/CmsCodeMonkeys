@@ -1,0 +1,27 @@
+﻿@inherits ComponentBase
+<div class="confirmation-backdrop" style="display:@(IsVisible ? "block" : "none")">
+    <div class="confirmation">
+        <div class="confirmation-content">
+            <div class="confirmation-header">
+                <button type="button" class="btn-close" aria-label="Close" @onclick="Cancel">
+                    <span aria-hidden="true"></span>
+                </button>
+                <h5 class="confirmation-title">@Title</h5>
+            </div>
+            <div class="confirmation-body">
+                @if (!string.IsNullOrEmpty(ConfirmationMessage))
+                {
+                    <p>@ConfirmationMessage</p>
+                }
+                else if (ChildContent != null)
+                {
+                    @ChildContent
+                }
+            </div>
+            <div class="confirmation-footer">
+                <button type="button" class="btn btn-sm btn-secondary" @onclick="Confirm">@ConfirmationButtonText</button>
+                <button type="button" class="btn btn-sm btn-danger" @onclick="Cancel">@CancelButtonText</button>
+            </div>
+        </div>
+    </div>
+</div>

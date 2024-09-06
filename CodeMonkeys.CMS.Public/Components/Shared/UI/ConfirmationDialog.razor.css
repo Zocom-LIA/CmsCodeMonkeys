@@ -1,0 +1,81 @@
+﻿.confirmation-backdrop {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    background-color: #000;
+    background-color: rgba(0,0,0,.4);
+}
+
+.confirmation {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 101;
+    overflow: hidden;
+    -webkit-overflow-scrolling: touch;
+    outline: 0;
+    border-radius: 5px;
+    border-style: double;
+    border-width: 1px;
+    background-color: #f8fafc;
+    min-width: 50%;
+    width: 500px; 
+}
+
+.confirmation, .confirmation-content {
+    border-style: double;
+    border-width: 1px;
+    background-color: #f8fafc;
+    margin: 2px;
+}
+
+.confirmation-header {
+    padding: 1rem;
+    text-align: center;
+}
+
+
+
+    .confirmation-header button {
+        border-radius: 5px;
+        float: right;
+    }
+
+.confirmation-content {
+    z-index: 102;
+    background-color: rgba(0,0,0,0.05);
+    border-radius: 5px;
+}
+
+.confirmation-title {
+}
+
+.confirmation-body {
+    padding: 1rem;
+    text-align: center;
+}
+
+.confirmation-footer {
+    padding: 1rem;
+    text-align: right;
+}
+
+.confirmation button:focus {
+    outline: 2px solid #0091ff;
+}
+
+.confirmation .btn-secondary {
+    color: #fff;
+    background-color: #4c855d;
+    border-color: #6c757d;
+}
+
+    .confirmation .btn-secondary:hover {
+        color: #fff;
+        background-color: #5a6268;
+        border-color: #545b62;
+    }

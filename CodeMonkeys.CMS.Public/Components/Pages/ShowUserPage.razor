@@ -1,22 +1,22 @@
 ﻿@page "/userPages/{SiteName}"
-@inherits BaseComponent<ShowUserPage>
+@inherits ContentBaseComponent<ShowUserPage>
+@rendermode InteractiveServer
 @using CodeMonkeys.CMS.Public.Components.Shared
 @using CodeMonkeys.CMS.Public.Components.Account.Shared
 @using CodeMonkeys.CMS.Public.Shared.Entities
 @using CodeMonkeys.CMS.Public.Shared.Repository
 
-@if (IsLoading ){
-    <p>Loading...</p>
-}
-
-else{
-    <PageTitle>@WebPage?.Title</PageTitle>
-    <StatusMessage/>
-    @foreach(Content content in (WebPage?.Contents??[]).OrderBy(c=>c.OrdinalNumber))
-    {
-        @content.Body
-    }
-}
+<PageTitle>@WebPage?.Title</PageTitle>
+<UserViewer>
+    <UserViewHeader>@WebPage?.Title</UserViewHeader>
+    <ChildContent>
+        <StatusMessage/>
+        @foreach(Content content in (WebPage?.Contents??[]).OrderBy(c=>c.OrdinalNumber))
+        {
+            @content.Body
+        }
+    </ChildContent>
+</UserViewer>
 
 @code {
     private Site? Site { get; set; }

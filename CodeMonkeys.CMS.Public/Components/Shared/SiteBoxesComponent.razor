@@ -1,0 +1,42 @@
+﻿@using CodeMonkeys.CMS.Public.Shared.Services
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "User, Admin")]
+ 
+<UserView>
+ 
+    <div class="sites-row">
+        @foreach (var Site in Sites)
+        {
+        <div class="sites-col-md-4 sites-mb-4">
+            <div class="sites-card h-100">
+                <div class="sites-card-header text-center font-weight-bold">@Site.Name</div>
+                <div class="sites-card-body">
+                    <div class="sites-empty-box bg-light" style="height: 150px;">
+                    <!-- Bild kommer här senare -->
+                    </div>
+                </div>
+                <div class="sites-card-actions">
+                    <a class="btn btn-primary sites-btn sites-btn-edit" href="/sites/@Site.SiteId/edit">Edit</a>
+                    <a class="btn btn-secondary sites-btn sites-btn-overview" href="/sites/@Site.SiteId/webpages">Overview</a>
+                    <a class="btn btn-danger sites-btn sites-btn-delete" href="/sites/@Site.SiteId/delete">Delete</a> 
+                </div>
+                <div class="sites-card-footer text-muted">
+                    Last Modified: @Site.LastModifiedDate.ToString("yyyy-MM-dd")
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</UserView>
+
+@code
+{
+    [Parameter] public IEnumerable<Site> Sites { get; set; } = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+}

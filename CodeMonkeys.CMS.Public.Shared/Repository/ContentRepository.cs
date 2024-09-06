@@ -1,5 +1,6 @@
 ﻿using CodeMonkeys.CMS.Public.Shared.Data;
 using CodeMonkeys.CMS.Public.Shared.Entities;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeMonkeys.CMS.Public.Shared.Repository
@@ -12,6 +13,8 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
         }
 
         public ApplicationDbContext Context { get; }
+
+        public static object UpdateOrdinalNumbersAsync(IEnumerable<Content> contents, bool v) => throw new NotImplementedException();
 
         // Consider adding web page ID to the method signature
         public async Task DeleteContentAsync(int contentId)
@@ -35,7 +38,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                 .Where(page => page.WebPageId == pageId)
                 .Include(page => page.Contents)
                 .SelectMany(page => page.Contents)
-                .Include(content => content.Author)
+                .Include(content => (User)content.Author)
                 .ToListAsync();
         }
     }

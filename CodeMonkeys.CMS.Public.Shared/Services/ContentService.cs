@@ -24,5 +24,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
 
             return await Repository.GetWebPageContentsAsync(pageId, pageIndex, pageSize);
         }
+
+        public Task UpdateOrdinalNumberAsync(ICollection<Content> contents, bool persist) => throw new NotImplementedException();
     }
 }
