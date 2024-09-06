@@ -86,7 +86,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (Content content in WebPage?.Contents?.OrderBy(content => content.OrdinalNumber).AsEnumerable() ?? [])
+            @foreach (Content content in WebPage?.Contents ?? [])
             {
                 <tr>
                     <td>@content.Title</td>
