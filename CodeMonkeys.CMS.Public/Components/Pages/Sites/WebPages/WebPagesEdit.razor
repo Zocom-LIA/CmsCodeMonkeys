@@ -7,7 +7,7 @@
 @using Microsoft.AspNetCore.Identity
 @using CodeMonkeys.CMS.Public.Components.Shared
 
-@inherits BaseComponent<EditWebPage>
+@inherits AuthenticationBaseComponent<WebPagesEdit>
 @rendermode InteractiveServer
 @attribute [Authorize(Roles = "User, Admin")]
 
