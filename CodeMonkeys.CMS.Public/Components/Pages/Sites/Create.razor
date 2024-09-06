@@ -10,29 +10,73 @@
 @rendermode InteractiveServer
 @attribute [Authorize(Roles = "User, Admin")]
 
-<h3>Create new Site</h3>
 
-<EditForm Model="Input" method="post" OnValidSubmit="HandleValidSubmit" FormName="createsite">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <StatusMessage Message="@ErrorMessage" />
-
-    <div class="form-floating mb-3">
-        <InputText @bind-Value="Input.Name" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" />
-        <label for="name" class="form-label">Site Name</label>
-        <ValidationMessage For="() => Input.Name" class="text-danger" />
-    </div>
-    <div>
-        <button type="submit" class="w-100 btn btn-lg btn-primary">Create site</button>
+<div class="create-container">
+    <div class="backbutton">
+        @* Gå tillbaka *@
+        <a href="javascript:history.back()"><button>Gå tillbaka</button></a>
     </div>
 
-</EditForm>
+    <div class="create-main-content">
+        <aside class="create-toolbar">
+            <tbody>
+                @foreach (Site site in Sites ?? [])
+                {
+                    <tr>
+                        <td style="font-weight: bold; text-decoration: underline;">@site.Name</td>
+                        <td>
+                            <a class="btn btn-success" href="/sites/@site.SiteId/edit">Edit</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </aside>
+
+        <section class="create-preview">
+            <h3>Create new Site</h3>
+
+            <EditForm Model="Input" method="post" OnValidSubmit="HandleValidSubmit" FormName="createsite">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <StatusMessage Message="@ErrorMessage" />
+
+                <div class="create-form-floating create-mb-3">
+                    <InputText @bind-Value="Input.Name" class="create-form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" />
+                    <label for="name" class="create-form-label"></label>
+                    <ValidationMessage For="() => Input.Name" class="create-text-danger" />
+                </div>
+                <div>
+                    <button type="submit" class="create-w-100 create-btn create-btn-lg create-btn-primary">Create site</button>
+                </div>
+            </EditForm>
+        </section>
+    </div>
+</div>
 
 @code {
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = new InputModel();
 
+    private IEnumerable<Site> Sites = [];
+
     private string ErrorMessage { get; set; } = string.Empty;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        User? user = await GetCurrentUserAsync();
+
+        if (user == null)
+        {
+            Logger.LogWarning("Authenticated User is not authenticated");
+            return;
+        }
+
+        Sites = await SiteService.GetUserSitesAsync(user.Id);
+    }
+
+
 
     private async Task HandleValidSubmit()
     {
@@ -50,19 +94,19 @@
         }
 
         var site = new Site()
-        {
-            Name = Input.Name,
-            CreatedDate = DateTime.Now,
-            LastModifiedDate = DateTime.Now,
-            CreatorId = user.Id
-        };
+            {
+                Name = Input.Name,
+                CreatedDate = DateTime.Now,
+                LastModifiedDate = DateTime.Now,
+                CreatorId = user.Id
+            };
 
         await SiteService.CreateSiteAsync(site);
 
         Navigation.NavigateTo($"sites/{site.SiteId}/webpages");
     }
 
-    private sealed class InputModel     
+    private sealed class InputModel
     {
         [Required]
         public string Name { get; set; } = string.Empty;
