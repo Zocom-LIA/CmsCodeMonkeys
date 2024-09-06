@@ -10,13 +10,7 @@
 
 <PageTitle>Sites Overview</PageTitle>
 
-@if (IsLoading)
-{
-    <Loading />
-}
-else
-{
-
+<UserViewer>
     <div class="sites-row">
         @foreach (Site site in Sites ?? [])
         {
@@ -42,7 +36,7 @@ else
             </div>
         }
     </div>
-}
+</UserViewer>
 
 @code
 {
