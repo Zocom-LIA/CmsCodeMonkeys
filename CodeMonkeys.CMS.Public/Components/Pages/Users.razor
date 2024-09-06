@@ -1,6 +1,7 @@
 ﻿@page "/users"
 @inherits AuthenticationBaseComponent<Users>
 @rendermode InteractiveServer
+@using CodeMonkeys.CMS.Public.Components.Pages.Sites
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Authorization
@@ -48,8 +49,8 @@
                 <a href="/sites/create">Create new site</a>
                 <a href="/sites">Go to existing sites</a>
             </div>
-       <div>
-             <CodeMonkeys.CMS.Public.Components.Pages.Sites.Index />
+        <div>
+            <SitesIndex />
         </div>
         </div>
     </div>
