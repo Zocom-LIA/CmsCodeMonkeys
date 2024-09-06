@@ -62,7 +62,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                 .Where(page => page.SiteId == siteId)
                 .Skip(pageIndex * pageSize)
                 .Take(pageSize)
-                .OrderBy(page => page)
                 .Include(page => page.Contents)
                 .Include(page => page.Site)
                 .Include(page => page.Author)
@@ -93,55 +92,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
         public Task<WebPage?> GetWebPageAsync(int webPageId)
         {
             return Context.Pages.FirstOrDefaultAsync(page => page.WebPageId == webPageId);
-        }
-
-        public async Task<IEnumerable<Content>> MoveContentDownAsync(WebPage webPage, int ordinalNumber)
-        {
-            var contents = webPage.Contents.OrderBy(content => content.OrdinalNumber).ToArray();
-            int index = Array.FindIndex(contents, c => c.OrdinalNumber == ordinalNumber);
-
-            if (index < 0 || index >= contents.Length - 1)
-            {
-                return webPage.Contents;
-            }
-
-            (contents[index], contents[index + 1]) = (contents[index + 1], contents[index]);
-
-            return await UpdateOrdinalNumbersAsync(contents);
-        }
-
-        public async Task<IEnumerable<Content>> MoveContentUpAsync(WebPage webPage, int ordinalNumber)
-        {
-            var contents = webPage.Contents.ToArray();
-            int index = Array.FindIndex(contents, c => c.OrdinalNumber == ordinalNumber);
-
-            if (index <= 0)
-            {
-                return webPage.Contents;
-            }
-
-            (contents[index], contents[index - 1]) = (contents[index - 1], contents[index]);
-
-            return await UpdateOrdinalNumbersAsync(contents);
-        }
-
-        private async Task<IEnumerable<Content>> UpdateOrdinalNumbersAsync(Content[] contents)
-        {
-            List<Content> contentsToUpdate = new List<Content>();
-
-            for (int i = 0; i < contents.Length; i++)
-            {
-                if (contents[i].OrdinalNumber != i)
-                {
-                    contents[i].OrdinalNumber = i;
-                    contentsToUpdate.Add(contents[i]);
-                }
-            }
-
-            Context.Contents.UpdateRange(contentsToUpdate);
-            await Context.SaveChangesAsync();
-
-            return contents.OrderBy(content => content.OrdinalNumber);
         }
     }
 }
