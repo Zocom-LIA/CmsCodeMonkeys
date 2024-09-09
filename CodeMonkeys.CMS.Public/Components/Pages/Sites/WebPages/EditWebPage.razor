@@ -84,40 +84,46 @@
 }
 @if (WebPage?.Contents != null && WebPage.Contents.Any())
 {
-    <h4>Content</h4>
-    <table>
-        <thead>
-            <tr>
-                <td>Content Title</td>
-                <td>Content Type</td>
-                <td>Content Body</td>
-                <td>Created by</td>
-                <td>Created Date</td>
-                <td>LastModified</td>
-                <td>Ordinal number</td>
-                <td></td>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (Content content in WebPage?.Contents ?? [])
-            {
+    
+        <h4>Content</h4>
+    <div class="edit_webpage_content">
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>@content.Title</td>
-                    <td>@content.ContentType</td>
-                    <td>@content.Body</td>
-                    <td>@content.Author?.Email</td>
-                    <td>@content.CreatedDate.ToString("yyyy-MM-dd")</td>
-                    <td>@content.LastModifiedDate.ToString("yyyy-MM-dd")</td>
-                    <td>@content.OrdinalNumber</td>
-                    <td>
-                        <button type="button" class="w-100 btn btn-lg btn-primary" @onclick="async () => await EditContent(content.ContentId)">Edit</button>
-                        <button type="button" class="w-100 btn btn-lg btn-primary" @onclick="async () => await DeleteContent(content.ContentId)">Delete</button>
-                    </td>
+                    <th>Content Title</th>
+                    <th>Content Type</th>
+                    <th>Content Body</th>
+                    <th>Created by</th>
+                    <th>Created Date</th>
+                    <th>Last Modified</th>
+                    <th>Ordinal number</th>
+                    <th>Actions</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (Content content in WebPage?.Contents ?? [])
+                {
+                    <tr>
+                        <td data-label="Content Title">@content.Title</td>
+                        <td data-label="Content Type">@content.ContentType</td>
+                        <td data-label="Content Body">@content.Body</td>
+                        <td data-label="Created by">@content.Author?.Email</td>
+                        <td data-label="Created Date">@content.CreatedDate.ToString("yyyy-MM-dd")</td>
+                        <td data-label="Last Modified">@content.LastModifiedDate.ToString("yyyy-MM-dd")</td>
+                        <td data-label="Ordinal number">@content.OrdinalNumber</td>
+                        <td data-label="Actions">
+                            <div class="action-buttons-edit">
+                                <button type="button" class="btn btn-primary" @onclick="async () => await EditContent(content.ContentId)">Edit</button>
+                                <button type="button" class="btn btn-danger" @onclick="async () => await DeleteContent(content.ContentId)">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
+
 <div>
     <button type="button" class="w-100 btn btn-lg btn-primary" @onclick="async () => await AddContent()">Add Content!</button>
 </div>
