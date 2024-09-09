@@ -6,6 +6,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
     {
         Task CreateSiteAsync(Site site);
         Task UpdateSiteAsync(Site site);
+        Task DeleteSiteAsync(Site site);
 
         Task<IEnumerable<Site>> GetUserSitesAsync(Guid userId, int pageIndex = 0, int pageSize = 10);
         Task<Site?> GetUserSiteAsync(Guid userId, int siteId);
