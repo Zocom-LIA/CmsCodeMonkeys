@@ -1,5 +1,4 @@
-﻿
-.admin-action-buttons {
+﻿.admin-action-buttons {
     display: flex;
     justify-content: start; /* Knapparna placeras nära varandra */
     padding: 10px; /* Utrymme runt knapparna */
@@ -7,20 +6,20 @@
     border-radius: 10px; /* Rundade hörn på containern */
 }
 
-.admin-action-buttons a {
-text-decoration: none;
-color: #ffffff; /* Vit textfärg, för bättre synlighet på mörk bakgrund */
-background-color: #007bff; /* Bootstrap's standardblå färg för primary knappar */
-padding: 8px 16px; /* Padding runt texten */
-margin-right: 10px; /* Marginal mellan knapparna */
-border-radius: 5px; /* Rundade hörn för knapparna */
-transition: background-color 0.3s ease; /* Övergångseffekt för bakgrundsfärgen */
-}
+    .admin-action-buttons a {
+        text-decoration: none;
+        color: #ffffff; /* Vit textfärg, för bättre synlighet på mörk bakgrund */
+        background-color: #007bff; /* Bootstrap's standardblå färg för primary knappar */
+        padding: 8px 16px; /* Padding runt texten */
+        margin-right: 10px; /* Marginal mellan knapparna */
+        border-radius: 5px; /* Rundade hörn för knapparna */
+        transition: background-color 0.3s ease; /* Övergångseffekt för bakgrundsfärgen */
+    }
 
-.admin-action-buttons a:hover {
-    background-color: #0056b3; /* En mörkare blå nyans för hover-effekt */
-}
+        .admin-action-buttons a:hover {
+            background-color: #0056b3; /* En mörkare blå nyans för hover-effekt */
+        }
 
-.admin-action-buttons a:last-child {
-    margin-right: 0; /* Ingen marginal på den sista knappen */
-}
+        .admin-action-buttons a:last-child {
+            margin-right: 0; /* Ingen marginal på den sista knappen */
+        }

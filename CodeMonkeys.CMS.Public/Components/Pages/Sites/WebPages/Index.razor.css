@@ -1,4 +1,5 @@
-﻿.webpages-card {
+﻿/* Grundläggande stil */
+.webpages-card {
     background-color: #fff;
     border: 1px solid #dee2e6;
     border-radius: 0.25rem;
@@ -76,6 +77,64 @@
     align-items: center;
 }
 
+/* Responsiv design */
+@media (max-width: 1199.98px) {
+    .webpages-col-md-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .webpages-btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .webpages-col-md-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .webpages-card-header {
+        font-size: 1.1rem;
+    }
+
+    .webpages-card-footer {
+        font-size: 0.8rem;
+    }
+
+    .webpages-btn {
+        width: 100%;
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .webpages-card {
+        box-shadow: none;
+        border: none;
+    }
+
+    .webpages-card-body {
+        padding: 1rem;
+    }
+
+    .webpages-card-actions {
+        flex-direction: column;
+        padding: 0.5rem 1rem;
+    }
+
+    .webpages-btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .webpages-empty-box {
+        height: 120px;
+    }
+}
+
+
 
 /*Content_placment*/
 
@@ -83,7 +142,3 @@
     padding-top: 30px;
 }
 
-/*BackButton*/
-.backbutton {
-    margin-top: 20px;
-}

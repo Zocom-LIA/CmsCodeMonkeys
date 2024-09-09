@@ -86,3 +86,24 @@
     border-top: 1px solid #dee2e6;
     padding: 0.75rem 1.25rem;
 }
+
+/* Responsiv design */
+@media (max-width: 1199.98px) {
+    .sites-col-md-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .sites-col-md-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .sites-btn {
+        margin-bottom: 5px;
+    }
+}
