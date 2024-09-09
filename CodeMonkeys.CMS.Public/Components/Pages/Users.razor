@@ -1,6 +1,7 @@
 ﻿@page "/users"
 @inherits AuthenticationBaseComponent<Users>
 @rendermode InteractiveServer
+@using CodeMonkeys.CMS.Public.Components.Pages.Sites
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Authorization
@@ -44,13 +45,9 @@
                 </div>
                 <button class="admin-carousel-control next">&gt;</button>
             </div>
-            <div class="admin-action-buttons">
-                <a href="/sites/create">Create new site</a>
-                <a href="/sites">Go to existing sites</a>
+            <div>
+                 <SitesIndex />
             </div>
-       <div>
-             <CodeMonkeys.CMS.Public.Components.Pages.Sites.Index />
-        </div>
         </div>
     </div>
 </UserViewer>
