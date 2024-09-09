@@ -5,16 +5,14 @@
 @using Microsoft.AspNetCore.Identity
 
 @inherits AuthenticationBaseComponent<SitesCreate>
-@inject UserManager<User> UserManager
-@inject ISiteService SiteService
 @rendermode InteractiveServer
 @attribute [Authorize(Roles = "User, Admin")]
-
 
 <UserViewer>
     <div class="create-container">
         <div class="backbutton">
             @* Gå tillbaka *@
+            @* TODO: Fix the html anchor/button *@
             <a href="javascript:history.back()"><button>Gå tillbaka</button></a>
         </div>
 
