@@ -4,8 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace
- CodeMonkeys.CMS.Public.Shared.Data
+namespace CodeMonkeys.CMS.Public.Shared.Data
 {
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<User, Role, Guid>(options)
     {
@@ -13,6 +12,7 @@ namespace
         public DbSet<Site> Sites => Set<Site>();
         public DbSet<WebPage> Pages => Set<WebPage>();
         public DbSet<Content> Contents => Set<Content>();
+        public DbSet<Menu> Menus => Set<Menu>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
