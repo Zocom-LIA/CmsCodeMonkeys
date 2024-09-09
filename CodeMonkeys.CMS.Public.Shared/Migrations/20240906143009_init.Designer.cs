@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeMonkeys.CMS.Public.Shared.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240827115743_init")]
+    [Migration("20240906143009_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -37,6 +37,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Color")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

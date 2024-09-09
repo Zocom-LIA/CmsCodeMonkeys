@@ -17,6 +17,8 @@ namespace CodeMonkeys.CMS.Public.Shared.Entities
 
         public int OrdinalNumber { get; set; }
 
+        public string Color { get; set; } = "#1e1e1e";
+
         public object GetIdentifier() => ContentId;
     }
 }

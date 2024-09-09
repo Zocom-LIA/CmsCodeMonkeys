@@ -183,6 +183,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     OrdinalNumber = table.Column<int>(type: "int", nullable: false),
+                    Color = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     WebPageId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
