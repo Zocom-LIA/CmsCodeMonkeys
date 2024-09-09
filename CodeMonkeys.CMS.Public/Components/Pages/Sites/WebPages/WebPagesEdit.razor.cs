@@ -1,50 +1,44 @@
 ﻿using CodeMonkeys.CMS.Public.Components.Shared;
+using CodeMonkeys.CMS.Public.Components.Shared.UI;
 using CodeMonkeys.CMS.Public.Shared.Entities;
+using CodeMonkeys.CMS.Public.Shared.Extensions;
+using CodeMonkeys.CMS.Public.Shared.Repository;
 using CodeMonkeys.CMS.Public.Shared.Services;
 
 using Microsoft.AspNetCore.Components;
 
 using System.ComponentModel.DataAnnotations;
 
-namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
+namespace CodeMonkeys.CMS.Public.Components.Pages
 {
-    public partial class WebPagesEdit : AuthenticationBaseComponent<WebPagesEdit>
+    public partial class TestPageEdit : AuthenticationBaseComponent<TestPageEdit>
     {
-        [Inject]
-        public ISiteService SiteService { get; set; }
-        [Inject]
-        public IWebPageService WebPageService { get; set; }
-        [Inject]
-        public IContentService ContentService { get; set; }
-
         [SupplyParameterFromForm]
         private InputModel Input { get; set; } = new InputModel();
 
-        [Parameter]
-        public int siteId { get; set; }
+        public int siteId { get; set; } = 1;
         public Site? Site { get; set; }
 
-        [Parameter]
-        public int webPageId { get; set; }
+        public int webPageId { get; set; } = 1;
         public WebPage? WebPage { get; set; }
 
         private ContentModel? Content { get; set; }
         private ConfirmationDialog? Confirmation { get; set; }
+        private string ConfirmationTitle = "Delete Content";
+        private string? ConfirmationMessage = "Are you sure that you want to delete this content?";
+        private string ConfirmationButtonText = "Yes";
+        private string CancelButtonText = "Cancel";
+        private EventCallback OnConfirm;
+        private EventCallback OnCancel;
 
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            User? user = await GetCurrentUserAsync();
-            if (user == null)
-            {
-                Logger.LogDebug("Authenticated User is not authenticated");
-                return;
-            }
 
-            Site = await SiteService.GetUserSiteAsync(user.Id, siteId);
+            Site = await SiteService.GetUserSiteAsync(User!.Id, siteId);
             if (Site == null)
             {
-                Logger.LogDebug($"Site with ID '{siteId}' for User with ID '{user.Id}' not found.");
+                Logger.LogDebug($"Site with ID '{siteId}' for User with ID '{User!.Id}' not found.");
                 ErrorMessage = "There is no such site available to edit";
                 return;
             }
@@ -59,6 +53,24 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
             }
 
             Input.Title = WebPage.Title;
+            WebPage.Contents = WebPage.Contents.OrderBy(content => content.OrdinalNumber).ToList();
+
+            Site = await SiteService.GetSiteAsync(siteId);
+
+            if (Site == null)
+            {
+                Logger.LogDebug($"Site with ID '{siteId}' for User with ID '{User.Id}' not found.");
+                ErrorMessage = "There is no such site available to edit";
+                return;
+            }
+
+            WebPage = await WebPageService.GetWebPageAsync(webPageId);
+            if (WebPage == null)
+            {
+                Logger.LogDebug($"WebPage with ID '{webPageId}' for site with ID '{siteId}' not found.");
+                ErrorMessage = "There is no such webpage available to edit";
+                return;
+            }
         }
 
         private async Task HandleValidSubmit()
@@ -86,74 +98,51 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
             Navigation.NavigateTo($"sites/{siteId}/webpages");
         }
 
-        private Task AddContent()
+        public Task AddOrUpdateContent(int? contentId = null)
         {
-            Content = new ContentModel()
-            {
-                ContentType = ContentTypes.Text.ToString(),
-                OrdinalNumber = WebPage!.Contents.Count() + 1
-            };
-            return Task.CompletedTask;
-        }
+            ConfirmationMessage = null;
 
-        private Task EditContent(int contentId)
-        {
-            var content = WebPage!.Contents.FirstOrDefault(c => c.ContentId == contentId);
-
-            if (content == null)
+            if (contentId == null)
             {
-                ErrorMessage = "Content not found";
-                return Task.CompletedTask;
+                ConfirmationTitle = "Add Content";
+                Content = new ContentModel
+                {
+                    Title = "A Content Title",
+                    ContentType = "Text",
+                    Body = "A Content Body",
+                    OrdinalNumber = WebPage!.Contents.Count
+                };
+                ConfirmationButtonText = "Add Content";
             }
-
-            Content = new ContentModel()
+            else
             {
-                ContentId = content.ContentId,
-                Title = content.Title,
-                ContentType = content.ContentType,
-                Body = content.Body,
-                OrdinalNumber = content.OrdinalNumber
-            };
+                ConfirmationTitle = "Edit Content";
+                var content = WebPage!.Contents.FirstOrDefault(content => content.ContentId == contentId);
+                if (content == null)
+                {
+                    ErrorMessage = "Content not found";
+                    return Task.CompletedTask;
+                }
 
-            return Task.CompletedTask;
-        }
-
-        private Task DeleteContent(int contentId)
-        {
-            var content = WebPage!.Contents.FirstOrDefault(c => c.ContentId == contentId);
-
-            if (content == null)
-            {
-                ErrorMessage = "Content not found";
-                return Task.CompletedTask;
+                Content = new ContentModel
+                {
+                    ContentId = content.ContentId,
+                    Title = content.Title,
+                    ContentType = content.ContentType,
+                    Body = content.Body,
+                    OrdinalNumber = content.OrdinalNumber
+                };
+                ConfirmationButtonText = "Update Content";
             }
+            CancelButtonText = "Cancel";
+            OnConfirm = EventCallback.Factory.Create(this, async () => await AddOrUpdateContentConfirmed(contentId));
+            OnCancel = EventCallback.Factory.Create(this, () => CloseConfirmation());
 
-            ShowConfirmation("Are you sure you want to delete this content?", async () =>
-            {
-                await ContentService.DeleteContentAsync(contentId);
-
-                WebPage = await WebPageService.GetSiteWebPageAsync(siteId, webPageId);
-
-                // TODO: Remember to update Ordinal numbers correctly.
-
-                Confirmation = null;
-            },
-            () =>
-            {
-                Confirmation = null;
-                return Task.CompletedTask;
-            });
-
+            ShowConfirmation();
             return Task.CompletedTask;
         }
 
-        private void ShowConfirmation(string message, Func<Task> onConfirm, Func<Task> onCancel)
-        {
-            Confirmation = new ConfirmationDialog(message, onConfirm, onCancel);
-        }
-
-
-        private async Task CreateOrUpdateContent()
+        private async Task AddOrUpdateContentConfirmed(int? contentId = null)
         {
             if (Content == null)
             {
@@ -163,7 +152,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
 
             if (string.IsNullOrEmpty(Content.Title))
             {
-                ErrorMessage = "Content Title is required";
+                ErrorMessage = "Title is required";
                 return;
             }
 
@@ -175,52 +164,85 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
 
             if (string.IsNullOrEmpty(Content.Body))
             {
-                ErrorMessage = "Content Body is required";
+                ErrorMessage = "Body is required";
                 return;
             }
 
-            if (Content.OrdinalNumber <= 0 || Content.OrdinalNumber > WebPage.Contents.Count() + 1)
+            if (contentId == null)
             {
-                ErrorMessage = $"Ordinal Number must be between 1 and {WebPage.Contents.Count() + 1}.";
-                return;
-            }
-
-            if (Content.ContentId == null)
-            {
-                var content = new Content()
+                var content = new Content
                 {
                     Title = Content.Title,
                     ContentType = Content.ContentType,
                     Body = Content.Body,
+                    OrdinalNumber = Content.OrdinalNumber,
                     CreatedDate = DateTime.Now,
                     LastModifiedDate = DateTime.Now,
-                    OrdinalNumber = Content.OrdinalNumber,
-                    AuthorId = WebPage.AuthorId
+                    Author = User
                 };
 
-                WebPage.Contents.Add(content);
-                Content = null;
-                await WebPageService.UpdateWebPageAsync(WebPage);
+                WebPage!.Contents.Add(content);
+
+                WebPage!.Contents = (await WebPageService.UpdateWebPageContentsAsync(WebPage!, WebPage!.Contents)).ToList();
             }
             else
             {
-                var content = WebPage.Contents.FirstOrDefault(c => c.ContentId == Content.ContentId);
+                var content = WebPage!.Contents.FirstOrDefault(content => content.ContentId == contentId);
                 if (content == null)
                 {
                     ErrorMessage = "Content not found";
                     return;
                 }
 
+                content.ContentId = Content.ContentId ?? WebPage!.Contents.Aggregate((cur, max) => cur.ContentId > max.ContentId ? cur : max).ContentId + 1;
                 content.Title = Content.Title;
                 content.ContentType = Content.ContentType;
                 content.Body = Content.Body;
                 content.LastModifiedDate = DateTime.Now;
+                content.Author = User;
                 content.OrdinalNumber = Content.OrdinalNumber;
-
-                await WebPageService.UpdateWebPageAsync(WebPage);
-
-                Content = null;
             }
+
+            await WebPageService.UpdateOrdinalNumbersAsync(WebPage!);
+            CloseConfirmation();
+        }
+
+        public Task DeleteContent(int contentId)
+        {
+            ConfirmationTitle = "Delete Content";
+            ConfirmationMessage = "Are you sure you want to delete this content?";
+            ConfirmationButtonText = "Delete";
+            CancelButtonText = "Cancel";
+            OnConfirm = EventCallback.Factory.Create(this, async () => await DeleteContentConfirmed(contentId));
+            OnCancel = EventCallback.Factory.Create(this, async () => { CloseConfirmation(); await Task.CompletedTask; });
+
+            ShowConfirmation();
+
+            return Task.CompletedTask;
+        }
+
+        private async Task DeleteContentConfirmed(int contentId)
+        {
+            await ContentService.DeleteContentAsync(contentId);
+            WebPage!.Contents = WebPage!.Contents.Where(content => content.ContentId != contentId).ToList();
+
+            await WebPageService.UpdateOrdinalNumbersAsync(WebPage!);
+            CloseConfirmation();
+        }
+
+        private void CloseConfirmation()
+        {
+            Confirmation?.Hide();
+        }
+
+        private void ShowConfirmation()
+        {
+            Confirmation?.Show();
+        }
+
+        private void NavigateToWebPage(int webPageId, NavigationActions action)
+        {
+            Navigation.NavigateTo($"/sites/{siteId}");
         }
 
         private async Task MoveUp(int ordinalNumber)
@@ -233,39 +255,25 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
             WebPage!.Contents = (await WebPageService.MoveContentDownAsync(WebPage!, ordinalNumber)).ToList();
         }
 
-        private sealed class InputModel
+        public sealed class InputModel
         {
             [Required]
             public string Title { get; set; } = string.Empty;
         }
 
-        private sealed class ContentModel
+        public sealed class ContentModel
         {
             public int? ContentId { get; set; }
             [Required]
+            [MinLength(1, ErrorMessage = "You must not leave the Title empty.")]
             public string Title { get; set; } = string.Empty;
             [Required]
+            [MinLength(1, ErrorMessage = "You must not leave the ContentType empty.")]
             public string ContentType { get; set; } = string.Empty;
             [Required]
+            [MinLength(1, ErrorMessage = "You must not leave the Body empty.")]
             public string Body { get; set; } = string.Empty;
-            [Required]
             public int OrdinalNumber { get; set; }
         }
-    }
-
-    public sealed class ConfirmationDialog
-    {
-        public ConfirmationDialog(string message, Func<Task> onConfirm, Func<Task> onCancel)
-        {
-            Message = message ?? throw new ArgumentNullException(nameof(message));
-            OnConfirm = onConfirm ?? throw new ArgumentNullException(nameof(onConfirm));
-            OnCancel = onCancel ?? throw new ArgumentNullException(nameof(onCancel));
-        }
-
-        public string Message { get; set; }
-
-        public Func<Task> OnConfirm { get; set; }
-
-        public Func<Task> OnCancel { get; set; }
     }
 }
