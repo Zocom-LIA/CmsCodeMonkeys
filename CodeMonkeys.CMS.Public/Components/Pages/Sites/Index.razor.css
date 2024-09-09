@@ -1,0 +1,88 @@
+﻿.sites-row {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 50px;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.sites-col-md-4 {
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    flex: 0 0 33.3333%;
+    max-width: 33.3333%;
+}
+
+.sites-mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.sites-card {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.sites-card-header {
+    font-size: 1.25rem;
+    font-weight: bold;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.sites-card-body {
+    flex: 1 1 auto;
+    padding: 1.25rem;
+}
+
+.sites-empty-box {
+    background-color: #f8f9fa;
+    border: 1px dashed #6c757d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sites-card-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+    border-top: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+}
+
+.sites-btn {
+    width: 100%;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.sites-btn-delete {
+    background-color: #dc3545;
+    color: white;
+}
+
+.sites-btn-edit {
+    background-color: #007bff;
+    color: white;
+    margin-top: 10px;
+}
+
+.sites-btn-overview {
+    background-color: #6c757d;
+    color: white;
+    margin-top: 10px;
+}
+
+.sites-card-footer {
+    font-size: 0.85rem;
+    text-align: right;
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    padding: 0.75rem 1.25rem;
+}
