@@ -1,25 +1,25 @@
 ﻿using CodeMonkeys.CMS.Public.Components.Shared;
 using CodeMonkeys.CMS.Public.Components.Shared.UI;
 using CodeMonkeys.CMS.Public.Shared.Entities;
-using CodeMonkeys.CMS.Public.Shared.Extensions;
-using CodeMonkeys.CMS.Public.Shared.Repository;
 using CodeMonkeys.CMS.Public.Shared.Services;
 
 using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Logging;
 
 using System.ComponentModel.DataAnnotations;
 
-namespace CodeMonkeys.CMS.Public.Components.Pages
+namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
 {
-    public partial class TestPageEdit : AuthenticationBaseComponent<TestPageEdit>
+    public partial class WebPagesEdit : AuthenticationBaseComponent<WebPagesEdit>
     {
         [SupplyParameterFromForm]
         private InputModel Input { get; set; } = new InputModel();
 
-        public int siteId { get; set; } = 1;
+        [Parameter] public int siteId { get; set; }
         public Site? Site { get; set; }
 
-        public int webPageId { get; set; } = 1;
+        [Parameter] public int webPageId { get; set; }
         public WebPage? WebPage { get; set; }
 
         private ContentModel? Content { get; set; }
