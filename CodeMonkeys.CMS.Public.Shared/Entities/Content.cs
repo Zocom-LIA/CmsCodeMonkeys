@@ -16,6 +16,8 @@ namespace CodeMonkeys.CMS.Public.Shared.Entities
         public Guid? AuthorId { get; set; }
         public User? Author { get; set; }
 
+        public string Color { get; set; } = "#1e1e1e";
+
         public object GetIdentifier() => ContentId;
     }
 }
