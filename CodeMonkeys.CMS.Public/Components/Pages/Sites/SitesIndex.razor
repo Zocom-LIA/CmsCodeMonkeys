@@ -30,7 +30,7 @@
                         <div class="sites-card-actions">
                             <button type="button" class="btn btn-primary sites-btn sites-btn-edit" @onclick="async () => await  AddOrUpdateSite(site.SiteId)">Edit</button>
                             <a class="btn btn-secondary sites-btn sites-btn-overview" href="/sites/@site.SiteId/webpages">Preview</a>
-                            <button type="button" class="btn btn-danger sites-btn sites-btn-delete" @onclick="async () => await DeleteSite(site.SiteId)">Delete</button>                            <a class="btn btn-primary sites-btn sites-btn-edit" href="/sites/@site.SiteId/edit">Edit Title</a>
+                            <button type="button" class="btn btn-danger sites-btn sites-btn-delete" @onclick="async () => await DeleteSite(site.SiteId)">Delete</button>
                         </div>
                         <div class="sites-card-footer text-muted">
                             Last Modified: @site.LastModifiedDate.ToString("yyyy-MM-dd")
