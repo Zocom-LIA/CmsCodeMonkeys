@@ -11,10 +11,13 @@
 else
 {
     <div class="user-view">
-        <div class="backbutton">
-            @* TODO: Fix the html anchor/button *@
-            <a href="javascript:history.back()"><button>Gå tillbaka</button></a>
-        </div>
+        @if (ShowReturnButton)
+        {
+            <div class="backbutton">
+                    @* TODO: Fix the html anchor/button *@
+                    <a href="javascript:history.back()"><button>Gå tillbaka</button></a>
+                </div>
+        }
         <StatusMessage />
 
         @if (UserViewHeader != null)
