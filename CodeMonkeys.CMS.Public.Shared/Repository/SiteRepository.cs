@@ -39,7 +39,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 
         public async Task<Site?> GetSiteByNameAsync(string name)
         {
-            return await Context.Sites.Include(site => site.LandingPage).ThenInclude(page => page!.Contents).FirstOrDefaultAsync(site => site.Name == name);
+            return await Context.Sites.Include(site =>site.Pages).ThenInclude(page => page.Contents).Include(site => site.LandingPage).ThenInclude(page => page!.Contents).FirstOrDefaultAsync(site => site.Name == name);
         }
 
         public async Task<IEnumerable<Site>> GetUserSitesAsync(Guid userId, int pageIndex = 0, int pageSize = 10)

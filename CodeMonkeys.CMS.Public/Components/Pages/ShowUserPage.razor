@@ -1,4 +1,5 @@
 ﻿@page "/userPages/{SiteName}"
+@page "/userPages/{SiteName}/{PageName}"
 @inherits ContentBaseComponent<ShowUserPage>
 @rendermode InteractiveServer
 @using CodeMonkeys.CMS.Public.Components.Shared
@@ -22,6 +23,7 @@
     private Site? Site { get; set; }
     private WebPage? WebPage { get; set; }
     [Parameter] public required string SiteName { get; set; }
+    [Parameter] public string? PageName { get; set; } = null;
     [Inject] public required ISiteRepository Repository { get; set; }
 
     protected async override Task OnInitializedAsync()
@@ -37,17 +39,42 @@
             SetLoading(false);
             return;
         }
-        WebPage = Site.LandingPage ?? NoLandingPageConfiguredPage(SiteName);
-        SetLoading(false);//TODO handle exceptions
+        if (PageName == null)
+        {
+            WebPage = Site.LandingPage ?? NoLandingPageConfiguredPage(SiteName);
+            SetLoading(false);//TODO handle exceptions
+            return;
+        }
+        WebPage = FindPage(Site, PageName) ?? NoSuchPagePage(PageName);
+        SetLoading(false);
+    }
+
+    /* A user that assigns the number of one page as the title of another page will not be able to access the latter by title. This is their problem.
+     * A user that assigns the same name to multiple pages will have one displayed at random when a page with that title is requested. This is also their problem.
+     */
+    private WebPage? FindPage(Site site, string pageName) => FindPageByNumber(site, pageName) ?? FindPageByTitle(site, pageName);
+
+    private WebPage? FindPageByTitle(Site site, string pageName) => site.Pages.FirstOrDefault(p => p.Title == pageName);
+
+    private WebPage? FindPageByNumber(Site site, string pageName)
+    {
+        int pageNumber;
+        bool isInt = int.TryParse(pageName, out pageNumber);
+        if (!isInt) return null;
+        return site.Pages.FirstOrDefault(p => p.WebPageId == pageNumber);
     }
 
     private WebPage NoSuchSitePage(string SiteName)
     {
-        return new WebPage() { Contents = [new Content() { Body = $"No such site: {SiteName}" }] };
+        return new WebPage() { Title = "No such site", Contents = [new Content() { Body = $"No such site: {SiteName}" }] };
     }
 
     private WebPage NoLandingPageConfiguredPage(string SiteName)
     {
-        return new WebPage() { Contents = [new Content() { Body = $"No landing page configured for site: {SiteName}" }] };
+        return new WebPage() {Title = "No landing page configured", Contents = [new Content() { Body = $"No landing page configured for site: {SiteName}" }] };
+    }
+    private WebPage NoSuchPagePage(string PageName)
+    {
+        return new WebPage() { Title = "No such page", Contents = [new Content() { Body = $"No such page: {PageName}" }] };
     }
 }
