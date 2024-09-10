@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CodeMonkeys.CMS.Public.Shared.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class YourMigrationName2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
