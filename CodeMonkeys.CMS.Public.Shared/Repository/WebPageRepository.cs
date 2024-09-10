@@ -106,5 +106,11 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
         {
             return Context.Pages.FirstOrDefaultAsync(page => page.WebPageId == webPageId);
         }
+
+        public async Task DeleteWebPageAsync(WebPage page)
+        {
+            Context.Pages.Remove(page);
+            await Context.SaveChangesAsync();
+        }
     }
 }

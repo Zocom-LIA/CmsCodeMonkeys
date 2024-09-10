@@ -14,7 +14,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
     public partial class WebPagesEdit : AuthenticationBaseComponent<WebPagesEdit>
     {
         [SupplyParameterFromForm]
-        private InputModel Input { get; set; } = new InputModel();
+        private WebPageModel Input { get; set; } = new WebPageModel();
 
         [Parameter] public int siteId { get; set; }
         public Site? Site { get; set; }
@@ -98,7 +98,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
             Navigation.NavigateTo($"sites/{siteId}/webpages");
         }
 
-        public Task AddOrUpdateContent(int? contentId = null)
+        public Task AddOrUpdateContentAsync(int? contentId = null)
         {
             ConfirmationMessage = null;
 
@@ -135,14 +135,14 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
                 ConfirmationButtonText = "Update Content";
             }
             CancelButtonText = "Cancel";
-            OnConfirm = EventCallback.Factory.Create(this, async () => await AddOrUpdateContentConfirmed(contentId));
+            OnConfirm = EventCallback.Factory.Create(this, async () => await AddOrUpdateContentConfirmedAsync(contentId));
             OnCancel = EventCallback.Factory.Create(this, () => CloseConfirmation());
 
             ShowConfirmation();
             return Task.CompletedTask;
         }
 
-        private async Task AddOrUpdateContentConfirmed(int? contentId = null)
+        private async Task AddOrUpdateContentConfirmedAsync(int? contentId = null)
         {
             if (Content == null)
             {
@@ -207,13 +207,13 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
             CloseConfirmation();
         }
 
-        public Task DeleteContent(int contentId)
+        public Task DeleteContentAsync(int contentId)
         {
             ConfirmationTitle = "Delete Content";
             ConfirmationMessage = "Are you sure you want to delete this content?";
             ConfirmationButtonText = "Delete";
             CancelButtonText = "Cancel";
-            OnConfirm = EventCallback.Factory.Create(this, async () => await DeleteContentConfirmed(contentId));
+            OnConfirm = EventCallback.Factory.Create(this, async () => await DeleteContentConfirmedAsync(contentId));
             OnCancel = EventCallback.Factory.Create(this, async () => { CloseConfirmation(); await Task.CompletedTask; });
 
             ShowConfirmation();
@@ -221,7 +221,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
             return Task.CompletedTask;
         }
 
-        private async Task DeleteContentConfirmed(int contentId)
+        private async Task DeleteContentConfirmedAsync(int contentId)
         {
             await ContentService.DeleteContentAsync(contentId);
             WebPage!.Contents = WebPage!.Contents.Where(content => content.ContentId != contentId).ToList();
@@ -245,17 +245,17 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
             Navigation.NavigateTo($"/sites/{siteId}");
         }
 
-        private async Task MoveUp(int ordinalNumber)
+        private async Task MoveUpAsync(int ordinalNumber)
         {
             WebPage!.Contents = (await WebPageService.MoveContentUpAsync(WebPage!, ordinalNumber)).ToList();
         }
 
-        private async Task MoveDown(int ordinalNumber)
+        private async Task MoveDownAsync(int ordinalNumber)
         {
             WebPage!.Contents = (await WebPageService.MoveContentDownAsync(WebPage!, ordinalNumber)).ToList();
         }
 
-        public sealed class InputModel
+        public sealed class WebPageModel
         {
             [Required]
             public string Title { get; set; } = string.Empty;

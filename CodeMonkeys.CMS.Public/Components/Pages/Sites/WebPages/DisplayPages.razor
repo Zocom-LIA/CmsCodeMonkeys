@@ -1,0 +1,14 @@
+
+@code {
+    [Parameter]
+    public int SiteId { get; set; }
+
+    [Parameter]
+    public IEnumerable<WebPage> Pages { get; set; }
+
+    private string? ConfirmationTitle;
+    private string? ConfirmationButtonText;
+    private string? CancelButtonText;
+    private string? ConfirmationMessage;
+
+}

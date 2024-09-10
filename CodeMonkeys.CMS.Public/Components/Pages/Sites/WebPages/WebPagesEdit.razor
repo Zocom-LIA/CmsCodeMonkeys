@@ -1,4 +1,5 @@
 ﻿@page "/sites/{siteId:int}/webpages/{webPageId:int}/edit"
+
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components
 @using CodeMonkeys.CMS.Public.Components.Shared
@@ -28,7 +29,7 @@
         }
         else
         {
-        <h1>Edit Page</h1>
+            <h1>Edit Page</h1>
         }
     </UserViewHeader>
     <ChildContent>
@@ -61,17 +62,17 @@
                             <td>@content.OrdinalNumber</td>
                             <td>
                                 <button type="button" class="btn btn-sm btn-primary"
-                                        @onclick="() => MoveUp(content.OrdinalNumber)"
+                                        @onclick="() => MoveUpAsync(content.OrdinalNumber)"
                                         disabled="@(content.OrdinalNumber == 0)">
                                     Up
                                 </button>
                                 <button type="button" class="btn btn-sm btn-primary"
-                                        @onclick="() => MoveDown(content.OrdinalNumber)"
+                                        @onclick="() => MoveDownAsync(content.OrdinalNumber)"
                                         disabled="@(content.OrdinalNumber == WebPage!.Contents.Max(c => c.OrdinalNumber))">
                                     Down
                                 </button>
-                                <button type="button" class="btn btn-sm btn-primary" @onclick="async () => await  AddOrUpdateContent(content.ContentId)">Edit</button>
-                                <button type="button" class="btn btn-sm btn-primary" @onclick="async () => await DeleteContent(content.ContentId)">Delete</button>
+                                <button type="button" class="btn btn-sm btn-primary" @onclick="async () => await AddOrUpdateContentAsync(content.ContentId)">Edit</button>
+                                <button type="button" class="btn btn-sm btn-primary" @onclick="async () => await DeleteContentAsync(content.ContentId)">Delete</button>
                             </td>
                         </tr>
                     }
@@ -79,27 +80,19 @@
             </table>
         }
         <div>
-            <button type="button" class="w-100 btn btn btn-primary" @onclick="async () => await AddOrUpdateContent()">Add Content!</button>
+            <button type="button" class="w-100 btn btn btn-primary" @onclick="async () => await AddOrUpdateContentAsync()">Add Content!</button>
         </div>
 
-        <ConfirmationDialog @ref="Confirmation" Title="@ConfirmationTitle"
+        <ConfirmationDialog @ref="Confirmation" 
+                            Title="@ConfirmationTitle"
                             ConfirmationButtonText="@ConfirmationButtonText"
                             CancelButtonText="@CancelButtonText"
                             ConfirmationMessage="@ConfirmationMessage"
                             OnConfirm="OnConfirm"
                             OnCancel="OnCancel">
-            <EditForm Model="Input" method="post" OnValidSubmit="async () => await HandleValidSubmit()" FormName="updatewebpage">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-                <StatusMessage Message="@ErrorMessage" />
-
-                <div class="form-floating mb-3">
-                    <InputText @bind-Value="Input.Title" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" hidden="@(Content != null)" />
-                    <label for="name" class="form-label">Site Name</label>
-                    <ValidationMessage For="() => Input.Title" class="text-danger" />
-                </div>
-                @if (Content != null)
-                {
+            @if (Content != null)
+            {
+                <EditForm Model="Content" method="post" OnValidSubmit="async () => await HandleValidSubmit()" FormName="updatecontent">
                     <div class="form-floating mb-3">
                         <InputText @bind-Value="Content.Title" class="form-control" autocomplete="name" aria-required="true" placeholder="Content Title" />
                         <label for="name" class="form-label">Content Title</label>
@@ -120,8 +113,22 @@
                         <label for="name" class="form-label">Content Body</label>
                         <ValidationMessage For="() => Content.Body" class="text-danger" />
                     </div>
+                </EditForm>
+            }
+            else
+            {
+                <EditForm Model="Input" method="post" OnValidSubmit="async () => await HandleValidSubmit()" FormName="updatewebpage">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <StatusMessage Message="@ErrorMessage" />
+
+                    <div class="form-floating mb-3">
+                        <InputText @bind-Value="Input.Title" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" hidden="@(Content != null)" />
+                        <label for="name" class="form-label">Site Name</label>
+                        <ValidationMessage For="() => Input.Title" class="text-danger" />
+                    </div>
+                </EditForm>
                 }
-            </EditForm>
-        </ConfirmationDialog>
+                </ConfirmationDialog>
     </ChildContent>
 </UserViewer>
