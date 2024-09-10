@@ -1,5 +1,5 @@
-﻿@page "/userPages/{SiteName}"
-@page "/userPages/{SiteName}/{PageName}"
+﻿@page "/userPages/{SiteId:int}"
+@page "/userPages/{SiteId:int}/{PageName}"
 @inherits ContentBaseComponent<ShowUserPage>
 @rendermode InteractiveServer
 @using CodeMonkeys.CMS.Public.Components.Shared
@@ -22,7 +22,7 @@
 @code {
     private Site? Site { get; set; }
     private WebPage? WebPage { get; set; }
-    [Parameter] public required string SiteName { get; set; }
+    [Parameter] public required int SiteId { get; set; }
     [Parameter] public string? PageName { get; set; } = null;
     [Inject] public required ISiteRepository Repository { get; set; }
 
@@ -30,18 +30,18 @@
     {
         SetLoading(true);
         await base.OnInitializedAsync();
-        Site = await Repository.GetSiteByNameAsync(SiteName);
+        Site = await Repository.GetSiteWithContentsAsync(SiteId);
         if (Site == null)
         {
-            SetError($"No such site: {SiteName}");
-            WebPage = NoSuchSitePage(SiteName);
+            SetError($"No such site: {SiteId}");
+            WebPage = NoSuchSitePage(SiteId);
             // TODO return a 404
             SetLoading(false);
             return;
         }
         if (PageName == null)
         {
-            WebPage = Site.LandingPage ?? NoLandingPageConfiguredPage(SiteName);
+            WebPage = Site.LandingPage ?? NoLandingPageConfiguredPage(SiteId);
             SetLoading(false);//TODO handle exceptions
             return;
         }
@@ -64,12 +64,12 @@
         return site.Pages.FirstOrDefault(p => p.WebPageId == pageNumber);
     }
 
-    private WebPage NoSuchSitePage(string SiteName)
+    private WebPage NoSuchSitePage(int SiteName)
     {
         return new WebPage() { Title = "No such site", Contents = [new Content() { Body = $"No such site: {SiteName}" }] };
     }
 
-    private WebPage NoLandingPageConfiguredPage(string SiteName)
+    private WebPage NoLandingPageConfiguredPage(int SiteName)
     {
         return new WebPage() {Title = "No landing page configured", Contents = [new Content() { Body = $"No landing page configured for site: {SiteName}" }] };
     }
