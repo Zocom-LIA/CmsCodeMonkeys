@@ -13,7 +13,7 @@
         <StatusMessage/>
         @foreach(Content content in (WebPage?.Contents??[]).OrderBy(c=>c.OrdinalNumber))
         {
-            @content.Body
+            <span style="color:@content.Color">@content.Body</span>
         }
     </ChildContent>
 </UserViewer>

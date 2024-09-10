@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeMonkeys.CMS.Public.Shared.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240906165731_TestMigration")]
-    partial class TestMigration
+    [Migration("20240910100322_YourMigrationName2")]
+    partial class YourMigrationName2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,6 +37,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Color")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

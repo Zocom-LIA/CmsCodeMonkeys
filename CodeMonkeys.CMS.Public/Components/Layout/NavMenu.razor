@@ -21,22 +21,11 @@
         <AuthorizeView>
             <Authorized>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="/contents" style="color: white;">
-                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Contents
+                    <NavLink class="nav-link" href="sites" style="color: white;">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Site Index
                     </NavLink>
                 </div>
 
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="users" style="color: white;">
-                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Users
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="modal-test" style="color: white;">
-                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Modal Tests
-                    </NavLink>
-                </div>
 
                 <form action="Account/Logout" method="post" id="logout-form" class="d-inline">
                     <AntiforgeryToken />

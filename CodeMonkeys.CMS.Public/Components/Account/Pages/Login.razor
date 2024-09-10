@@ -107,7 +107,7 @@
 
             if (await UserManager.IsInRoleAsync(user, "Admin") || await UserManager.IsInRoleAsync(user, "User"))
             {
-                RedirectManager.RedirectTo("users");
+                RedirectManager.RedirectTo("sites");
             }
             else
             {
