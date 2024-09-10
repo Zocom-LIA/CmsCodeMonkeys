@@ -45,6 +45,9 @@
                 </div>
                 <button class="admin-carousel-control next">&gt;</button>
             </div>
+                  <div class="admin-action-buttons">
+                        <a href="/sites/create">Create new site</a>
+                    </div>
  
        
 
@@ -55,6 +58,7 @@
                     @foreach (Site site in Sites)
                     {
                         <div class="sites-col-md-4 sites-mb-4">
+                        
                             <div class="sites-card h-100">
                                 <div class="sites-card-header text-center font-weight-bold">
                                     @site.Name
@@ -73,14 +77,16 @@
                                     Last Modified: @site.LastModifiedDate.ToString("yyyy-MM-dd")
                                 </div>
                             </div>
+                            
                         </div>
                     }
                 }
                 else
                 {
-                    <div class="admin-action-buttons">
-                        <a href="/sites/create">Create new site</a>
-                    </div>
+                   
+                   <div>
+                   <p> No Pages</p>
+                   </div>
                 }
             </div>
         </div>
