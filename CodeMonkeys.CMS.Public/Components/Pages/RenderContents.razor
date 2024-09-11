@@ -8,7 +8,7 @@
 
 <VisitorViewer>
     <PageTitle>@WebPage?.Title</PageTitle>
-    <PageBody>
+    <ChildContent>
         <StatusMessage/>
         @foreach(ContentDto content in (WebPage?.Contents??[]).OrderBy(c=>c.OrdinalNumber))
         {
@@ -16,7 +16,7 @@
                 @RenderContent(content)
             </div>
         }
-    </PageBody>
+    </ChildContent>
 </VisitorViewer>
 
 @code {
