@@ -10,15 +10,8 @@
 @attribute [Authorize(Roles = "User, Admin")]
 
 <UserViewer>
-    <div class="backbutton">
-        @* Gå tillbaka *@
-        @* TODO: Fix the html anchor/button *@
-        <a href="javascript:history.back()"><button>Gå tillbaka</button></a>
-    </div>
-
     <div class="Content_Layout">
         <h3>Create new Page</h3>
-
         <EditForm Model="Input" method="post" OnValidSubmit="HandleValidSubmit" FormName="createwebpage">
             <DataAnnotationsValidator />
             <ValidationSummary />
@@ -29,10 +22,10 @@
                 <label for="name" class="form-label">Page title</label>
                 <ValidationMessage For="() => Input.Title" class="text-danger" />
             </div>
+
             <div>
                 <button type="submit" class="w-100 btn btn-lg btn-primary">Create page</button>
             </div>
-
         </EditForm>
     </div>
 </UserViewer>

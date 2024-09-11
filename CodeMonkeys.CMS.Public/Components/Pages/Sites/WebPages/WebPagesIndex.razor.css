@@ -1,0 +1,145 @@
+﻿/* Grundläggande stil */
+.webpages-card, .webpages-card-header {
+    background-color: #f8f9fa;
+}
+
+.webpages-card {
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+}
+
+    .webpages-card:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+.webpages-card-header {
+    border-bottom: 1px solid #dee2e6;
+    font-size: 1.25rem;
+    font-weight: bold;
+    padding: 0.75rem 1.25rem;
+    text-align: center;
+}
+
+.webpages-card-body {
+    flex: 1 1 auto;
+    padding: 1.25rem;
+}
+
+.webpages-card-footer, .webpages-card-header {
+    border-top: 1px solid #dee2e6;
+}
+
+.webpages-card-footer {
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 0.75rem 1.25rem;
+}
+
+.webpages-card-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 1.25rem;
+}
+
+.webpages-btn {
+    width: 48%;
+    text-align: center;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+}
+
+.webpages-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.webpages-col-md-4 {
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    flex: 0 0 33.3333%;
+    max-width: 33.3333%;
+}
+
+.webpages-mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.webpages-empty-box {
+    background-color: #f8f9fa;
+    border: 1px dashed #dee2e6;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Responsiv design */
+@media (max-width: 1199.98px) {
+    .webpages-col-md-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .webpages-btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .webpages-col-md-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .webpages-card-header {
+        font-size: 1.1rem;
+    }
+
+    .webpages-card-footer {
+        font-size: 0.8rem;
+    }
+
+    .webpages-btn {
+        width: 100%;
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .webpages-card {
+        box-shadow: none;
+        border: none;
+    }
+
+    .webpages-card-body {
+        padding: 1rem;
+    }
+
+    .webpages-card-actions {
+        flex-direction: column;
+        padding: 0.5rem 1rem;
+    }
+
+    .webpages-btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .webpages-empty-box {
+        height: 120px;
+    }
+}
+
+/*Content_placment*/
+
+.Content_Layout {
+    padding-top: 30px;
+}

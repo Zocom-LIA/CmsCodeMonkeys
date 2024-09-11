@@ -114,5 +114,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         {
             return await Repository.UpdateWebPageContentsAsync(webPage, contents);
         }
+
+        public Task DeleteWebPageAsync(WebPage page)
+        {
+            return Repository.DeleteWebPageAsync(page);
+        }
     }
 }
