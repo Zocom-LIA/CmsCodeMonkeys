@@ -4,12 +4,11 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Identity
 
-@inherits BaseComponent<Create>
-@inject UserManager<User> UserManager
-@inject ISiteService SiteService
+@inherits AuthenticationBaseComponent<SitesCreate>
 @rendermode InteractiveServer
 @attribute [Authorize(Roles = "User, Admin")]
 
+<UserViewer>
 <div class="create-container">
     <div class="backbutton">
         @* Gå tillbaka *@

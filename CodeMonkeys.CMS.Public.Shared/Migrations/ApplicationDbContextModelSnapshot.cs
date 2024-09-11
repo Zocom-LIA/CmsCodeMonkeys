@@ -37,6 +37,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ContentType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -64,6 +68,54 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.HasIndex("WebPageId");
 
                     b.ToTable("Contents");
+                });
+
+            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Menu", b =>
+                {
+                    b.Property<int>("MenuId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MenuId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SiteId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MenuId");
+
+                    b.HasIndex("SiteId");
+
+                    b.ToTable("Menus");
+                });
+
+            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.MenuItem", b =>
+                {
+                    b.Property<int>("MenuItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MenuItemId"));
+
+                    b.Property<int>("MenuId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WebPageId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MenuItemId");
+
+                    b.HasIndex("MenuId");
+
+                    b.HasIndex("WebPageId");
+
+                    b.ToTable("MenuItem");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.PageStats", b =>
@@ -362,6 +414,36 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.Navigation("Author");
                 });
 
+            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Menu", b =>
+                {
+                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.Site", "Site")
+                        .WithMany("Menus")
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Site");
+                });
+
+            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.MenuItem", b =>
+                {
+                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.Menu", "Menu")
+                        .WithMany("Items")
+                        .HasForeignKey("MenuId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", "WebPage")
+                        .WithMany()
+                        .HasForeignKey("WebPageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Menu");
+
+                    b.Navigation("WebPage");
+                });
+
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Site", b =>
                 {
                     b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.User", "Creator")
@@ -444,8 +526,15 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Menu", b =>
+                {
+                    b.Navigation("Items");
+                });
+
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Site", b =>
                 {
+                    b.Navigation("Menus");
+
                     b.Navigation("Pages");
                 });
 

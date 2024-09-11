@@ -11,11 +11,12 @@ namespace CodeMonkeys.CMS.Public.Shared.Entities
         public string Body { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime LastModifiedDate { get; set; }
-
+        public int OrdinalNumber { get; set; }
+        
         public Guid? AuthorId { get; set; }
         public User? Author { get; set; }
 
-        public int OrdinalNumber { get; set; }
+        public string Color { get; set; } = "#1e1e1e";
 
         public object GetIdentifier() => ContentId;
     }

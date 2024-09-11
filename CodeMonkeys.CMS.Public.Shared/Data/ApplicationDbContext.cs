@@ -1,4 +1,5 @@
 using CodeMonkeys.CMS.Public.Shared.Entities;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +12,11 @@ namespace CodeMonkeys.CMS.Public.Shared.Data
         public DbSet<Site> Sites => Set<Site>();
         public DbSet<WebPage> Pages => Set<WebPage>();
         public DbSet<Content> Contents => Set<Content>();
+        public DbSet<Menu> Menus => Set<Menu>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);  // Ensure Identity configurations are applied
+            base.OnModelCreating(modelBuilder); // Ensure Identity configurations are applied
 
             // Configure the one-to-many relationship between Site and WebPage
             modelBuilder.Entity<Site>()
@@ -25,8 +27,8 @@ namespace CodeMonkeys.CMS.Public.Shared.Data
             // Configure the one-to-one relationship between Site and LandingPage
             modelBuilder.Entity<Site>()
                 .HasOne(s => s.LandingPage)
-                .WithMany()  // No navigation back from WebPage to Site for LandingPage
-                .HasForeignKey(s => s.LandingPageId)  // Foreign key in Site to WebPage
+                .WithMany() // No navigation back from WebPage to Site for LandingPage
+                .HasForeignKey(s => s.LandingPageId) // Foreign key in Site to WebPage
                 .OnDelete(DeleteBehavior.NoAction); // Optionally set delete behavior to restrict or cascade
         }
     }

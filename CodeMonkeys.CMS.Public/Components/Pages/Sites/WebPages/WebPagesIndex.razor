@@ -1,93 +1,94 @@
-﻿@page "/sites/{siteId:int}/webpages"
+@page "/sites/{siteId:int}/webpages"
 @using CodeMonkeys.CMS.Public.Components.Account.Shared
+@using CodeMonkeys.CMS.Public.Components.Shared
+@using CodeMonkeys.CMS.Public.Components.Shared.UI
 @using CodeMonkeys.CMS.Public.Shared.Services
 @using Microsoft.AspNetCore.Identity
-@inherits BaseComponent<Index>
-
-@inject ISiteService SiteService
-@inject IWebPageService WebPageService
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Authorization
+@inherits AuthenticationBaseComponent<WebPagesIndex>
+@rendermode InteractiveServer
 @attribute [Authorize(Roles = "User, Admin")]
 
 <PageTitle>@Site?.Name</PageTitle>
 
-@if (IsLoading)
-{
-    <Loading />
-}
-else
-{
-    <div class="backbutton">
-        @* Gå tillbaka *@
-        <a href="javascript:history.back()"><button>Gå tillbaka</button></a>
-    </div>
+<UserViewer>
+    <div class="Page_Layout">
+        <StatusMessage Message="@ErrorMessage" />
 
-    <div class="Content_Layout">
-    <StatusMessage Message="@ErrorMessage" />
+        <div>
+            <h3>Overview for @Site?.Name</h3>
+            <button type="button" class="btn btn-primary" @onclick="async() => await AddOrUpdatePageAsync()">Create new page</button>
+        </div>
 
-    <div>
-        <h3>Overview for @Site?.Name</h3>
-        <a class="btn btn-primary" href="/sites/@siteId/webpages/create">Create new page</a>
-    </div>
-
-        <div class="webpages-row mt-4">
-            @foreach (var webPage in Pages ?? Enumerable.Empty<WebPage>())
-            {
-                <div class="webpages-col-md-4 webpages-mb-4">
-                    <div class="webpages-card h-100">
-                        <div class="webpages-card-header text-center font-weight-bold">
-                            @webPage.Title
-                        </div>
-                        <div class="webpages-card-body">
-                            <div class="webpages-empty-box bg-light" style="height: 150px;">
-                                <!-- Additional content can go here -->
-                            </div>
-                        </div>
-                        <div class="webpages-card-actions">
-                            <a class="btn btn-primary webpages-btn webpages-btn-edit" href="/sites/@siteId/webpages/@webPage.WebPageId/edit">Edit</a>
-                            <a class="btn btn-danger webpages-btn webpages-btn-delete" href="/sites/@siteId/webpages/@webPage.WebPageId/delete">Delete</a>
-                        </div>
-                        <div class="webpages-card-footer text-muted">
-                            Last Modified: @webPage.LastModifiedDate.ToString("yyyy-MM-dd")
-                        </div>
-                    </div>
-                </div>
-            }
+        @if (Site != null && Site.Pages.Any())
+        {
+            <h4>Page</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <td>Page Title</td>
+                        <td>Created by</td>
+                        <td>Created Date</td>
+                        <td>LastModified</td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (WebPage Page in Site.Pages)
+                    {
+                        <tr>
+                            <td>@Page.Title</td>
+                            <td>@Page.Author?.Email</td>
+                            <td>@Page.CreatedDate.ToString("yyyy-MM-dd")</td>
+                            <td>@Page.LastModifiedDate.ToString("yyyy-MM-dd")</td>
+                            <td>
+                                <button class="btn btn-primary" @onclick="async () => await AddOrUpdatePageAsync(Page.WebPageId)">Edit page title</button>
+                                <button class="btn btn-secondary" @onclick="async () => await EditContentsAsync(Page.WebPageId)">Edit contents</button>
+                                <button class="btn btn-danger" @onclick="async () => await DeletePageAsync(Page.WebPageId)">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        <div>
+            <button type="button" class="w-100 btn btn btn-primary" @onclick="async () => await AddOrUpdatePageAsync()">Create new Page!</button>
         </div>
     </div>
 
-    <div>
-        <a class="btn btn-primary" href="/sites/@siteId/webpages/create">Create new page</a>
-    </div>
-}
-
-@code
-{
-    [Parameter]
-    public int siteId { get; set; }
-
-    public Site? Site { get; set; }
-
-    private IEnumerable<WebPage> Pages = Enumerable.Empty<WebPage>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-        User? user = await GetCurrentUserAsync();
-
-        if (user == null)
+    <ConfirmationDialog @ref="Confirmation" Title="@ConfirmationTitle"
+                        ConfirmationButtonText="@ConfirmationButtonText"
+                        CancelButtonText="@CancelButtonText"
+                        ConfirmationMessage="@ConfirmationMessage"
+                        OnConfirm="OnConfirm"
+                        OnCancel="OnCancel">
+        @if (_pageModel == null)
         {
-            Logger.LogWarning("Authenticated User is not authenticated");
-            return;
+            <EditForm Model="Input" method="post" OnValidSubmit="async () => await HandleValidSubmit()" FormName="updatesite">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <StatusMessage Message="@ErrorMessage" />
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="Input.Name" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" />
+                    <label for="name" class="form-label">Site Name</label>
+                    <ValidationMessage For="() => Input.Name" class="text-danger" />
+                </div>                
+            </EditForm>
         }
-
-        Site = await SiteService.GetUserSiteAsync(user.Id, siteId);
-        if (Site == null)
+        else
         {
-            Logger.LogWarning("Site not found");
-            ErrorMessage = "There is no such site";
-            return;
+            <EditForm Model="_pageModel" method="post" OnValidSubmit="async () => await HandleValidSubmit()" FormName="updatepage">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <StatusMessage Message="@ErrorMessage" />
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="_pageModel.Title" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" />
+                    <label for="name" class="form-label">Site Name</label>
+                    <ValidationMessage For="() => _pageModel.Title" class="text-danger" />
+                 </div>
+            </EditForm>
         }
-
-        Pages = await WebPageService.GetSiteWebPagesAsync(siteId);
-    }
-}
+    </ConfirmationDialog>
+</UserViewer>

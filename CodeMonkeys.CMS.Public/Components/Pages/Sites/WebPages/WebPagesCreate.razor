@@ -5,29 +5,30 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Identity
 
-@inherits BaseComponent<Create>
-@inject UserManager<User> UserManager
-@inject IWebPageService WebPageService
+@inherits AuthenticationBaseComponent<WebPagesCreate>
 @rendermode InteractiveServer
 @attribute [Authorize(Roles = "User, Admin")]
 
-<h3>Create new Page</h3>
+<UserViewer>
+    <div class="Content_Layout">
+        <h3>Create new Page</h3>
+        <EditForm Model="Input" method="post" OnValidSubmit="HandleValidSubmit" FormName="createwebpage">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <StatusMessage Message="@ErrorMessage" />
 
-<EditForm Model="Input" method="post" OnValidSubmit="HandleValidSubmit" FormName="createwebpage">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <StatusMessage Message="@ErrorMessage" />
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Input.Title" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" />
+                <label for="name" class="form-label">Page title</label>
+                <ValidationMessage For="() => Input.Title" class="text-danger" />
+            </div>
 
-    <div class="form-floating mb-3">
-        <InputText @bind-Value="Input.Title" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" />
-        <label for="name" class="form-label">Page title</label>
-        <ValidationMessage For="() => Input.Title" class="text-danger" />
+            <div>
+                <button type="submit" class="w-100 btn btn-lg btn-primary">Create page</button>
+            </div>
+        </EditForm>
     </div>
-    <div>
-        <button type="submit" class="w-100 btn btn-lg btn-primary">Create page</button>
-    </div>
-
-</EditForm>
+</UserViewer>
 
 @code {
     [SupplyParameterFromForm]

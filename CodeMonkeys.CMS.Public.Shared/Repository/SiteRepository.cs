@@ -1,6 +1,8 @@
 ﻿using CodeMonkeys.CMS.Public.Shared.Data;
 using CodeMonkeys.CMS.Public.Shared.Entities;
+
 using Microsoft.EntityFrameworkCore;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,9 +25,21 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             await Context.SaveChangesAsync();
         }
 
-        public async Task<Site?> GetSiteByNameAsync(string name)
+        public Task UpdateSiteAsync(Site site)
         {
-            return await Context.Sites.Include(site => site.LandingPage).ThenInclude(page => page!.Contents).FirstOrDefaultAsync(site => site.Name == name);
+            Context.Sites.Update(site);
+            return Context.SaveChangesAsync();
+        }
+
+        public async Task DeleteSiteAsync(Site site)
+        {
+            Context.Sites.Remove(site);
+            await Context.SaveChangesAsync();
+        }
+
+        public async Task<Site?> GetSiteWithContentsAsync(int siteId)
+        {
+            return await Context.Sites.Include(site => site.Pages).ThenInclude(page => page.Contents).Include(site => site.LandingPage).ThenInclude(page => page!.Contents).FirstOrDefaultAsync(site => site.SiteId == siteId);
         }
 
         public async Task<IEnumerable<Site>> GetUserSitesAsync(Guid userId, int pageIndex = 0, int pageSize = 10)
@@ -37,19 +51,19 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                 .Where(site => site.CreatorId.Equals(userId))
                 .Skip(pageIndex * pageSize)
                 .Take(pageSize)
+                .OrderBy(site => site.CreatedDate)
                 .Include(site => site.LandingPage)
                 .Include(site => site.Pages)
-                //.ThenInclude(page => page.Contents)
+                .ThenInclude(page => page.Contents)
                 .Include(site => site.Creator)
                 .ToListAsync();
         }
 
         public Task<Site?> GetUserSiteAsync(Guid userId, int siteId) => Context.Sites.Include(site => site.LandingPage).Include(site => site.Pages).FirstOrDefaultAsync(site => site.SiteId == siteId && site.CreatorId.Equals(userId));
 
-        public Task UpdateSiteAsync(Site site)
+        public Task<Site?> GetSiteAsync(int siteId)
         {
-            Context.Sites.Update(site);
-            return Context.SaveChangesAsync();
+            return Context.Sites.Include(site => site.LandingPage).Include(site => site.Pages).FirstOrDefaultAsync(site => site.SiteId == siteId);
         }
     }
 }

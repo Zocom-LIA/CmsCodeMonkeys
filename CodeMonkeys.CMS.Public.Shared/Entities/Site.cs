@@ -13,13 +13,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Entities
         public Guid? CreatorId { get; set; }
         public User? Creator { get; set; }
 
-        public ICollection<WebPage> Pages { get; set; } = new List<WebPage>();
-
-        // Explicit Foreign Key
         public int? LandingPageId { get; set; }
-
-        [ForeignKey("LandingPageId")]
         public WebPage? LandingPage { get; set; }
+        public ICollection<WebPage> Pages { get; set; } = new List<WebPage>();
+        public ICollection<Menu> Menus { get; set; } = new List<Menu>();
 
         public object GetIdentifier() => SiteId;
     }

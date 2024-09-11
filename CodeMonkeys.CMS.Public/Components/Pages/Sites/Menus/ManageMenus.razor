@@ -1,0 +1,33 @@
+﻿@page "/sites/{siteId}/menus"
+@inherits AuthenticationBaseComponent<ManageMenus>
+@using CodeMonkeys.CMS.Public.Shared.Entities
+@using CodeMonkeys.CMS.Public.Shared.Services
+@inject IMenuService MenuService
+
+<UserViewer>
+    <div>
+        @if (Site != null)
+        {
+            <h2>Manage Menus for "@Site.Name"</h2>
+        }
+    </div>
+</UserViewer>
+
+@code {
+    [Parameter]
+    public int siteId { get; set; }
+    public Site? Site { get; set; }
+    public IEnumerable<Menu>? Menus { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        Site = await SiteService.GetUserSiteAsync(User!.Id, siteId);
+
+        if (Site == null)
+        {
+            Logger.LogWarning($"Site for user with ID '{User!.Id}' not found");
+        }
+        Menus = await MenuService.GetMenusBySiteIdAsync(siteId);
+    }
+}

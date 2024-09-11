@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CodeMonkeys.CMS.Public.Shared.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class YourMigrationName2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -181,8 +181,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     Body = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     OrdinalNumber = table.Column<int>(type: "int", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Color = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     WebPageId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -193,6 +194,35 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         column: x => x.AuthorId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MenuItem",
+                columns: table => new
+                {
+                    MenuItemId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MenuId = table.Column<int>(type: "int", nullable: false),
+                    WebPageId = table.Column<int>(type: "int", nullable: false),
+                    Order = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MenuItem", x => x.MenuItemId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Menus",
+                columns: table => new
+                {
+                    MenuId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SiteId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Menus", x => x.MenuId);
                 });
 
             migrationBuilder.CreateTable(
@@ -294,6 +324,21 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 column: "WebPageId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MenuItem_MenuId",
+                table: "MenuItem",
+                column: "MenuId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MenuItem_WebPageId",
+                table: "MenuItem",
+                column: "WebPageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Menus_SiteId",
+                table: "Menus",
+                column: "SiteId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Pages_AuthorId",
                 table: "Pages",
                 column: "AuthorId");
@@ -319,6 +364,30 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 column: "WebPageId",
                 principalTable: "Pages",
                 principalColumn: "WebPageId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_MenuItem_Menus_MenuId",
+                table: "MenuItem",
+                column: "MenuId",
+                principalTable: "Menus",
+                principalColumn: "MenuId",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_MenuItem_Pages_WebPageId",
+                table: "MenuItem",
+                column: "WebPageId",
+                principalTable: "Pages",
+                principalColumn: "WebPageId",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Menus_Sites_SiteId",
+                table: "Menus",
+                column: "SiteId",
+                principalTable: "Sites",
+                principalColumn: "SiteId",
+                onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Pages_Sites_SiteId",
@@ -362,10 +431,16 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 name: "Contents");
 
             migrationBuilder.DropTable(
+                name: "MenuItem");
+
+            migrationBuilder.DropTable(
                 name: "PageStats");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Menus");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

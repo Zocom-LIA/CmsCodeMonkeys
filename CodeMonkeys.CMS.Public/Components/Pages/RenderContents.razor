@@ -1,0 +1,54 @@
+﻿@page "/content/{WebPageId:int?}"
+@inherits ContentBaseComponent<ShowUserPage>
+@using CodeMonkeys.CMS.Public.Components.Shared
+@using CodeMonkeys.CMS.Public.Components.Account.Shared
+@using CodeMonkeys.CMS.Public.Shared.DTOs
+@using CodeMonkeys.CMS.Public.Shared.Entities
+@using CodeMonkeys.CMS.Public.Shared.Repository
+
+<VisitorViewer>
+    <PageTitle>@WebPage?.Title</PageTitle>
+    <PageBody>
+        <StatusMessage/>
+        @foreach(ContentDto content in (WebPage?.Contents??[]).OrderBy(c=>c.OrdinalNumber))
+        {
+            <div class="content-container">
+                @RenderContent(content)
+            </div>
+        }
+    </PageBody>
+</VisitorViewer>
+
+@code {
+    private Site? Site { get; set; }
+    private WebPageDto? WebPage { get; set; }
+    private IEnumerable<ContentDto> Contents { get; set; }
+    [Parameter] public required int? WebPageId { get; set; }
+    [Inject] public required ISiteRepository Repository { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await ExecuteWithLoadingAsync(async () =>
+        {
+            WebPage = (await WebPageService.GetVisitorPageAsync(WebPageId)).FirstOrDefault();
+        });
+    }
+
+    private RenderFragment RenderContent(ContentDto item) => @<div>
+        @if (item.ContentType == ContentTypes.Paragraph.ToString())
+        {
+            <p>@item.Body</p>
+        }
+    else if (item.ContentType == ContentTypes.Image.ToString())
+        {
+            <img src="@item.Body" alt="@item.Title" />
+        }
+        else if (item.ContentType == ContentTypes.Video.ToString())
+        {
+            <video controls>
+                <source src="@item.Body" type="video/mp4" />
+            </video>
+        }
+        </div>;
+}

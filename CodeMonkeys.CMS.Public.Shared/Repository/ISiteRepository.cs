@@ -12,7 +12,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
         Task CreateAsync(Site site);
         Task UpdateSiteAsync(Site site);
         Task<Site?> GetUserSiteAsync(Guid userId, int siteId);
-        Task<Site?> GetSiteByNameAsync(string name);
+        Task<Site?> GetSiteWithContentsAsync(int siteId);
         Task<IEnumerable<Site>> GetUserSitesAsync(Guid userId, int pageIndex = 0, int pageSize = 10);
+        Task DeleteSiteAsync(Site site);
+        Task<Site?> GetSiteAsync(int siteId);
     }
 }
