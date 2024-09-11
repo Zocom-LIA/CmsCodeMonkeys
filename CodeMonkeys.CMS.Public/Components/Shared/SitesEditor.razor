@@ -1,0 +1,39 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components
+@using CodeMonkeys.CMS.Public.Components.Shared
+@using CodeMonkeys.CMS.Public.Components.Shared.UI
+@using System.ComponentModel.DataAnnotations
+@using CodeMonkeys.CMS.Public.Components.Account.Shared
+@using CodeMonkeys.CMS.Public.Shared.Entities
+@using CodeMonkeys.CMS.Public.Shared.Services
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+
+@inherits AuthenticationBaseComponent<SitesEditor>
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "User, Admin")]
+
+@*
+    TODO:
+    - Add button to cancel the changes.
+    - Don't commit the changes before the button to save the changes is clicked
+*@
+
+<UserViewer>
+    @if (WebPage != null)
+    {
+        <h1>Edit Page for @WebPage.Title</h1>
+    }
+    else if (Site != null)
+    {
+        <h1>Edit Page for @Site.Name</h1>
+    }
+
+    <ConfirmationDialog @ref="Confirmation" Title="@ConfirmationTitle"
+                        ConfirmationButtonText="@ConfirmationButtonText"
+                        CancelButtonText="@CancelButtonText"
+                        ConfirmationMessage="@ConfirmationMessage"
+                        OnConfirm="OnConfirm"
+                        OnCancel="OnCancel">
+    </ConfirmationDialog>
+</UserViewer>

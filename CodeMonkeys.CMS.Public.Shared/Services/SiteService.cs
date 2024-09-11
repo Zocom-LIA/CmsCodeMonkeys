@@ -21,6 +21,11 @@ public class SiteService : ISiteService
         await Repository.UpdateSiteAsync(site);
     }
 
+    public async Task DeleteSiteAsync(Site site)
+    {
+        await Repository.DeleteSiteAsync(site);
+    }
+
     public async Task<IEnumerable<Site>> GetUserSitesAsync(Guid userId, int pageIndex = 0, int pageSize = 10)
     {
         return await Repository.GetUserSitesAsync(userId, pageIndex, pageSize);

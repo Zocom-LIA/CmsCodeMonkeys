@@ -1,4 +1,5 @@
 ﻿@page "/sites"
+@using CodeMonkeys.CMS.Public.Components.Shared.UI
 @using CodeMonkeys.CMS.Public.Shared.Services
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Identity
@@ -45,23 +46,22 @@
                 </div>
                 <button class="admin-carousel-control next">&gt;</button>
             </div>
-                  <div class="admin-action-buttons">
-                        <a href="/sites/create">Create new site</a>
-                    </div>
             
             <h2 class="admin-templates-title" style=" text-align: center; margin-bottom:-59px;">
-  My Web Pages
-</h2>
-       
+                My Sites
+            </h2>
 
-        <div class="Content_Layout">
-            <div class="sites-row">
-                @if (Sites != null && Sites.Any())
+            <div class="admin-action-buttons">
+                <button type="button" class="btn btn btn-primary" @onclick="async () => await AddOrUpdateSite()">Create Site!</button>
+            </div>
+
+            <div>
+                @if (Sites != null)
                 {
-                    @foreach (Site site in Sites)
+                    <div class="sites-row">
+                    @foreach (Site site in Sites ?? [])
                     {
                         <div class="sites-col-md-4 sites-mb-4">
-                        
                             <div class="sites-card h-100">
                                 <div class="sites-card-header text-center font-weight-bold">
                                     @site.Name
@@ -72,46 +72,39 @@
                                     </div>
                                 </div>
                                 <div class="sites-card-actions">
-                                    <a class="btn btn-primary sites-btn sites-btn-edit" href="/sites/@site.SiteId/edit">Edit Title</a>
-                                    <a class="btn btn-secondary sites-btn sites-btn-overview" href="/sites/@site.SiteId/webpages">Preview</a>
-                                    <a class="btn btn-danger sites-btn sites-btn-delete" href="/sites">Delete</a> 
+                                    <button type="button" class="btn btn-primary sites-btn sites-btn-edit" @onclick="async () => await  AddOrUpdateSite(site.SiteId)">Edit Title</button>
+                                    <a class="btn btn-secondary sites-btn sites-btn-overview" href="/sites/@site.SiteId/webpages">View Pages</a>
+                                    <button type="button" class="btn btn-danger sites-btn sites-btn-delete" @onclick="async () => await DeleteSite(site.SiteId)">Delete</button>
                                 </div>
                                 <div class="sites-card-footer text-muted">
                                     Last Modified: @site.LastModifiedDate.ToString("yyyy-MM-dd")
                                 </div>
                             </div>
-                            
                         </div>
                     }
-                }
-                else
-                {
-                   
-                   <div>
-                   <p> No Pages</p>
-                   </div>
+                    </div>
                 }
             </div>
         </div>
-         </div>
     </div>
 </UserViewer>
+<ConfirmationDialog @ref="Confirmation" Title="@ConfirmationTitle"
+                    ConfirmationButtonText="@ConfirmationButtonText"
+                    CancelButtonText="@CancelButtonText"
+                    ConfirmationMessage="@ConfirmationMessage"
+                    OnConfirm="OnConfirm"
+                    OnCancel="OnCancel">
+    <div class="Content_Layout">
+        <EditForm Model="Site" method="post" OnValidSubmit="HandleValidSubmit" FormName="createsite">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <StatusMessage Message="@ErrorMessage" />
 
-@code
-{
-    private IEnumerable<Site> Sites = [];
-
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-        User? user = await GetCurrentUserAsync();
-
-        if (user == null)
-        {
-            Logger.LogWarning("Authenticated User is not authenticated");
-            return;
-        }
-
-        Sites = await SiteService.GetUserSitesAsync(user.Id);
-    }
-}
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Site.Name" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" />
+                <label for="name" class="form-label">Site Name</label>
+                <ValidationMessage For="() => Site.Name" class="text-danger" />
+            </div>
+        </EditForm>
+    </div>
+</ConfirmationDialog>

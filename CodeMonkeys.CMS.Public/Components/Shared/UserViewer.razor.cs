@@ -10,6 +10,8 @@ namespace CodeMonkeys.CMS.Public.Components.Shared
         [Parameter]
         public RenderFragment? UserViewHeader { get; set; }
 
+        [Parameter] public bool ShowReturnButton { get; set; } = true;
+
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();

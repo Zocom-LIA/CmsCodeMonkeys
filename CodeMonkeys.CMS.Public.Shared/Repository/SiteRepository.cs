@@ -25,9 +25,21 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             await Context.SaveChangesAsync();
         }
 
+        public Task UpdateSiteAsync(Site site)
+        {
+            Context.Sites.Update(site);
+            return Context.SaveChangesAsync();
+        }
+
+        public async Task DeleteSiteAsync(Site site)
+        {
+            Context.Sites.Remove(site);
+            await Context.SaveChangesAsync();
+        }
+
         public async Task<Site?> GetSiteWithContentsAsync(int siteId)
         {
-            return await Context.Sites.Include(site =>site.Pages).ThenInclude(page => page.Contents).Include(site => site.LandingPage).ThenInclude(page => page!.Contents).FirstOrDefaultAsync(site => site.SiteId == siteId);
+            return await Context.Sites.Include(site => site.Pages).ThenInclude(page => page.Contents).Include(site => site.LandingPage).ThenInclude(page => page!.Contents).FirstOrDefaultAsync(site => site.SiteId == siteId);
         }
 
         public async Task<IEnumerable<Site>> GetUserSitesAsync(Guid userId, int pageIndex = 0, int pageSize = 10)
@@ -48,12 +60,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
         }
 
         public Task<Site?> GetUserSiteAsync(Guid userId, int siteId) => Context.Sites.Include(site => site.LandingPage).Include(site => site.Pages).FirstOrDefaultAsync(site => site.SiteId == siteId && site.CreatorId.Equals(userId));
-
-        public Task UpdateSiteAsync(Site site)
-        {
-            Context.Sites.Update(site);
-            return Context.SaveChangesAsync();
-        }
 
         public Task<Site?> GetSiteAsync(int siteId)
         {

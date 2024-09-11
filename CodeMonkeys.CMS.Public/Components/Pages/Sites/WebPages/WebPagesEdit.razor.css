@@ -1,0 +1,98 @@
+﻿input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+    input:focus, select:focus, textarea:focus {
+        border-color: #007bff;
+    }
+
+ Label Styling 
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+
+
+/* Table Styling 
+ Grundläggande tabellstil för felsökning */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: white;  Lägg till en synlig bakgrundsfärg 
+}
+
+th, td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: left;
+    word-wrap: break-word;  Försäkra att lång text bryts 
+word-break: break-word;
+    color: black;  Gör textfärgen mycket tydlig för felsökning 
+background-color: lightblue;  Gör cellernas bakgrund tydlig 
+max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;  Använd ellips om texten är för lång 
+}
+
+ /*Rubrikstilar */
+th {
+    background-color: #007bff;
+    color: black;
+}
+/*
+ Responsiv design för mindre skärmar */
+@media (max-width: 768px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+        width: 100%;
+    }
+
+    thead {
+        display: none;
+    }
+
+    tr {
+        margin-bottom: 10px;
+        border-bottom: 2px solid #ddd;
+    }
+
+    td {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border: none;
+        border-bottom: 1px solid #ddd;
+    }
+
+        td:before {
+            content: attr(data-label);
+            font-weight: bold;
+            flex-basis: 40%;
+            text-transform: capitalize;
+            padding-right: 10px;
+        }
+}
+
+/* För mindre skärmar */
+@media (max-width: 576px) {
+    td {
+        padding: 8px;
+        font-size: 0.85rem;
+    }
+
+        td:before {
+            font-size: 0.8rem;
+        }
+}
+
+
+
+.backbutton {
+    margin-top: 20px;
+}
