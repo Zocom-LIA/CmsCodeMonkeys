@@ -12,7 +12,6 @@
 <UserViewer>
     <div class="Content_Layout">
         <h3>Create new Page</h3>
-
         <EditForm Model="Input" method="post" OnValidSubmit="HandleValidSubmit" FormName="createwebpage">
             <DataAnnotationsValidator />
             <ValidationSummary />
@@ -23,10 +22,10 @@
                 <label for="name" class="form-label">Page title</label>
                 <ValidationMessage For="() => Input.Title" class="text-danger" />
             </div>
+
             <div>
                 <button type="submit" class="w-100 btn btn-lg btn-primary">Create page</button>
             </div>
-
         </EditForm>
     </div>
 </UserViewer>

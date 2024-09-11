@@ -1,4 +1,4 @@
-﻿using CodeMonkeys.CMS.Public.Components.Shared;
+using CodeMonkeys.CMS.Public.Components.Shared;
 using CodeMonkeys.CMS.Public.Components.Shared.UI;
 using CodeMonkeys.CMS.Public.Shared.Entities;
 using CodeMonkeys.CMS.Public.Shared.Services;
@@ -152,7 +152,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
 
             if (string.IsNullOrEmpty(Content.Title))
             {
-                ErrorMessage = "Title is required";
+                ErrorMessage = "Content Title is required";
                 return;
             }
 
@@ -164,7 +164,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
 
             if (string.IsNullOrEmpty(Content.Body))
             {
-                ErrorMessage = "Body is required";
+                ErrorMessage = "Content Body is required";
                 return;
             }
 
