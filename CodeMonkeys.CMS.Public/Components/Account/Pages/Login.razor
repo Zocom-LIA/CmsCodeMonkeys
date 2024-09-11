@@ -107,7 +107,15 @@
 
             if (await UserManager.IsInRoleAsync(user, "Admin") || await UserManager.IsInRoleAsync(user, "User"))
             {
-                RedirectManager.RedirectTo("sites");
+                
+                if (string.IsNullOrEmpty(ReturnUrl)){
+                RedirectManager.RedirectTo("/");
+                } else {
+                RedirectManager.RedirectTo(ReturnUrl);
+                }
+
+                
+
             }
             else
             {
