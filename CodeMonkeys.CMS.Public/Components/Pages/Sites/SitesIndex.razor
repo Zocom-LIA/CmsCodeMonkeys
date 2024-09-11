@@ -1,0 +1,142 @@
+﻿@page "/sites"
+@using CodeMonkeys.CMS.Public.Shared.Services
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@inherits BaseComponent<Index>
+
+@inject ISiteService SiteService
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "User, Admin")]
+
+<PageTitle>Sites Overview</PageTitle>
+
+<div class="admin-container">
+
+    <div class="admin-profile-section">
+
+        <img src="Image/Photo by Amy Santos.png" alt="Profile Picture" class="admin-profile-picture" />
+
+        <p class="admin-profile-description">
+
+            Lorem ipsum dolor sit amet consectetur. Sed ullamcorper elementum eu diam orci.
+
+            Adipiscing et pretium pretium proin adipiscing diam. Tristique in facilisi ac id in
+
+            amet ante amet. Etiam aliquam tortor laoreet eget lobortis suspendisse.
+
+        </p>
+
+        <ul class="admin-profile-details">
+
+            <li>Lorem ipsum</li>
+
+            <li>Lorem ipsum</li>
+
+            <li>Lorem ipsum</li>
+
+            <li>Lorem ipsum</li>
+
+            <li>Lorem ipsum</li>
+
+            <li>Lorem ipsum</li>
+
+            <li>Lorem ipsum</li>
+
+            <li>Lorem ipsum</li>
+
+        </ul>
+
+        <button class="admin-edit-profile-button">Edit profile</button>
+
+    </div>
+
+    <div class="admin-templates-section">
+
+        <h2 class="admin-templates-title">Available Templates</h2>
+
+        <p class="admin-templates-description">
+
+            Lorem ipsum dolor sit amet consectetur. Varius amet velit suspendisse
+
+            pretium sagittis congue vel.
+
+        </p>
+
+        <div class="admin-template-carousel">
+
+            <button class="admin-carousel-control prev">&lt;</button>
+
+            <div class="admin-template-cards">
+
+                <div class="admin-template-card"></div>
+
+                <div class="admin-template-card"></div>
+
+                <div class="admin-template-card"></div>
+
+                <div class="admin-template-card"></div>
+
+            </div>
+
+            <button class="admin-carousel-control next">&gt;</button>
+
+        </div>
+
+        <div class="admin-action-buttons">
+
+            <a href="/sites/create">Create new site</a>
+            @* <a href="/sites">Go to existing sites</a>s  *@
+
+        </div>
+
+        <div>
+            <div class="sites-row">
+                @foreach (Site site in Sites ?? [])
+                {
+                        <div class="sites-col-md-4 sites-mb-4">
+                            <div class="sites-card h-100">
+                                <div class="sites-card-header text-center font-weight-bold">
+                                @site.Name
+                                </div>
+                                <div class="sites-card-body">
+                                    <div class="sites-empty-box bg-light" style="height: 150px;">
+                                        <!-- Bild kommer här senare -->
+                                    </div>
+                                </div>
+                                <div class="sites-card-actions">
+                                    <a class="btn btn-primary sites-btn sites-btn-edit" href="/sites/@site.SiteId/edit">Edit Title</a>
+                                    <a class="btn btn-secondary sites-btn sites-btn-overview" href="/sites/@site.SiteId/webpages">Preview</a>
+                                    <a class="btn btn-danger sites-btn sites-btn-delete" href="/sites">Delete</a>
+                                </div>
+                                <div class="sites-card-footer text-muted">
+                                    Last Modified: @site.LastModifiedDate.ToString("yyyy-MM-dd")
+                                </div>
+                            </div>
+                        </div>
+                }
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@code
+{
+    private IEnumerable<Site> Sites = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        User? user = await GetCurrentUserAsync();
+
+        if (user == null)
+        {
+            Logger.LogWarning("Authenticated User is not authenticated");
+            return;
+        }
+
+        Sites = await SiteService.GetUserSitesAsync(user.Id);
+    }
+}
