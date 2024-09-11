@@ -18,40 +18,37 @@
         <StatusMessage Message="@ErrorMessage" />
 
         <div>
-            <h3>Overview for @Site?.Name</h3>
+            <h3>Page Overview for @Site?.Name</h3>
             <button type="button" class="btn btn-primary" @onclick="async() => await AddOrUpdatePageAsync()">Create new page</button>
         </div>
 
         @if (Site != null && Site.Pages.Any())
         {
-            <h4>Page</h4>
-            <table>
-                <thead>
-                    <tr>
-                        <td>Page Title</td>
-                        <td>Created by</td>
-                        <td>Created Date</td>
-                        <td>LastModified</td>
-                        <td></td>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (WebPage Page in Site.Pages)
-                    {
-                        <tr>
-                            <td>@Page.Title</td>
-                            <td>@Page.Author?.Email</td>
-                            <td>@Page.CreatedDate.ToString("yyyy-MM-dd")</td>
-                            <td>@Page.LastModifiedDate.ToString("yyyy-MM-dd")</td>
-                            <td>
-                                <button class="btn btn-primary" @onclick="async () => await AddOrUpdatePageAsync(Page.WebPageId)">Edit page title</button>
-                                <button class="btn btn-secondary" @onclick="async () => await EditContentsAsync(Page.WebPageId)">Edit contents</button>
-                                <button class="btn btn-danger" @onclick="async () => await DeletePageAsync(Page.WebPageId)">Delete</button>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+            <div class="webpages-row mt-4">
+                @foreach (var webPage in Site.Pages)
+                {
+                    <div class="webpages-col-md-4 webpages-mb-4">
+                        <div class="webpages-card h-100">
+                            <div class="webpages-card-header text-center font-weight-bold">
+                                @webPage.Title
+                            </div>
+                            <div class="webpages-card-body">
+                                <div class="webpages-empty-box bg-light" style="height: 150px;">
+                                    <!-- Additional content can go here -->
+                                </div>
+                            </div>
+                            <div class="webpages-card-actions">
+                                <button class="btn btn-primary" @onclick="async () => await AddOrUpdatePageAsync(webPage.WebPageId)">Edit page title</button>
+                                <button class="btn btn-secondary" @onclick="async () => await EditContentsAsync(webPage.WebPageId)">Edit contents</button>
+                                <button class="btn btn-danger" @onclick="async () => await DeletePageAsync(webPage.WebPageId)">Delete</button>
+                            </div>
+                            <div class="webpages-card-footer text-muted">
+                                Last Modified: @webPage.LastModifiedDate.ToString("yyyy-MM-dd")
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
         }
         <div>
             <button type="button" class="w-100 btn btn btn-primary" @onclick="async () => await AddOrUpdatePageAsync()">Create new Page!</button>

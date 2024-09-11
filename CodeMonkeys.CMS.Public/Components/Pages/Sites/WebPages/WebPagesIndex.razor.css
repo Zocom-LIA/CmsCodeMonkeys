@@ -1,6 +1,9 @@
 ﻿/* Grundläggande stil */
+.webpages-card, .webpages-card-header {
+    background-color: #f8f9fa;
+}
+
 .webpages-card {
-    background-color: #fff;
     border: 1px solid #dee2e6;
     border-radius: 0.25rem;
     display: flex;
@@ -14,7 +17,6 @@
     }
 
 .webpages-card-header {
-    background-color: #f8f9fa;
     border-bottom: 1px solid #dee2e6;
     font-size: 1.25rem;
     font-weight: bold;
@@ -27,9 +29,11 @@
     padding: 1.25rem;
 }
 
-.webpages-card-footer {
-    background-color: #f8f9fa;
+.webpages-card-footer, .webpages-card-header {
     border-top: 1px solid #dee2e6;
+}
+
+.webpages-card-footer {
     font-size: 0.85rem;
     text-align: center;
     padding: 0.75rem 1.25rem;
@@ -134,11 +138,8 @@
     }
 }
 
-
-
 /*Content_placment*/
 
 .Content_Layout {
     padding-top: 30px;
 }
-

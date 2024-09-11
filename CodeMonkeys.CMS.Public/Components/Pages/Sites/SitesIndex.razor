@@ -48,14 +48,17 @@
             </div>
             
             <h2 class="admin-templates-title" style=" text-align: center; margin-bottom:-59px;">
-                My Web Pages
+                My Sites
             </h2>
 
-            <div class="Content_Layout">
-                <div class="admin-action-buttons">
-                    <button type="button" class="btn btn btn-primary" @onclick="async () => await AddOrUpdateSite()">Create Site!</button>
-                </div>
-                <div class="sites-row">
+            <div class="admin-action-buttons">
+                <button type="button" class="btn btn btn-primary" @onclick="async () => await AddOrUpdateSite()">Create Site!</button>
+            </div>
+
+            <div>
+                @if (Sites != null)
+                {
+                    <div class="sites-row">
                     @foreach (Site site in Sites ?? [])
                     {
                         <div class="sites-col-md-4 sites-mb-4">
@@ -69,7 +72,7 @@
                                     </div>
                                 </div>
                                 <div class="sites-card-actions">
-                                    <button type="button" class="btn btn-primary sites-btn sites-btn-edit" @onclick="async () => await  AddOrUpdateSite(site.SiteId)">Edit</button>
+                                    <button type="button" class="btn btn-primary sites-btn sites-btn-edit" @onclick="async () => await  AddOrUpdateSite(site.SiteId)">Edit Title</button>
                                     <a class="btn btn-secondary sites-btn sites-btn-overview" href="/sites/@site.SiteId/webpages">View Pages</a>
                                     <button type="button" class="btn btn-danger sites-btn sites-btn-delete" @onclick="async () => await DeleteSite(site.SiteId)">Delete</button>
                                 </div>
@@ -79,9 +82,10 @@
                             </div>
                         </div>
                     }
-                </div>
+                    </div>
+                }
             </div>
-         </div>
+        </div>
     </div>
 </UserViewer>
 <ConfirmationDialog @ref="Confirmation" Title="@ConfirmationTitle"
