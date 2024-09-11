@@ -8,7 +8,7 @@
 @rendermode InteractiveServer
 @attribute [Authorize(Roles = "User, Admin")]
 
-<UserViewer>
+<UserViewer> 
 <div class="create-container">
     <div class="backbutton">
         @* Gå tillbaka *@
@@ -50,7 +50,7 @@
         </section>
     </div>
 </div>
-
+</UserViewer>
 @code {
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = new InputModel();
