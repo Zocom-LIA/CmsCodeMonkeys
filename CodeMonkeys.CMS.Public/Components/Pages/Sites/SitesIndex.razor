@@ -46,7 +46,7 @@
                 </div>
                 <button class="admin-carousel-control next">&gt;</button>
             </div>
-            
+
             <h2 class="admin-templates-title" style=" text-align: center; margin-bottom:-59px;">
                 My Sites
             </h2>
@@ -104,6 +104,17 @@
                 <InputText @bind-Value="Site.Name" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" />
                 <label for="name" class="form-label">Site Name</label>
                 <ValidationMessage For="() => Site.Name" class="text-danger" />
+            </div>
+
+            <div class="form-floating mb-3">
+                <InputSelect id="landing_page" @bind-Value="Site.LandingPageId" class="form-control">
+                    @foreach ((int key, string pageName) in PageOptions)
+                    {
+                        <option value="@key">@pageName</option>
+                    }
+                </InputSelect>
+                <label for="landing_page" class="form-label">Landing Page</label>
+
             </div>
         </EditForm>
     </div>
