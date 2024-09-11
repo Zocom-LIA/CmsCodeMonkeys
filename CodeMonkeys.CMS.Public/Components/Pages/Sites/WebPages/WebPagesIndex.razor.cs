@@ -4,10 +4,11 @@ using CodeMonkeys.CMS.Public.Shared.Entities;
 using CodeMonkeys.CMS.Public.Shared.Services;
 
 using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
 
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
 {
@@ -28,6 +29,17 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
         private string CancelButtonText = "Cancel";
         private EventCallback OnConfirm;
         private EventCallback OnCancel;
+
+        // Toolbar Variables (font size, font family, font color)
+        private string SelectedFontSize { get; set; } = "16"; // Default font size
+        private string SelectedFontFamily { get; set; } = "Arial"; // Default font family
+        private string SelectedFontColor { get; set; } = "#000000"; // Default color in hex
+
+        // Method to dynamically apply styles only to the content block
+        private string GetTextStyle()
+        {
+            return $"font-size: {SelectedFontSize}px; font-family: {SelectedFontFamily}; color: {SelectedFontColor};";
+        }
 
         protected override async Task OnInitializedAsync()
         {
@@ -67,12 +79,10 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
                 return;
             }
 
-            Site!.Name = Input.Name;
-            Site!.LastModifiedDate = DateTime.Now;
+            Site.Name = Input.Name;
+            Site.LastModifiedDate = DateTime.Now;
 
             await SiteService.UpdateSiteAsync(Site);
-
-            //Navigation.NavigateTo($"sites/{siteId}/webpages");
         }
 
         public Task AddOrUpdatePageAsync(int? webPageId = null)
@@ -117,7 +127,6 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
                 var page = new WebPage
                 {
                     Title = _pageModel.Title,
-
                     CreatedDate = DateTime.Now,
                     LastModifiedDate = DateTime.Now,
                     Author = User
@@ -158,7 +167,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
             ConfirmationButtonText = "Delete";
             CancelButtonText = "Cancel";
             OnConfirm = EventCallback.Factory.Create(this, async () => await DeletePageConfirmedAsync(webPageId));
-            OnCancel = EventCallback.Factory.Create(this, async () => { CloseConfirmation(); await Task.CompletedTask; });
+            OnCancel = EventCallback.Factory.Create(this, () => { CloseConfirmation(); return Task.CompletedTask; });
 
             ShowConfirmation();
 
@@ -187,11 +196,6 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
         private void ShowConfirmation()
         {
             Confirmation?.Show();
-        }
-
-        private void NavigateToWebPage(int webPageId, NavigationActions action)
-        {
-            Navigation.NavigateTo($"/sites/{siteId}");
         }
 
         public sealed class SiteModel
