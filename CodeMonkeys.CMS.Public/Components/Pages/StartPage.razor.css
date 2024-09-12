@@ -1,14 +1,186 @@
 .StartPage {
   padding-top: 2%;
-  margin-top: 11px;
   width: auto;
-  padding-bottom: 20%;
 }
 
 /* Standard bakgrundsfärg */
 .StartPage {
   background-color: lightgray;
 }
+
+.StartPage-div0,
+.StartPage-div1,
+.StartPage-div2,
+.StartPage-div3,
+.StartPage-div4,
+.StartPage-div5 {
+  
+  height: 900px;
+}
+
+.StartPage-div0{
+  /* background: radial-gradient(circle at 50% 50%, #ffe5ce, #fcc6b4, #faa8b0, #f795ca, #e589f4, #9c71f2); */
+background-size: 100% 100%;
+background-position: 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px;
+background-image: radial-gradient(18% 28% at 24% 50%, #FFEEEE8A 1%, #073AFF00 100%), radial-gradient(18% 28% at 18% 71%, #FFFFFF59 6%, #073AFF00 100%), radial-gradient(70% 53% at 36% 76%, #FF8E737A 31%, #073AFF00 100%), radial-gradient(42% 53% at 15% 94%, #FFFFFFFF 7%, #073AFF00 100%), radial-gradient(18% 28% at 35% 87%, #FFFFFFFF 7%, #073AFF00 100%), radial-gradient(31% 43% at 7% 98%, #FFFFFFFF 24%, #073AFF00 100%), radial-gradient(21% 37% at 72% 23%, #6DE9FF99 1%, #073AFF00 100%), radial-gradient(35% 56% at 91% 74%, #8A4FFFF5 9%, #073AFF00 100%), radial-gradient(74% 86% at 67% 38%, #FF6DDFF5 24%, #073AFF00 100%), linear-gradient(125deg, #FF7F4EFF 1%, #4C00FCFF 100%);
+}
+
+.StartPage-div0 h1{
+  margin-top: 10%;
+  text-align: center;
+  font-size: 150px;
+  font-family:'futura pt book';
+  color: #1E1E1E;
+}
+
+.StartPage-div0 h4 {
+  text-align: center;
+  font-size: 50px;
+  font-family: 'futura pf light';
+  color: #1E1E1E;
+}
+
+/* Om Verktyget Section 1*/
+.StartPage-div1{
+  background-color: #ffffff;
+}
+
+.StartPage-div1 h1,
+.StartPage-div2 h1,
+.StartPage-div3 h1,
+.StartPage-div4 h1,
+.StartPage-div5 h1 {
+  text-align: center;
+  font-size: 40px;
+  font-family: 'futura pt book';
+  color: #1E1E1E;
+  margin-top: 14px;
+}
+
+.StartPage-div1 p,
+.StartPage-div2 p,
+.StartPage-div3 p,
+.StartPage-div4 p,
+.StartPage-div5 p {
+  font-size: 20px;
+  font-family: 'futura pf light';
+  color: #1E1E1E;
+}
+
+/* GRID SYSTEM */
+
+.StartPage-div-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  padding: 20px;
+}
+.StartPage-div-grid div {
+  background-color: #C9C9C9;
+  /* Bakgrundsfärg för boxarna */
+  padding: 20px;
+  /* Inre marginal */
+  border: 1px solid #ccc;
+  /* Ram runt boxarna */
+}
+
+/* Custom layout 2 */
+.StartPage-div-grid2 {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 10px;
+
+}
+
+.StartPage-div-grid2 div {
+  background-color: #C9C9C9;
+  /* Bakgrundsfärg för boxarna */
+
+  /* Inre marginal */
+  border: 1px solid #ccc;
+  /* Ram runt boxarna */
+}
+
+/* Möt Teamet inline */
+.StartPage-div-teamet {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  /* Sex lika stora kolumner */
+  gap: 10px;
+  padding: 20px;
+}
+
+.StartPage-div-teamet div {
+  background-color: #C9C9C9;
+  padding: 20px;
+  border: 1px solid #ccc;
+  display: flex;
+  /* Flexbox för att centrera innehållet */
+  justify-content: center;
+  /* Centrerar innehållet horisontellt */
+  align-items: center;
+  /* Centrerar innehållet vertikalt */
+}
+
+/* Bilderna inom gridboxarna */
+.StartPage-div-teamet img {
+  width: 210px;
+  /* Bestämmer bildens storlek */
+  height: 200px;
+  border-radius: 50%;
+  /* Gör bilden rund */
+  object-fit: cover;
+  /* Behåll bildens proportioner och fyll området */
+  border: 2px solid #ccc;
+  /* Ram runt bilden */
+  
+}
+
+.StartPage-div-teamet p {
+ 
+  font-size: 20px;
+  margin-left: 20px;
+}
+
+.StartPage-div-grid2 h1{
+ font-size: 25px;
+}
+
+/* För varje teammedlems info */
+.OmVarjeTeam {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* För rubriken (namnet) */
+.StartPage-div-teamet p {
+  font-size: 20px;
+  margin-left: 40px;
+}
+
+/* För listan */
+.StartPage-div-teamet ul {
+  list-style: none;
+  
+ 
+}
+
+.StartPage-div-grid2 {
+  height: 700px;
+  padding: 20px;
+  border-radius: 20%;
+}
+
+/* Våra Mallar Section 2 */
+
+/* Möt Teamet Section 3 */
+
+
+/* ZoCom  Section 4*/
+
+/* Kontakt Section 5*/
 
 /* Mobil (upp till 480px) */
 @media (max-width: 480px) {
