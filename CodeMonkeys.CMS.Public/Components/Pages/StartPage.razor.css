@@ -82,6 +82,7 @@ background-image: radial-gradient(18% 28% at 24% 50%, #FFEEEE8A 1%, #073AFF00 10
   /* Inre marginal */
   border: 1px solid #ccc;
   /* Ram runt boxarna */
+  border-radius: 50px;
 }
 
 /* Custom layout 2 */
