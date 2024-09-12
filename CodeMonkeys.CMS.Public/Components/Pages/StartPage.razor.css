@@ -89,23 +89,21 @@ background-image: radial-gradient(18% 28% at 24% 50%, #FFEEEE8A 1%, #073AFF00 10
   display: grid;
   grid-template-columns: repeat(1, 1fr);
   gap: 10px;
-
+  height: 750px;
+  
 }
 
 .StartPage-div-grid2 div {
+  border-radius: 50px;
+  padding: 10px;
   background-color: #C9C9C9;
-  /* Bakgrundsfärg för boxarna */
-
-  /* Inre marginal */
-  border: 1px solid #ccc;
-  /* Ram runt boxarna */
 }
 
 /* Möt Teamet inline */
 /* Övergripande layout för sektionen */
 .StartPage-div3 {
   padding: 20px;
-  background-color: #9c2b2b;
+  background-color: #ffffff;
   text-align: center;
 }
 
