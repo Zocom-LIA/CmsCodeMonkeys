@@ -59,29 +59,37 @@
                 @if (Sites != null)
                 {
                     <div class="sites-row">
-                    @foreach (Site site in Sites ?? [])
-                    {
-                        <div class="sites-col-md-4 sites-mb-4">
-                            <div class="sites-card h-100">
-                                <div class="sites-card-header text-center font-weight-bold">
-                                    @site.Name
-                                </div>
-                                <div class="sites-card-body">
-                                    <div class="sites-empty-box bg-light" style="height: 150px;">
-                                        <!-- Bild kommer här senare -->
+                        @foreach (Site site in Sites ?? [])
+                        {
+                            <div class="sites-col-md-4 sites-mb-4">
+                                <div class="sites-card h-100">
+                                    <div class="sites-card-header text-center font-weight-bold">
+                                        @site.Name
+                                    </div>
+                                    <div class="sites-card-body">
+                                        <div class="sites-empty-box bg-light" style="height: 150px;">
+                                            <!-- Bild kommer här senare -->
+                                        </div>
+                                    </div>
+                                    <div class="sites-card-actions">
+                                        <button type="button" class="btn btn-primary sites-btn sites-btn-edit" @onclick="async () => await  AddOrUpdateSite(site.SiteId)">Edit Site Properties</button>
+                                        <a class="btn btn-secondary sites-btn sites-btn-overview" href="/sites/@site.SiteId/webpages">Manage Pages</a>
+                                        @if (site.LandingPage != null)
+                                        {
+                                            <a class="btn btn-secondary sites-btn" href="/userPages/@site.SiteId">Go To Landing Page</a>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" class="btn btn-secondary sites-btn" disabled>No Landing Page</button>
+                                        }
+                                        <button type="button" class="btn btn-danger sites-btn sites-btn-delete" @onclick="async () => await DeleteSite(site.SiteId)">Delete</button>
+                                    </div>
+                                    <div class="sites-card-footer text-muted">
+                                        Last Modified: @site.LastModifiedDate.ToString("yyyy-MM-dd")
                                     </div>
                                 </div>
-                                <div class="sites-card-actions">
-                                    <button type="button" class="btn btn-primary sites-btn sites-btn-edit" @onclick="async () => await  AddOrUpdateSite(site.SiteId)">Edit Title</button>
-                                    <a class="btn btn-secondary sites-btn sites-btn-overview" href="/sites/@site.SiteId/webpages">View Pages</a>
-                                    <button type="button" class="btn btn-danger sites-btn sites-btn-delete" @onclick="async () => await DeleteSite(site.SiteId)">Delete</button>
-                                </div>
-                                <div class="sites-card-footer text-muted">
-                                    Last Modified: @site.LastModifiedDate.ToString("yyyy-MM-dd")
-                                </div>
                             </div>
-                        </div>
-                    }
+                        }
                     </div>
                 }
             </div>
