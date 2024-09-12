@@ -10,11 +10,14 @@
 else
 {
     <div class="visitor-view">
+    @if(PageTitle!=null){
         <header>
             <h1>@PageTitle</h1>
         </header>
+    }
+       
         <div class="visitor-body">
-            @PageBody
+            @ChildContent
         </div>
     </div>
 }
