@@ -73,8 +73,7 @@
                                     </div>
                                     <div class="sites-card-actions">
                                         <button type="button" class="btn btn-primary sites-btn sites-btn-edit" @onclick="async () => await  AddOrUpdateSite(site.SiteId)">Edit Site Properties</button>
-                                        <a class="btn btn-secondary sites-btn sites-btn-overview" href="/sites/@site.SiteId/webpages">View Pages</a>
-                                        <button type="button" class="btn btn-danger sites-btn sites-btn-delete" @onclick="async () => await DeleteSite(site.SiteId)">Delete</button>
+                                        <a class="btn btn-secondary sites-btn sites-btn-overview" href="/sites/@site.SiteId/webpages">Manage Pages</a>
                                         @if (site.LandingPage != null)
                                         {
                                             <a class="btn btn-secondary sites-btn" href="/userPages/@site.SiteId">Go To Landing Page</a>
@@ -83,6 +82,7 @@
                                         {
                                             <button type="button" class="btn btn-secondary sites-btn" disabled>No Landing Page</button>
                                         }
+                                        <button type="button" class="btn btn-danger sites-btn sites-btn-delete" @onclick="async () => await DeleteSite(site.SiteId)">Delete</button>
                                     </div>
                                     <div class="sites-card-footer text-muted">
                                         Last Modified: @site.LastModifiedDate.ToString("yyyy-MM-dd")
