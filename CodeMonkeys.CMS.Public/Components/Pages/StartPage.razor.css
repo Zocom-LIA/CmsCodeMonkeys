@@ -102,76 +102,82 @@ background-image: radial-gradient(18% 28% at 24% 50%, #FFEEEE8A 1%, #073AFF00 10
 }
 
 /* Möt Teamet inline */
+/* Övergripande layout för sektionen */
+.StartPage-div3 {
+  padding: 20px;
+  background-color: #9c2b2b;
+  text-align: center;
+}
+
+.StartPage-div3 h1 {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+/* Grid layout för teamsektionen */
+.StartPage-div-grid2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+.a-team {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+/* Layout för teammedlemmarnas bilder */
 .StartPage-div-teamet {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  /* Sex lika stora kolumner */
-  gap: 10px;
-  padding: 20px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  justify-items: center;
+  margin-bottom: 20px;
 }
 
 .StartPage-div-teamet div {
-  background-color: #C9C9C9;
-  padding: 20px;
-  border: 1px solid #ccc;
-  display: flex;
-  /* Flexbox för att centrera innehållet */
-  justify-content: center;
-  /* Centrerar innehållet horisontellt */
-  align-items: center;
-  /* Centrerar innehållet vertikalt */
-}
-
-/* Bilderna inom gridboxarna */
-.StartPage-div-teamet img {
-  width: 210px;
-  /* Bestämmer bildens storlek */
-  height: 200px;
-  border-radius: 50%;
-  /* Gör bilden rund */
-  object-fit: cover;
-  /* Behåll bildens proportioner och fyll området */
-  border: 2px solid #ccc;
-  /* Ram runt bilden */
-  
-}
-
-.StartPage-div-teamet p {
- 
-  font-size: 20px;
-  margin-left: 20px;
-}
-
-.StartPage-div-grid2 h1{
- font-size: 25px;
-}
-
-/* För varje teammedlems info */
-.OmVarjeTeam {
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
-  align-items: flex-start;
 }
 
-/* För rubriken (namnet) */
-.StartPage-div-teamet p {
-  font-size: 20px;
-  margin-left: 40px;
+/* Stil för bilderna */
+.StartPage-div-teamet img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ccc;
+  margin-bottom: 10px;
 }
 
-/* För listan */
+/* Namn under varje bild */
+.StartPage-div-teamet div {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Specifik styling för Angelia, där det finns en lista */
+.StartPage-div-teamet div p {
+  margin-bottom: 10px;
+}
+
 .StartPage-div-teamet ul {
   list-style: none;
-  
- 
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  font-size: 14px;
 }
 
-.StartPage-div-grid2 {
-  height: 700px;
-  padding: 20px;
-  border-radius: 20%;
+/* Lista för Angelia */
+.StartPage-div-teamet ul li {
+  margin: 5px 0;
 }
+
+
 
 /* Våra Mallar Section 2 */
 
