@@ -12,9 +12,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
         private readonly DbSet<PageStats> _pageStats;
         private readonly ILogger _logger;
 
-        public PageStatsRepository(ApplicationDbContext context, ILogger<PageStatsRepository> logger)
+        public PageStatsRepository(IDbContextFactory<ApplicationDbContext> contextFactory, ILogger<PageStatsRepository> logger)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
+            if (contextFactory == null) throw new ArgumentNullException(nameof(contextFactory), "The context factory must not be null.");
+            _context = contextFactory?.CreateDbContext() ?? throw new ArgumentNullException(nameof(contextFactory), "The context factory must not return a null context.");
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _pageStats = _context.Set<PageStats>()
                 ?? throw new InvalidOperationException("PageStats table is missing in the database. Add a PageStats table in the database, please.");

@@ -2,6 +2,7 @@
 using CodeMonkeys.CMS.Public.Shared.Entities;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 using System;
 using System.Collections.Generic;
@@ -14,9 +15,14 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
     public class SiteRepository : ISiteRepository
     {
         public ApplicationDbContext Context { get; }
-        public SiteRepository(ApplicationDbContext context)
+
+        private readonly ILogger<SiteRepository> _logger;
+
+        public SiteRepository(IDbContextFactory<ApplicationDbContext> contextFactory, ILogger<SiteRepository> logger)
         {
-            Context = context ?? throw new ArgumentNullException("context");
+            if (contextFactory == null) throw new ArgumentNullException(nameof(contextFactory), "The context factory must not be null.");
+            Context = contextFactory?.CreateDbContext() ?? throw new ArgumentNullException(nameof(contextFactory), "The context factory must not return a null context.");
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task CreateAsync(Site site)
