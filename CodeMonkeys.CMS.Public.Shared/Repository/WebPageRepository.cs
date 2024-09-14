@@ -3,17 +3,21 @@ using CodeMonkeys.CMS.Public.Shared.DTOs;
 using CodeMonkeys.CMS.Public.Shared.Entities;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace CodeMonkeys.CMS.Public.Shared.Repository
 {
     public class WebPageRepository : IWebPageRepository
     {
-        public WebPageRepository(ApplicationDbContext context)
+        public WebPageRepository(IDbContextFactory<ApplicationDbContext> contextFactory, ILogger<WebPageRepository> logger)
         {
-            Context = context;
+            if (contextFactory == null) throw new ArgumentNullException(nameof(contextFactory), "The context factory must not be null.");
+            Context = contextFactory?.CreateDbContext() ?? throw new ArgumentNullException(nameof(contextFactory), "The context factory must not return a null context.");
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public ApplicationDbContext Context { get; }
+        private readonly object? _logger;
 
         public async Task CreateWebPageAsync(WebPage webPage)
         {
