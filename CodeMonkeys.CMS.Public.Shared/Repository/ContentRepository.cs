@@ -8,9 +8,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 {
     public class ContentRepository : IContentRepository
     {
-        public ContentRepository(ApplicationDbContext context)
+        public ContentRepository(IDbContextFactory<ApplicationDbContext> contextFactory)
         {
-            Context = context;
+            if (contextFactory == null) throw new ArgumentNullException(nameof(contextFactory), "The context factory must not be null.");
+            Context = contextFactory?.CreateDbContext() ?? throw new ArgumentNullException(nameof(contextFactory), "The context factory must not return a null context.");
         }
 
         public ApplicationDbContext Context { get; }
