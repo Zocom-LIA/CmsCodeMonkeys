@@ -102,14 +102,13 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites
                 var site = new Site
                 {
                     Name = Site.Name,
-                    CreatedDate = DateTime.Now,
-                    LastModifiedDate = DateTime.Now,
-                    Creator = User
+                    LandingPageId = Site.LandingPageId != NoLandingPage ? Site.LandingPageId : null,
+                    CreatorId = User?.Id
                 };
 
-                Sites.Add(site);
-
                 await SiteService.CreateSiteAsync(site);
+
+                Sites.Add(site);
             }
             else
             {

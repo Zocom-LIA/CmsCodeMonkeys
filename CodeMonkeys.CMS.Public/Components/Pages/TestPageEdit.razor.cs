@@ -178,7 +178,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages
                     OrdinalNumber = Content.OrdinalNumber,
                     CreatedDate = DateTime.Now,
                     LastModifiedDate = DateTime.Now,
-                    Author = User
+                    AuthorId = User?.Id
                 };
 
                 WebPage!.Contents.Add(content);
@@ -199,7 +199,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages
                 content.ContentType = Content.ContentType;
                 content.Body = Content.Body;
                 content.LastModifiedDate = DateTime.Now;
-                content.Author = User;
+                content.AuthorId = User?.Id;
                 content.OrdinalNumber = Content.OrdinalNumber;
             }
 

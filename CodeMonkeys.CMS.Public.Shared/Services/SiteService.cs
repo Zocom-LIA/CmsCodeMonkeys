@@ -13,6 +13,9 @@ public class SiteService : ISiteService
 
     public async Task CreateSiteAsync(Site site)
     {
+        site.CreatedDate = DateTime.Now;
+        site.LastModifiedDate = DateTime.Now;
+
         await Repository.CreateAsync(site);
     }
 

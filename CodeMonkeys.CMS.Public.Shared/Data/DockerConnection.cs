@@ -3,6 +3,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using System.IO;
 
@@ -21,6 +22,9 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         optionsBuilder.UseSqlServer(connectionString);
 
-        return new ApplicationDbContext(optionsBuilder.Options);
+        var logger = LoggerFactory.Create(builder => builder.AddProvider(new ConsoleLoggerProvider(LogLevel.Debug)))
+            .CreateLogger<ApplicationDbContext>();
+
+        return new ApplicationDbContext(optionsBuilder.Options, logger);
     }
 }

@@ -3,11 +3,23 @@ using CodeMonkeys.CMS.Public.Shared.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace CodeMonkeys.CMS.Public.Shared.Data
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<User, Role, Guid>(options)
+    public class ApplicationDbContext : IdentityDbContext<User, Role, Guid>, IDisposable
     {
+        private readonly ILogger _logger;
+        private bool _isDisposed = false;
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ILogger<ApplicationDbContext> logger) : base(options)
+        {
+            var _logger = LoggerFactory.Create(builder => builder.AddProvider(new ConsoleLoggerProvider(LogLevel.Debug)))
+                .CreateLogger<ApplicationDbContext>();
+            this._logger = _logger ?? throw new ArgumentNullException(nameof(logger));
+            _logger.LogDebug("ApplicationDbContext created");
+        }
+
         public DbSet<PageStats> PageStats => Set<PageStats>();
         public DbSet<Site> Sites => Set<Site>();
         public DbSet<WebPage> Pages => Set<WebPage>();
@@ -30,6 +42,19 @@ namespace CodeMonkeys.CMS.Public.Shared.Data
                 .WithMany() // No navigation back from WebPage to Site for LandingPage
                 .HasForeignKey(s => s.LandingPageId) // Foreign key in Site to WebPage
                 .OnDelete(DeleteBehavior.NoAction); // Optionally set delete behavior to restrict or cascade
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            if (!_isDisposed)
+            {
+                _logger.LogDebug("ApplicationDbContext disposed");
+            }
+            else
+            {
+                _logger.LogDebug("Calling Dispose in ApplicationDbContext when already disposed.");
+            }
         }
     }
 }

@@ -176,14 +176,10 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
                     ContentType = Content.ContentType,
                     Body = Content.Body,
                     OrdinalNumber = Content.OrdinalNumber,
-                    CreatedDate = DateTime.Now,
-                    LastModifiedDate = DateTime.Now,
-                    Author = User
+                    AuthorId = User!.Id
                 };
 
-                WebPage!.Contents.Add(content);
-
-                WebPage!.Contents = (await WebPageService.UpdateWebPageContentsAsync(WebPage!, WebPage!.Contents)).ToList();
+                WebPage!.Contents = (await WebPageService.CreateWebPageContentAsync(WebPage!, content)).ToList();
             }
             else
             {
@@ -199,7 +195,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
                 content.ContentType = Content.ContentType;
                 content.Body = Content.Body;
                 content.LastModifiedDate = DateTime.Now;
-                content.Author = User;
+                content.AuthorId = User!.Id;
                 content.OrdinalNumber = Content.OrdinalNumber;
             }
 
