@@ -72,7 +72,7 @@ background-image: radial-gradient(18% 28% at 24% 50%, #FFEEEE8A 1%, #073AFF00 10
 .StartPage-div-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 90px;
   padding: 20px;
 }
 .StartPage-div-grid div {
@@ -203,6 +203,12 @@ background-image: radial-gradient(18% 28% at 24% 50%, #FFEEEE8A 1%, #073AFF00 10
   height: 600px;
   border: 0;
   border-radius: 10px;
+}
+
+.imgdator {
+  border-radius: 50px;
+  max-width: 90%;
+  margin-left: 5%;
 }
 
 /* Mobil (upp till 480px) */
