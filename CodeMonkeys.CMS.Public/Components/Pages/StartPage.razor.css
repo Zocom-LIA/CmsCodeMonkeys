@@ -186,6 +186,24 @@ background-image: radial-gradient(18% 28% at 24% 50%, #FFEEEE8A 1%, #073AFF00 10
 /* ZoCom  Section 4*/
 
 /* Kontakt Section 5*/
+.StartPage-div5-Contact p {
+  margin-left: 40px;
+}
+
+.map-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  
+}
+
+.map-iframe {
+  margin-top: 20px;
+  width: 750px;
+  height: 600px;
+  border: 0;
+  border-radius: 10px;
+}
 
 /* Mobil (upp till 480px) */
 @media (max-width: 480px) {
