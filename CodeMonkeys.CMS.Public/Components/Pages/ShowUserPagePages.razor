@@ -1,0 +1,165 @@
+﻿@page "/userPages/{SiteId:int}/{PageName}"
+@inherits ContentBaseComponent<ShowUserPage>
+@rendermode InteractiveServer
+@using CodeMonkeys.CMS.Public.Components.Shared
+@using CodeMonkeys.CMS.Public.Components.Account.Shared
+@using CodeMonkeys.CMS.Public.Shared.Entities
+@using CodeMonkeys.CMS.Public.Shared.Repository
+@inject IJSRuntime JSRuntime
+
+<PageTitle>@WebPage?.Title</PageTitle>
+
+<div class="page-layout">
+    <!-- Content Area -->
+    <div class="content-area"
+         ondrop="OnDrop"
+         ondragover="OnDragOver">
+        <UserViewer>
+            <UserViewHeader>@WebPage?.Title</UserViewHeader>
+            <ChildContent>
+                <StatusMessage />
+                @foreach (Content content in (WebPage?.Contents ?? []).OrderBy(c => c.OrdinalNumber))
+                {
+                    <div class="editable-element" @onclick="() => EditElement(content)">
+                        <span style="color:@content.Color; font-size:@content.FontSize; font-family:@content.FontFamily">@content.Body</span>
+                    </div>
+                }
+            </ChildContent>
+        </UserViewer>
+    </div>
+
+    <!-- Toolbar Area -->
+    <div class="toolbar">
+        <div class="toolbar-header">
+            <h3>Verktygslåda</h3>
+        </div>
+        <div class="toolbar-content">
+            @if (selectedElement != null)
+            {
+                <div class="element-editor">
+                    <label for="fontSize">Textstorlek:</label>
+                    <input type="number" id="fontSize" @bind="selectedElement.FontSize" />
+
+                    <label for="color">Färg:</label>
+                    <input type="color" id="color" @bind="selectedElement.Color" />
+
+                    <label for="fontFamily">Typsnitt:</label>
+                    <select id="fontFamily" @bind="selectedElement.FontFamily">
+                        <option value="Arial">Arial</option>
+                        <option value="Times New Roman">Times New Roman</option>
+                        <option value="Verdana">Verdana</option>
+                        <option value="Georgia">Georgia</option>
+                    </select>
+
+                    <button @onclick="SaveElementChanges">Spara ändringar</button>
+                </div>
+            }
+            else
+            {
+                <div draggable="true" @ondragstart="OnDragStart" class="toolbar-item">
+                    Text Element
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private Site? Site { get; set; }
+    private WebPage? WebPage { get; set; }
+    private Content? selectedElement { get; set; }
+
+    [Parameter] public required int SiteId { get; set; }
+    [Parameter] public string? PageName { get; set; } = null;
+    [Inject] public required ISiteRepository Repository { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        SetLoading(true);
+        await base.OnInitializedAsync();
+        Site = await Repository.GetSiteWithContentsAsync(SiteId);
+        if (Site == null)
+        {
+            SetError($"No such site: {SiteId}");
+            WebPage = NoSuchSitePage(SiteId);
+            SetLoading(false);
+            return;
+        }
+        if (PageName == null)
+        {
+            WebPage = Site.LandingPage ?? NoLandingPageConfiguredPage(SiteId);
+            SetLoading(false);
+            return;
+        }
+        WebPage = FindPage(Site, PageName) ?? NoSuchPagePage(PageName);
+        SetLoading(false);
+    }
+
+    async void OnDragStart(DragEventArgs e)
+    {
+        await JSRuntime.InvokeVoidAsync("dragDropInterop.setData", "Text Element");
+    }
+
+    async void OnDrop(DragEventArgs e)
+    {
+        var data = await JSRuntime.InvokeAsync<string>("dragDropInterop.getData");
+        if (data == "Text Element")
+        {
+            AddTextElement();
+        }
+    }
+
+    async void OnDragOver(DragEventArgs e)
+    {
+        await JSRuntime.InvokeVoidAsync("dragDropInterop.preventDefault");
+    }
+
+    private void EditElement(Content element)
+    {
+        selectedElement = element;
+    }
+
+    private void SaveElementChanges()
+    {
+        selectedElement = null; // Döljer redigeringspanelen efter sparande
+    }
+
+    private WebPage? FindPage(Site site, string pageName) => FindPageByNumber(site, pageName) ?? FindPageByTitle(site, pageName);
+
+    private WebPage? FindPageByTitle(Site site, string pageName) => site.Pages.FirstOrDefault(p => p.Title == pageName);
+
+    private WebPage? FindPageByNumber(Site site, string pageName)
+    {
+        int pageNumber;
+        bool isInt = int.TryParse(pageName, out pageNumber);
+        if (!isInt) return null;
+        return site.Pages.FirstOrDefault(p => p.WebPageId == pageNumber);
+    }
+
+    private WebPage NoSuchSitePage(int SiteName)
+    {
+        return new WebPage() { Title = "No such site", Contents = [new Content() { Body = $"No such site: {SiteName}" }] };
+    }
+
+    private WebPage NoLandingPageConfiguredPage(int SiteName)
+    {
+        return new WebPage() { Title = "No landing page configured", Contents = [new Content() { Body = $"No landing page configured for site: {SiteName}" }] };
+    }
+
+    private WebPage NoSuchPagePage(string PageName)
+    {
+        return new WebPage() { Title = "No such page", Contents = [new Content() { Body = $"No such page: {PageName}" }] };
+    }
+
+    private void AddTextElement()
+    {
+        var newContent = new Content
+            {
+                Body = "Ny Text",
+                Color = "#000000",
+                FontSize = "16px",
+                FontFamily = "Arial"
+            };
+        WebPage?.Contents.Add(newContent);
+    }
+}
