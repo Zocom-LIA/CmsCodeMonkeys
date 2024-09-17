@@ -65,7 +65,7 @@
                 Name = Input.Name,
                 CreatedDate = DateTime.Now,
                 LastModifiedDate = DateTime.Now,
-                CreatorId = user.Id
+                CreatorId = user?.Id
             };
 
         await SiteService.CreateSiteAsync(site);

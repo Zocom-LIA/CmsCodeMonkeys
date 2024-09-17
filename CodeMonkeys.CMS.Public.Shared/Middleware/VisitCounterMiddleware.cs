@@ -31,17 +31,25 @@ namespace CodeMonkeys.CMS.Public.Shared.Middleware
             {
                 try
                 {
-                    if (context.Request.Path.StartsWithSegments("/content"))
-                    { 
-                        var header = context.Response.Headers["Content-Type"].ToString();
-                        if (string.IsNullOrEmpty(header) || header.Contains("text/html"))
+                    var header = context.Response.Headers["Content-Type"].ToString();
+                    if (string.IsNullOrEmpty(header) || header.Contains("text/html"))
+                    {
+                        var pageUrl = context.Request.Path.Value;
+                        if (pageUrl != null)
                         {
-                            var pageUrl = context.Request.Path.Value;
-
-                            if (pageUrl != null)
+                            // Extract Site ID from the URL if it exists
+                            var siteId = 0;
+                            var urlParts = pageUrl.Split('/');
+                            foreach (var urlPart in urlParts)
                             {
-                                await _repository.UpdatePageCountAsync(pageUrl);
+                                if (int.TryParse(urlPart, out int id))
+                                {
+                                    siteId = id;
+                                    break;
+                                }
                             }
+
+                            await _repository.UpdatePageCountAsync(siteId, pageUrl);
                         }
                     }
                 }

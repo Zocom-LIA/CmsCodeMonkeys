@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeMonkeys.CMS.Public.Shared.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240910100322_YourMigrationName2")]
-    partial class YourMigrationName2
+    [Migration("20240916122100_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

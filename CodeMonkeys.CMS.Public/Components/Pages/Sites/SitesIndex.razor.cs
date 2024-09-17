@@ -102,14 +102,13 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites
                 var site = new Site
                 {
                     Name = Site.Name,
-                    CreatedDate = DateTime.Now,
-                    LastModifiedDate = DateTime.Now,
-                    Creator = User
+                    LandingPageId = Site.LandingPageId != NoLandingPage ? Site.LandingPageId : null,
+                    CreatorId = User?.Id
                 };
 
-                Sites.Add(site);
-
                 await SiteService.CreateSiteAsync(site);
+
+                Sites.Add(site);
             }
             else
             {
@@ -123,7 +122,15 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites
                 site.SiteId = Site.SiteId > 0 ? Site.SiteId : Sites.Aggregate((cur, max) => cur.SiteId > max.SiteId ? cur : max).SiteId + 1;
                 site.Name = Site.Name;
                 site.LastModifiedDate = DateTime.Now;
-                site.LandingPageId = (Site.LandingPageId == NoLandingPage) ? null : Site.LandingPageId;
+                if (Site.LandingPageId == NoLandingPage)
+                {
+                    site.LandingPageId = null;
+                    site.LandingPage = null;
+                }
+                else
+                {
+                    site.LandingPageId = Site.LandingPageId;
+                }
 
                 await SiteService.UpdateSiteAsync(site);
             }
