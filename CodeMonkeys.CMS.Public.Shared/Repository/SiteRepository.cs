@@ -2,6 +2,7 @@
 using CodeMonkeys.CMS.Public.Shared.Entities;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
 
 using System;
@@ -62,8 +63,11 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 
             try
             {
-                context.Sites.Update(site);
+                EntityEntry<Site> entry = context.Sites.Update(site);
                 await context.SaveChangesAsync();
+
+                site.LandingPage = entry.Entity.LandingPage;
+                site.Creator = entry.Entity.Creator;
             }
             catch (Exception ex)
             {

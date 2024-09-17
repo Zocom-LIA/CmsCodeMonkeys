@@ -3,24 +3,19 @@ using CodeMonkeys.CMS.Public.Shared.Entities;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Extensions.Logging;
 
 namespace CodeMonkeys.CMS.Public.Shared.Repository
 {
-    public class ContentRepository : IContentRepository
+    public class ContentRepository : RepositoryBase, IContentRepository
     {
-        public ContentRepository(IDbContextFactory<ApplicationDbContext> contextFactory)
-        {
-            if (contextFactory == null) throw new ArgumentNullException(nameof(contextFactory), "The context factory must not be null.");
-            ContextFactory = contextFactory ?? throw new ArgumentNullException(nameof(contextFactory), "The context factory must not return a null context.");
-        }
-
-        public IDbContextFactory<ApplicationDbContext> ContextFactory { get; }
+        public ContentRepository(IDbContextFactory<ApplicationDbContext> contextFactory, ILogger<ContentRepository> logger) : base(contextFactory, logger) { }
 
         public async Task<Content> CreateContentAsync(Content content)
         {
             if (content == null) throw new ArgumentNullException(nameof(content), "Content must not be null.");
 
-            var context = ContextFactory.CreateDbContext();
+            var context = GetContext();
 
             try
             {
@@ -45,7 +40,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
         {
             if (contentId <= 0) throw new ArgumentOutOfRangeException("ContentId must be greater than zero.");
 
-            var context = ContextFactory.CreateDbContext();
+            var context = GetContext();
             Content? content;
 
             try
@@ -75,7 +70,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             if (pageIndex < 0) throw new ArgumentOutOfRangeException("PageIndex must be a positive number.");
             if (pageSize <= 0) throw new ArgumentOutOfRangeException("PageSize must be greater than zero.");
 
-            var context = ContextFactory.CreateDbContext();
+            var context = GetContext();
             IEnumerable<Content> contents = Enumerable.Empty<Content>();
 
             try
@@ -105,7 +100,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             if (webPage == null) throw new ArgumentNullException(nameof(webPage));
             if (contents == null) throw new ArgumentNullException(nameof(contents));
 
-            var context = ContextFactory.CreateDbContext();
+            var context = GetContext();
             var transaction = await context.Database.BeginTransactionAsync();
 
             try
@@ -137,7 +132,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 
             if (persist)
             {
-                var context = ContextFactory.CreateDbContext();
+                var context = GetContext();
                 var transaction = await context.Database.BeginTransactionAsync();
                 try
                 {
