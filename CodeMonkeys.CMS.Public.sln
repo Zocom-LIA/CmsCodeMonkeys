@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeMonkeys.CMS.Public.Back
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeMonkeys.CMS.Public.Shared", "CodeMonkeys.CMS.Public.Shared\CodeMonkeys.CMS.Public.Shared.csproj", "{544344E4-592F-44C1-8977-A2659B97BF76}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeMonkeys.CMS.Public.Tests", "CodeMonkeys.CMS.Public.Tests\CodeMonkeys.CMS.Public.Tests.csproj", "{CCE855F0-2B89-436B-8727-1A4BC0F9E283}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{544344E4-592F-44C1-8977-A2659B97BF76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{544344E4-592F-44C1-8977-A2659B97BF76}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{544344E4-592F-44C1-8977-A2659B97BF76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCE855F0-2B89-436B-8727-1A4BC0F9E283}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCE855F0-2B89-436B-8727-1A4BC0F9E283}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCE855F0-2B89-436B-8727-1A4BC0F9E283}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCE855F0-2B89-436B-8727-1A4BC0F9E283}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
