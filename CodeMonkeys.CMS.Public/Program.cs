@@ -14,7 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Logging.ClearProviders();
+//builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 // TODO: Add logging configuration that includes database storage
 
@@ -81,7 +81,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseAntiforgery();
 
-app.UseMiddleware<VisitCounterMiddleware>();
+//app.UseMiddleware<VisitCounterMiddleware>();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();

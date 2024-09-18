@@ -17,7 +17,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<IEnumerable<PageStats>> GetPageStatsAsync() => await _repository.GetPageStatsAsync();
+        public async Task<IEnumerable<PageStats>> GetPageStatsAsync(int siteId) => await _repository.GetPageStatsAsync(siteId);
         public async Task<int> GetPageVisitsAsync(string pageUrl) => await _repository.GetPageVisitsAsync(pageUrl);
     }
 }

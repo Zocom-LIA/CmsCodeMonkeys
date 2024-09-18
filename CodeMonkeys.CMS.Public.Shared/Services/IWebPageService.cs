@@ -8,7 +8,8 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
     {
         IWebPageRepository Repository { get; }
 
-        Task CreateWebPageAsync(WebPage webPage);
+        Task CreateWebPageAsync(int siteId, WebPage webPage);
+        Task<IEnumerable<Content>> CreateWebPageContentAsync(WebPage webPage, Content content);
         Task DeleteWebPageAsync(WebPage page);
         Task<WebPage?> GetSiteWebPageAsync(int siteId, int pageId);
         Task<IEnumerable<WebPage>> GetSiteWebPagesAsync(int siteId, int pageIndex = 0, int pageSize = 10);

@@ -71,14 +71,10 @@
         var page = new WebPage()
         {
             Title = Input.Title,
-            CreatedDate = DateTime.Now,
-            LastModifiedDate = DateTime.Now,
-            SiteId = siteId,
-            AuthorId = user.Id,
-
+            AuthorId = user.Id
         };
 
-        await WebPageService.CreateWebPageAsync(page);
+        await WebPageService.CreateWebPageAsync(siteId, page);
 
         Navigation.NavigateTo($"sites/{siteId}/webpages/{page.WebPageId}/edit");
     }

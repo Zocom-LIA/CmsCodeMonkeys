@@ -10,14 +10,14 @@ header {
     z-index: 1000;
     display: flex;
     align-items: center;
-    height: 60px; /* Mindre höjd för att matcha en mer traditionell meny */
+    height: 60px; /* Mindre hï¿½jd fï¿½r att matcha en mer traditionell meny */
 }
 
 .header-content {
     display: flex;
     align-items: center;
     width: 100%;
-    max-width: 1200px; /* Justera till önskad bredd */
+    max-width: 1200px; /* Justera till ï¿½nskad bredd */
     margin: 0 auto;
 }
 
@@ -25,7 +25,7 @@ header {
     margin: 0;
     font-size: 1.5rem;
     font-weight: bold;
-    flex: 1; /* Låter titeln ta upp plats så den inte överlappar med menyn */
+    flex: 1; /* Lï¿½ter titeln ta upp plats sï¿½ den inte ï¿½verlappar med menyn */
 }
 
 /* Navigation styles */
@@ -38,11 +38,11 @@ header {
 }
 
 .nav-item {
-    margin-left: 20px; /* Mindre avstånd så att menyn inte skjuts ut */
+    margin-left: 20px; /* Mindre avstï¿½nd sï¿½ att menyn inte skjuts ut */
 }
 
 .nav-link {
-    color: white !important; /* Viktigt: Säkerställ att färgen alltid är vit */
+    color: white !important; /* Viktigt: Sï¿½kerstï¿½ll att fï¿½rgen alltid ï¿½r vit */
     text-decoration: none;
     font-weight: bold;
     padding: 5px 10px;
@@ -56,7 +56,7 @@ header {
 .button-logout {
     background: none;
     border: none;
-    color: white !important; /* Viktigt: Säkerställ att färgen alltid är vit */
+    color: white !important; /* Viktigt: Sï¿½kerstï¿½ll att fï¿½rgen alltid ï¿½r vit */
     font-size: 1rem;
     cursor: pointer;
 }
@@ -69,17 +69,17 @@ header {
 /* Responsive adjustments for navigation */
 @media (max-width: 768px) {
     .header-content {
-        flex-direction: column; /* Gör att elementen staplas vid smala skärmar */
+        flex-direction: column; /* Gï¿½r att elementen staplas vid smala skï¿½rmar */
     }
 
     .navbar-nav {
         flex-direction: column;
         align-items: flex-start;
-        width: 100%; /* Låter menyn ta full bredd */
+        width: 100%; /* Lï¿½ter menyn ta full bredd */
     }
 
     .nav-item {
         margin-left: 0;
-        margin-bottom: 10px; /* Avstånd mellan länktext på smala skärmar */
+        margin-bottom: 10px; /* Avstï¿½nd mellan lï¿½nktext pï¿½ smala skï¿½rmar */
     }
 }

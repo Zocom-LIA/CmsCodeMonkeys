@@ -15,6 +15,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeMonkeys.CMS.Public.Back
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeMonkeys.CMS.Public.Shared", "CodeMonkeys.CMS.Public.Shared\CodeMonkeys.CMS.Public.Shared.csproj", "{544344E4-592F-44C1-8977-A2659B97BF76}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DC62C72B-1DDD-4BC4-89FF-88FCB238CA82}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
