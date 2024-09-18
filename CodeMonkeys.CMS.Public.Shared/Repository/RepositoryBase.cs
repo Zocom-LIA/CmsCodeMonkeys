@@ -19,6 +19,28 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        protected async Task<TResult?> ExecuteAsync<TResult>(Func<ApplicationDbContext, CancellationToken, Task<TResult>> operation, CancellationToken cancellation = default)
+        {
+            var context = ContextFactory.CreateDbContext();
+
+            TResult? result;
+            try
+            {
+                result = await operation(context, cancellation);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while executing the operation.");
+                throw;
+            }
+            finally
+            {
+                await context.DisposeAsync();
+            }
+
+            return result;
+        }
+
         protected async Task<User?> GetUserAsync(ApplicationDbContext context, Guid? id)
         {
             return await context.Users.FindAsync(id);

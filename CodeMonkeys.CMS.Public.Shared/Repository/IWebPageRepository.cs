@@ -18,8 +18,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 
         Task<IEnumerable<WebPageDto>> GetVisitorWebPageAsync(int? pageId);
         Task<WebPage?> GetWebPageAsync(int webPageId);
-        Task<IEnumerable<ContentDto>> GetWebPageContentsAsync(int pageId, bool sortContent = false);
+        Task<IEnumerable<Content>> GetWebPageContentsAsync(int webPageId);
+        Task<IEnumerable<ContentDto>> GetWebPageContentsAsync(int webPageId, bool sortContent);
         Task UpdateWebPageAsync(WebPage webPage);
         Task<IEnumerable<Content>> UpdateWebPageContentsAsync(WebPage webPage, IEnumerable<Content> contents);
+        Task<IEnumerable<Content>> UpdateWebPageContentsAsync(WebPage webPage, IEnumerable<Content> contents, bool persist = false, CancellationToken cancellation = default);
     }
 }

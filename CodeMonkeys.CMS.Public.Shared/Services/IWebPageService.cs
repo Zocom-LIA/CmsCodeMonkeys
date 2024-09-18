@@ -6,8 +6,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
 {
     public interface IWebPageService
     {
-        IWebPageRepository Repository { get; }
-
         Task CreateWebPageAsync(int siteId, WebPage webPage);
         Task<IEnumerable<Content>> CreateWebPageContentAsync(WebPage webPage, Content content);
         Task DeleteWebPageAsync(WebPage page);
@@ -16,9 +14,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         Task<IEnumerable<WebPageDto>> GetVisitorPageAsync(int? pageId = null);
         Task<WebPage?> GetWebPageAsync(int webPageId);
         Task<IEnumerable<ContentDto>> GetWebPageContentsAsync(int pageId);
-        Task<IEnumerable<Content>> MoveContentDownAsync(WebPage page, int ordinalNumber);
-        Task<IEnumerable<Content>> MoveContentUpAsync(WebPage page, int ordinalNumber);
-        Task<IEnumerable<Content>> UpdateOrdinalNumbersAsync(WebPage webPage, bool persist = true);
+        Task<IEnumerable<Content>> MoveContentDownAsync(WebPage page, int ordinalNumber, CancellationToken cancellation = default);
+        Task<IEnumerable<Content>> MoveContentUpAsync(WebPage page, int ordinalNumber, CancellationToken cancellation = default);
+        Task<IEnumerable<Content>> UpdateOrdinalNumbersAsync(WebPage webPage, bool persist = true, CancellationToken cancellation = default);
         Task UpdateWebPageAsync(WebPage webPage);
         Task<IEnumerable<Content>> UpdateWebPageContentsAsync(WebPage webPage, IEnumerable<Content> contents);
     }

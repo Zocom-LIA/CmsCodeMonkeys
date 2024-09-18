@@ -3,16 +3,20 @@ using CodeMonkeys.CMS.Public.Shared.Entities;
 using CodeMonkeys.CMS.Public.Shared.Extensions;
 using CodeMonkeys.CMS.Public.Shared.Repository;
 
+using Microsoft.Extensions.Logging;
+
 namespace CodeMonkeys.CMS.Public.Shared.Services
 {
     public class WebPageService : IWebPageService
     {
-        public WebPageService(IWebPageRepository repository)
+        public WebPageService(IWebPageRepository repository, ILogger<WebPageService> logger)
         {
-            Repository = repository;
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository), "Repository must not be null.");
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger), "Logger must not be null.");
         }
 
-        public IWebPageRepository Repository { get; }
+        public IWebPageRepository _repository;
+        private readonly ILogger<WebPageService> _logger;
 
         public async Task CreateWebPageAsync(int siteId, WebPage webPage)
         {
@@ -28,12 +32,12 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
             webPage.CreatedDate = DateTime.Now;
             webPage.LastModifiedDate = DateTime.Now;
 
-            await Repository.CreateWebPageAsync(webPage);
+            await _repository.CreateWebPageAsync(webPage);
         }
 
         public async Task UpdateWebPageAsync(WebPage webPage)
         {
-            await Repository.UpdateWebPageAsync(webPage);
+            await _repository.UpdateWebPageAsync(webPage);
         }
 
         public async Task<IEnumerable<WebPage>> GetSiteWebPagesAsync(int siteId, int pageIndex = 0, int pageSize = 10)
@@ -41,79 +45,103 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
             if (pageIndex < 0) throw new ArgumentOutOfRangeException("PageIndex must be a positive number.");
             if (pageSize <= 0) throw new ArgumentOutOfRangeException("PageSize must be greater than zero.");
 
-            return await Repository.GetSiteWebPagesAsync(siteId, pageIndex, pageSize);
+            return await _repository.GetSiteWebPagesAsync(siteId, pageIndex, pageSize);
         }
 
         public async Task<WebPage?> GetSiteWebPageAsync(int siteId, int pageId)
         {
-            return await Repository.GetSiteWebPageAsync(siteId, pageId);
+            return await _repository.GetSiteWebPageAsync(siteId, pageId);
         }
 
         public async Task<IEnumerable<ContentDto>> GetWebPageContentsAsync(int pageId)
         {
-            return await Repository.GetWebPageContentsAsync(pageId);
+            return await _repository.GetWebPageContentsAsync(pageId, true);
         }
 
         public async Task<IEnumerable<WebPageDto>> GetVisitorPageAsync(int? pageId = null)
         {
-            return await Repository.GetVisitorWebPageAsync(pageId);
+            return await _repository.GetVisitorWebPageAsync(pageId);
         }
 
-        public async Task<IEnumerable<Content>> UpdateOrdinalNumbersAsync(WebPage webPage, bool persist = true)
+        public async Task<IEnumerable<Content>> UpdateOrdinalNumbersAsync(WebPage webPage, bool persist = true, CancellationToken cancellation = default)
         {
-            var contents = webPage.Contents.OrderBy(c => c.OrdinalNumber).ToArray();
-            List<Content> unorderedContents = new List<Content>();
-            for (int i = 0; i < contents.Count(); i++)
+            try
             {
-                if (contents[i].OrdinalNumber != i)
+                if (webPage == null) throw new ArgumentNullException(nameof(webPage));
+                var contents = webPage.Contents.OrderBy(c => c.OrdinalNumber).ToArray();
+                List<Content> unorderedContents = new List<Content>();
+                for (int i = 0; i < contents.Count(); i++)
                 {
-                    unorderedContents.Add(contents[i]);
-                    contents[i].OrdinalNumber = i;
+                    if (contents[i].OrdinalNumber != i)
+                    {
+                        unorderedContents.Add(contents[i]);
+                        contents[i].OrdinalNumber = i;
+                    }
                 }
+
+                return (!persist || unorderedContents.Count() == 0)
+                    ? contents.OrderBy(c => c.OrdinalNumber)
+                    : await _repository.UpdateWebPageContentsAsync(webPage, unorderedContents, persist);
             }
-
-
-            return (!persist || unorderedContents.Count() == 0)
-                ? contents.OrderBy(c => c.OrdinalNumber)
-                : await Repository.UpdateWebPageContentsAsync(webPage, unorderedContents);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error updating ordinal numbers: {ex.Message}");
+                return Enumerable.Empty<Content>();
+            }
         }
 
-        public async Task<IEnumerable<Content>> MoveContentUpAsync(WebPage page, int ordinalNumber)
+        public async Task<IEnumerable<Content>> MoveContentUpAsync(WebPage page, int ordinalNumber, CancellationToken cancellation = default)
         {
-            if (page == null) throw new ArgumentNullException(nameof(page));
-
-            var items = page.Contents.OrderBy(c => c.OrdinalNumber).ToArray();
-            var currentIndex = items.FindIndex(i => i.OrdinalNumber == ordinalNumber);
-
-            if (currentIndex <= 0)
+            try
             {
-                return await UpdateOrdinalNumbersAsync(page, true);
+                if (page == null) throw new ArgumentNullException(nameof(page));
+
+                var items = page.Contents.OrderBy(c => c.OrdinalNumber).ToArray();
+                var currentIndex = items.FindIndex(i => i.OrdinalNumber == ordinalNumber);
+
+                if (currentIndex <= 0)
+                {
+                    return await UpdateOrdinalNumbersAsync(page, true);
+                }
+
+                items[currentIndex - 1].OrdinalNumber = ordinalNumber;
+                items[currentIndex].OrdinalNumber = ordinalNumber - 1;
+
+                await UpdateOrdinalNumbersAsync(page, true);
+
+                return await _repository.UpdateWebPageContentsAsync(page, [items[currentIndex], items[currentIndex - 1]], true);
             }
-
-            items[currentIndex - 1].OrdinalNumber = ordinalNumber;
-            items[currentIndex].OrdinalNumber = ordinalNumber - 1;
-
-            await UpdateOrdinalNumbersAsync(page, true);
-
-            return await Repository.UpdateWebPageContentsAsync(page, [items[currentIndex], items[currentIndex - 1]]);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error moving content up: {ex.Message}");
+                return Enumerable.Empty<Content>();
+            }
         }
 
-        public async Task<IEnumerable<Content>> MoveContentDownAsync(WebPage page, int ordinalNumber)
+        public async Task<IEnumerable<Content>> MoveContentDownAsync(WebPage page, int ordinalNumber, CancellationToken cancellation = default)
         {
-            if (page == null) throw new ArgumentNullException(nameof(page));
-
-            var items = page.Contents.OrderBy(c => c.OrdinalNumber).ToArray();
-            var currentIndex = items.FindIndex(i => i.OrdinalNumber == ordinalNumber);
-
-            if (currentIndex < 0 || currentIndex >= items.Length - 1)
+            try
             {
-                return await UpdateOrdinalNumbersAsync(page, true);
+                if (page == null) throw new ArgumentNullException(nameof(page));
+
+                var items = page.Contents.OrderBy(c => c.OrdinalNumber).ToArray();
+                var currentIndex = items.FindIndex(i => i.OrdinalNumber == ordinalNumber);
+
+                if (currentIndex < 0 || currentIndex >= items.Length - 1)
+                {
+                    return await UpdateOrdinalNumbersAsync(page, true);
+                }
+
+                items[currentIndex + 1].OrdinalNumber = ordinalNumber;
+                items[currentIndex].OrdinalNumber = ordinalNumber + 1;
+
+                return await _repository.UpdateWebPageContentsAsync(page, [items[currentIndex], items[currentIndex + 1]], true);
             }
-
-            items[currentIndex + 1].OrdinalNumber = ordinalNumber;
-            items[currentIndex].OrdinalNumber = ordinalNumber + 1;
-
-            return await Repository.UpdateWebPageContentsAsync(page, [items[currentIndex], items[currentIndex + 1]]);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error moving content down: {ex.Message}");
+                return Enumerable.Empty<Content>();
+            }
         }
 
         public async Task<IEnumerable<Content>> CreateWebPageContentAsync(WebPage webPage, Content content)
@@ -126,7 +154,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
                 content.OrdinalNumber = webPage.Contents.Count();
             }
 
-            return await Repository.CreateWebPageContentsAsync(webPage, content);
+            return await _repository.CreateWebPageContentsAsync(webPage, content);
         }
 
         public async Task<IEnumerable<Content>> UpdateWebPageContentsAsync(WebPage webPage, IEnumerable<Content> contents)
@@ -134,18 +162,18 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
             if (webPage == null) throw new ArgumentNullException(nameof(webPage), "WebPage cannot be null.");
             if (contents == null) throw new ArgumentNullException(nameof(contents), "Contents cannot be null.");
 
-            return await Repository.UpdateWebPageContentsAsync(webPage, contents);
+            return await _repository.UpdateWebPageContentsAsync(webPage, contents);
         }
 
         public Task DeleteWebPageAsync(WebPage page)
         {
-            return Repository.DeleteWebPageAsync(page);
+            return _repository.DeleteWebPageAsync(page);
         }
 
         // Used for testing purposes only
         public async Task<WebPage?> GetWebPageAsync(int webPageId)
         {
-            return await Repository.GetWebPageAsync(webPageId);
+            return await _repository.GetWebPageAsync(webPageId);
         }
     }
 }

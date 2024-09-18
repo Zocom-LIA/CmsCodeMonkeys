@@ -71,6 +71,8 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
                 ErrorMessage = "There is no such webpage available to edit";
                 return;
             }
+
+            WebPage.Contents = WebPage.Contents.OrderBy(comparer => comparer.OrdinalNumber).ToList();
         }
 
         private async Task HandleValidSubmit()
@@ -243,12 +245,16 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
 
         private async Task MoveUpAsync(int ordinalNumber)
         {
-            WebPage!.Contents = (await WebPageService.MoveContentUpAsync(WebPage!, ordinalNumber)).ToList();
+            WebPage!.Contents = (await WebPageService.MoveContentUpAsync(WebPage!, ordinalNumber))
+                .OrderBy(comparer => comparer.OrdinalNumber)
+                .ToList();
         }
 
         private async Task MoveDownAsync(int ordinalNumber)
         {
-            WebPage!.Contents = (await WebPageService.MoveContentDownAsync(WebPage!, ordinalNumber)).ToList();
+            WebPage!.Contents = (await WebPageService.MoveContentDownAsync(WebPage!, ordinalNumber))
+                .OrderBy(comparer => comparer.OrdinalNumber)
+                .ToList();
         }
 
         public sealed class WebPageModel

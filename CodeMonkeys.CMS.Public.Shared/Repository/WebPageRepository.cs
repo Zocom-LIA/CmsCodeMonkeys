@@ -13,7 +13,8 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 {
     public class WebPageRepository : RepositoryBase, IWebPageRepository
     {
-        public WebPageRepository(IDbContextFactory<ApplicationDbContext> contextFactory, ILogger<WebPageRepository> logger) : base(contextFactory, logger)
+        public WebPageRepository(IDbContextFactory<ApplicationDbContext> contextFactory, ILogger<WebPageRepository> logger)
+            : base(contextFactory, logger)
         { }
 
 
@@ -21,23 +22,44 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
         {
             if (webPage == null) throw new ArgumentNullException(nameof(webPage), "WebPage must not be null.");
 
-            var context = GetContext();
+            await ExecuteAsync(async (context, cancellation) =>
+            {
+                try
+                {
+                    await context.Pages.AddAsync(webPage);
+                    await context.SaveChangesAsync(cancellation);
 
-            try
-            {
-                await context.Pages.AddAsync(webPage);
-                await context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while creating a new web page.");
-                throw new RepositoryException("Error when creating a web page.", ex);
-            }
-            finally
-            {
-                await context.DisposeAsync();
-            }
+                    return webPage;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "An error occurred while creating a new web page.");
+                    throw new RepositoryException("Error when creating a web page.", ex);
+                }
+            });
         }
+
+        //public async Task CreateWebPageAsync(WebPage webPage)
+        //{
+        //    if (webPage == null) throw new ArgumentNullException(nameof(webPage), "WebPage must not be null.");
+
+        //    var context = GetContext();
+
+        //    try
+        //    {
+        //        await context.Pages.AddAsync(webPage);
+        //        await context.SaveChangesAsync();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "An error occurred while creating a new web page.");
+        //        throw new RepositoryException("Error when creating a web page.", ex);
+        //    }
+        //    finally
+        //    {
+        //        await context.DisposeAsync();
+        //    }
+        //}
 
         public async Task<WebPage?> GetSiteWebPageAsync(int siteId, int pageId)
         {
@@ -64,29 +86,54 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             return page;
         }
 
-        public async Task<IEnumerable<ContentDto>> GetWebPageContentsAsync(int pageId, bool sortContent = false)
+        public async Task<IEnumerable<Content>> GetWebPageContentsAsync(int webPageId)
         {
-            if (pageId <= 0) throw new ArgumentOutOfRangeException("PageId must be greater than zero.");
+            if (webPageId <= 0) throw new ArgumentOutOfRangeException("WebPageId must be greater than zero.");
+
+            var context = GetContext();
+            IEnumerable<Content> contents = Enumerable.Empty<Content>();
+
+            try
+            {
+                contents = await context.Contents
+                    .Where(content => content.WebPageId == webPageId)
+                    .OrderBy(content => content.OrdinalNumber)
+                    .Include(content => content.Author)
+                    .AsNoTracking()
+                    .ToListAsync();
+            }
+            finally
+            {
+                await context.DisposeAsync();
+            }
+
+            return contents;
+        }
+
+        public async Task<IEnumerable<ContentDto>> GetWebPageContentsAsync(int webPageId, bool sortContent)
+        {
+            if (webPageId <= 0) throw new ArgumentOutOfRangeException("WebPageId must be greater than zero.");
 
             var context = GetContext();
             IEnumerable<ContentDto> contents = Enumerable.Empty<ContentDto>();
 
             try
             {
-                var query = context.Pages
-                    .Where(page => page.WebPageId == pageId)
-                    .Include(page => page.Contents)
-                    .SelectMany(page => page.Contents.Select(content => new ContentDto
+                var query = context.Contents
+                    .Where(content => content.WebPageId == webPageId)
+                    .Include(content => content.Author)
+                    .AsNoTracking()
+                    .Select(content => new ContentDto
                     {
                         Title = content.Title,
                         ContentType = content.ContentType,
                         Body = content.Body,
                         OrdinalNumber = content.OrdinalNumber
-                    }));
+                    });
 
                 if (sortContent)
                 {
-                    contents = contents.OrderBy(content => content.OrdinalNumber);
+                    query = query.OrderBy(content => content.OrdinalNumber);
                 }
 
                 contents = await query.AsNoTracking().ToListAsync();
@@ -126,6 +173,38 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             }
 
             return pages;
+        }
+        public async Task<IEnumerable<Content>> UpdateWebPageContentsAsync(
+            WebPage webPage,
+            IEnumerable<Content> contents,
+            bool persist = false,
+            CancellationToken cancellation = default)
+        {
+            var context = GetContext();
+
+            try
+            {
+                context.Contents.UpdateRange(contents);
+                context.Pages.Update(webPage);
+
+                if (persist) await context.SaveChangesAsync();
+            }
+            catch (OperationCanceledException ex)
+            {
+                _logger.LogWarning(ex, $"Operation was cancelled: {ex.Message}");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error updating contents: {ex.Message}");
+                throw;
+            }
+            finally
+            {
+                await context.DisposeAsync();
+            }
+
+            return webPage.Contents.OrderBy(content => content.OrdinalNumber);
         }
 
         public async Task UpdateWebPageAsync(WebPage webPage)
@@ -198,6 +277,8 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 
                 contents = await context.Contents
                     .Where(content => content.WebPageId == webPage.WebPageId)
+                    .OrderBy(content => content.OrdinalNumber)
+                    .Include(content => content.Author)
                     .AsNoTracking()
                     .ToListAsync();
             }
@@ -287,57 +368,11 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                 await context.Contents.AddAsync(newContent);
                 await context.SaveChangesAsync();
 
-                contents = await context.Pages
-                    .Where(page => page.WebPageId == webPage.WebPageId)
-                    .Include(page => page.Contents)
+                contents = await context.Contents
+                    .Where(content => content.WebPageId == webPage.WebPageId)
+                    .OrderBy(content => content.OrdinalNumber)
+                    .Include(content => content.Author)
                     .AsNoTracking()
-                    .SelectMany(page => page.Contents)
-                    .ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while creating a new content.");
-                throw new RepositoryException("Error when creating a content.", ex);
-            }
-            finally
-            {
-                await context.DisposeAsync();
-            }
-
-            return contents;
-        }
-        public async Task<IEnumerable<Content>> CreateWebPageContentsAsync2(WebPage webPage, Content content)
-        {
-            if (webPage == null) throw new ArgumentNullException(nameof(webPage), "WebPage must not be null.");
-            if (content == null) throw new ArgumentNullException(nameof(content), "Content must not be null.");
-
-            var context = GetContext();
-            IEnumerable<Content>? contents = null;
-
-            try
-            {
-                Guid authorId = content.AuthorId ?? content.Author?.Id ?? Guid.Empty;
-                var newContent = new Content
-                {
-                    Title = content.Title,
-                    Body = content.Body,
-                    ContentType = content.ContentType,
-                    OrdinalNumber = content.OrdinalNumber,
-                    CreatedDate = DateTime.Now,
-                    LastModifiedDate = DateTime.Now,
-                    Color = content.Color,
-                    AuthorId = authorId,
-                    WebPageId = webPage.WebPageId
-                };
-
-                await context.Contents.AddAsync(newContent);
-                await context.SaveChangesAsync();
-
-                contents = await context.Pages
-                    .Where(page => page.WebPageId == webPage.WebPageId)
-                    .Include(page => page.Contents)
-                    .AsNoTracking()
-                    .SelectMany(page => page.Contents)
                     .ToListAsync();
             }
             catch (Exception ex)
