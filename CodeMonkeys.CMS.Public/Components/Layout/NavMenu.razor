@@ -5,6 +5,18 @@
 @inject NavigationManager NavigationManager
 @using Microsoft.AspNetCore.Components.Authorization
 
+<style>
+    html {
+        scroll-padding-top: 40px; /* Justera denna höjd baserat på höjden av din navigeringsmeny */
+    }
+
+    [id]::before {
+        content: "";
+        display: block;
+        height: 40px; /* Justera denna höjd baserat på din navigeringsmeny */
+        margin-top: -40px; /* Samma som höjden ovan */
+    }
+</style>
 
 <header>
     <nav class="header-content">
@@ -12,14 +24,17 @@
             <h1 class="header-title">CODE MONKEYS</h1>
         </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" style="color: white;">
-                Home
-            </NavLink>
-        </div>
+
+       
 
         <AuthorizeView>
             <Authorized>
+                        
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/" style="color: white;">
+                        Home
+                    </NavLink>
+                </div>            
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="sites" style="color: white;">
                         <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Site Index
@@ -36,16 +51,53 @@
                 </form>
             </Authorized>
             <NotAuthorized>
-                <div class="nav-item">
-                    <NavLink class="nav-link" href="Account/Register" style="color: white;">
-                        Register
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="#section0" style="color: white;">
+                        Home
                     </NavLink>
                 </div>
-                <div class="nav-item">
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="#section1" style="color: white;">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Om Verktyget
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="#section2" style="color: white;">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Våra Mallar
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="#section3" style="color: white;">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Möt Teamet
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="#section4" style="color: white;">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> ZoCom
+                    </NavLink>
+                </div>
+
+                 <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="#section5" style="color: white;">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Kontakt
+                    </NavLink>
+                </div>
+                
+                <div class="nav-item ">
                     <NavLink class="nav-link" href="Account/Login" style="color: white;">
                         Login
                     </NavLink>
                 </div>
+                <div class="nav-item ">
+                    <NavLink class="nav-link" href="Account/Register" style="color: white;">
+                        Register
+                    </NavLink>
+                </div>
+                
             </NotAuthorized>
         </AuthorizeView>
     </nav>

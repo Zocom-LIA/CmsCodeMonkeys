@@ -15,90 +15,76 @@
 
 <UserViewer>
 
-    <div class="toolbar">
-        <label for="font-size">Font Size: </label>
-        <select id="font-size" @bind="SelectedFontSize">
-            <option value="12">12px</option>
-            <option value="14">14px</option>
-            <option value="16">16px</option>
-            <option value="18">18px</option>
-            <option value="20">20px</option>
-            <option value="22">22px</option>
-            <option value="24">24px</option>
-        </select>
+        <div>
+            <h3>Page Overview for @Site?.Name</h3>
+            <button type="button" class="btn btn-primary" @onclick="async() => await AddOrUpdatePageAsync()">Create new page</button>
+        </div>
 
-        <label for="font-family">Font Family: </label>
-        <select id="font-family" @bind="SelectedFontFamily">
-            <option value="Arial">Arial</option>
-            <option value="Times New Roman">Times New Roman</option>
-            <option value="Verdana">Verdana</option>
-            <option value="Courier New">Courier New</option>
-            <option value="Georgia">Georgia</option>
-        </select>
-
-        <label for="font-color">Font Color: </label>
-        <input type="color" id="font-color" @bind="SelectedFontColor" />
-    </div>
-
-    <div id="styled-content" style="@GetTextStyle()">
-        <h2>Example Text</h2>
-        <p>
-            This is an example of a paragraph. The style changes from the toolbar above will be applied here.
-        </p>
-    </div>
-
-    <div class="Content_Layout">
-        <!-- Original content that should remain unaffected -->
-        <h2>Unaffected Section</h2>
-        
-                <div class="webpages-row">
-                    <div class="webpages-col-md-8">
-                        <div class="webpages-card">
-                            <div class="webpages-card-header">
-                                Overview for @Site?.Name
+        @if (Site != null && Site.Pages.Any())
+        {
+            <div class="webpages-row mt-4">
+                @foreach (var webPage in Site.Pages)
+                {
+                    <div class="webpages-col-md-4 webpages-mb-4">
+                        <div class="webpages-card h-100">
+                            <div class="webpages-card-header text-center font-weight-bold">
+                                @webPage.Title
                             </div>
                             <div class="webpages-card-body">
-                                <StatusMessage Message="@ErrorMessage" />
-                                <button type="button" class="btn btn-primary" @onclick="async() => await AddOrUpdatePageAsync()">Create new page</button>
-
-                                @if (Site != null && Site.Pages.Any())
-                                {
-                                    <h4>Pages</h4>
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>Page Title</th>
-                                                <th>Created by</th>
-                                                <th>Created Date</th>
-                                                <th>LastModified</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (WebPage Page in Site.Pages)
-                                            {
-                                                <tr>
-                                                    <td>@Page.Title</td>
-                                                    <td>@Page.Author?.Email</td>
-                                                    <td>@Page.CreatedDate.ToString("yyyy-MM-dd")</td>
-                                                    <td>@Page.LastModifiedDate.ToString("yyyy-MM-dd")</td>
-                                                    <td>
-                                                        <button class="btn btn-primary" @onclick="async () => await AddOrUpdatePageAsync(Page.WebPageId)">Edit title</button>
-                                                        <button class="btn btn-secondary" @onclick="async () => await EditContentsAsync(Page.WebPageId)">Edit content</button>
-                                                        <button class="btn btn-danger" @onclick="async () => await DeletePageAsync(Page.WebPageId)">Delete</button>
-                                                    </td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                }
+                                <div class="webpages-empty-box bg-light" style="height: 150px;">
+                                    <!-- Additional content can go here -->
+                                </div>
                             </div>
-                            <div class="webpages-card-footer">
-                                <button type="button" class="btn btn-primary w-100" @onclick="async () => await AddOrUpdatePageAsync()">Create new Page!</button>
+                            <div class="webpages-card-actions">
+                                <button class="btn btn-primary" @onclick="async () => await AddOrUpdatePageAsync(webPage.WebPageId)">Edit page title</button>
+                                <button class="btn btn-secondary" @onclick="async () => await EditContentsAsync(webPage.WebPageId)">Edit contents</button>
+                                <button class="btn btn-danger" @onclick="async () => await DeletePageAsync(webPage.WebPageId)">Delete</button>
+                                <a class="btn btn-secondary" href="/userPages/@Site.SiteId/@webPage.WebPageId">Go to page</a>
+                            </div>
+                            <div class="webpages-card-footer text-muted">
+                                Last Modified: @webPage.LastModifiedDate.ToString("yyyy-MM-dd")
                             </div>
                         </div>
                     </div>
-                </div>
+                }
+            </div>
+        }
+        <div>
+            <button type="button" class="w-100 btn btn btn-primary" @onclick="async () => await AddOrUpdatePageAsync()">Create new Page!</button>
+        </div>
     </div>
 
+    <ConfirmationDialog @ref="Confirmation" Title="@ConfirmationTitle"
+                        ConfirmationButtonText="@ConfirmationButtonText"
+                        CancelButtonText="@CancelButtonText"
+                        ConfirmationMessage="@ConfirmationMessage"
+                        OnConfirm="OnConfirm"
+                        OnCancel="OnCancel">
+        @if (_pageModel == null)
+        {
+            <EditForm Model="Input" method="post" OnValidSubmit="async () => await HandleValidSubmit()" FormName="updatesite">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <StatusMessage Message="@ErrorMessage" />
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="Input.Name" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" />
+                    <label for="name" class="form-label">Site Name</label>
+                    <ValidationMessage For="() => Input.Name" class="text-danger" />
+                </div>                
+            </EditForm>
+        }
+        else
+        {
+            <EditForm Model="_pageModel" method="post" OnValidSubmit="async () => await HandleValidSubmit()" FormName="updatepage">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <StatusMessage Message="@ErrorMessage" />
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="_pageModel.Title" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" />
+                    <label for="name" class="form-label">Site Name</label>
+                    <ValidationMessage For="() => _pageModel.Title" class="text-danger" />
+                 </div>
+            </EditForm>
+        }
+    </ConfirmationDialog>
 </UserViewer>

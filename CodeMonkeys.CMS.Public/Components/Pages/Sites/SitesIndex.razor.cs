@@ -1,7 +1,6 @@
 ﻿using CodeMonkeys.CMS.Public.Components.Shared;
 using CodeMonkeys.CMS.Public.Components.Shared.UI;
 using CodeMonkeys.CMS.Public.Shared.Entities;
-using CodeMonkeys.CMS.Public.Shared.Migrations;
 
 using Microsoft.AspNetCore.Components;
 
@@ -21,6 +20,9 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites
         private string CancelButtonText = "Cancel";
         private EventCallback OnConfirm;
         private EventCallback OnCancel;
+        private Dictionary<int, string> PageOptions = new();
+
+        private const int NoLandingPage = -1; //Apparently, you cannot key a dictionary on a nullable type. Hopefully, we will never have to deal with a database that assigns this number to anything.
 
         protected override async Task OnInitializedAsync()
         {
@@ -38,6 +40,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites
         public Task AddOrUpdateSite(int? siteId = null)
         {
             ConfirmationMessage = null;
+            PageOptions = new() { { NoLandingPage, "None" } };
 
             if (siteId == null)
             {
@@ -63,10 +66,13 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites
                 Site = new SiteModel
                 {
                     SiteId = site.SiteId,
-                    Name = site.Name
+                    Name = site.Name,
+                    LandingPageId = site.LandingPageId ?? NoLandingPage
                 };
                 ConfirmationButtonText = "Update Site";
+                foreach (WebPage page in site.Pages) PageOptions.Add(page.WebPageId, page.Title);
             }
+
             CancelButtonText = "Cancel";
             HandleValidSubmit = async () => await AddOrUpdateSiteConfirmed(siteId);
             OnConfirm = EventCallback.Factory.Create(this, HandleValidSubmit);
@@ -96,14 +102,13 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites
                 var site = new Site
                 {
                     Name = Site.Name,
-                    CreatedDate = DateTime.Now,
-                    LastModifiedDate = DateTime.Now,
-                    Creator = User
+                    LandingPageId = Site.LandingPageId != NoLandingPage ? Site.LandingPageId : null,
+                    CreatorId = User?.Id
                 };
 
-                Sites.Add(site);
-
                 await SiteService.CreateSiteAsync(site);
+
+                Sites.Add(site);
             }
             else
             {
@@ -117,6 +122,15 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites
                 site.SiteId = Site.SiteId > 0 ? Site.SiteId : Sites.Aggregate((cur, max) => cur.SiteId > max.SiteId ? cur : max).SiteId + 1;
                 site.Name = Site.Name;
                 site.LastModifiedDate = DateTime.Now;
+                if (Site.LandingPageId == NoLandingPage)
+                {
+                    site.LandingPageId = null;
+                    site.LandingPage = null;
+                }
+                else
+                {
+                    site.LandingPageId = Site.LandingPageId;
+                }
 
                 await SiteService.UpdateSiteAsync(site);
             }
@@ -175,6 +189,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites
         {
             public int SiteId { get; set; }
             public string Name { get; set; }
+            public int LandingPageId { get; set; } = NoLandingPage;
         }
     }
 }

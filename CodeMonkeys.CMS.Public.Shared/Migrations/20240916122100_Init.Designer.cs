@@ -4,6 +4,7 @@ using CodeMonkeys.CMS.Public.Shared.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeMonkeys.CMS.Public.Shared.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240916122100_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,14 +50,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("FontFamily")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FontSize")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("LastModifiedDate")
                         .HasColumnType("datetime2");
@@ -139,9 +134,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PageVisits")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SiteId")
                         .HasColumnType("int");
 
                     b.HasKey("PageStatsId");
@@ -418,13 +410,11 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .WithMany()
                         .HasForeignKey("AuthorId");
 
-                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", "WebPage")
+                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", null)
                         .WithMany("Contents")
                         .HasForeignKey("WebPageId");
 
                     b.Navigation("Author");
-
-                    b.Navigation("WebPage");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Menu", b =>

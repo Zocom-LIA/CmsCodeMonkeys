@@ -1,4 +1,5 @@
 ﻿using CodeMonkeys.CMS.Public.Shared.Entities;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 {
     public interface ISiteRepository
     {
-        Task CreateAsync(Site site);
+        Task CreateAsync(Site site, Guid? creatorId = null);
         Task UpdateSiteAsync(Site site);
         Task<Site?> GetUserSiteAsync(Guid userId, int siteId);
         Task<Site?> GetSiteWithContentsAsync(int siteId);

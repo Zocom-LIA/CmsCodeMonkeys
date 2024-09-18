@@ -1,0 +1,55 @@
+﻿.page-layout {
+    display: flex;
+    height: 100vh;
+}
+
+.content-area {
+    flex: 3;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.toolbar {
+    flex: 1;
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-left: 1px solid #ccc;
+    overflow-y: auto;
+}
+
+.toolbar-header {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.toolbar-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toolbar-item {
+    padding: 10px;
+    background-color: #eaeaea;
+    border: 1px solid #ccc;
+    cursor: grab;
+}
+
+.editable-element {
+    cursor: pointer;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+}
+
+.element-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.element-editor input,
+.element-editor select,
+.element-editor button {
+    margin-top: 10px;
+}

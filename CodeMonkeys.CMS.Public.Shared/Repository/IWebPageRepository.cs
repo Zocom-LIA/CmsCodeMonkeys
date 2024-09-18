@@ -2,13 +2,16 @@ using CodeMonkeys.CMS.Public.Shared.Data;
 using CodeMonkeys.CMS.Public.Shared.DTOs;
 using CodeMonkeys.CMS.Public.Shared.Entities;
 
+using Microsoft.EntityFrameworkCore;
+
 namespace CodeMonkeys.CMS.Public.Shared.Repository
 {
     public interface IWebPageRepository
     {
-        ApplicationDbContext Context { get; }
+        IDbContextFactory<ApplicationDbContext> ContextFactory { get; }
 
         Task CreateWebPageAsync(WebPage webPage);
+        Task<IEnumerable<Content>> CreateWebPageContentsAsync(WebPage webPage, Content content);
         Task DeleteWebPageAsync(WebPage page);
         Task<WebPage?> GetSiteWebPageAsync(int siteId, int pageId);
         Task<IEnumerable<WebPage>> GetSiteWebPagesAsync(int siteId, int pageIndex = 0, int pageSize = 10);

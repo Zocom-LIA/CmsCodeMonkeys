@@ -14,8 +14,20 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
 
         public IWebPageRepository Repository { get; }
 
-        public async Task CreateWebPageAsync(WebPage webPage)
+        public async Task CreateWebPageAsync(int siteId, WebPage webPage)
         {
+            if (!webPage.SiteId.HasValue)
+            {
+                webPage.SiteId = siteId;
+            }
+            else if (webPage.SiteId != siteId)
+            {
+                throw new InvalidOperationException($"Site ID does not match. Expected Site ID '{siteId}' Actual Site ID '{webPage.SiteId}'.");
+            }
+
+            webPage.CreatedDate = DateTime.Now;
+            webPage.LastModifiedDate = DateTime.Now;
+
             await Repository.CreateWebPageAsync(webPage);
         }
 
@@ -104,20 +116,36 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
             return await Repository.UpdateWebPageContentsAsync(page, [items[currentIndex], items[currentIndex + 1]]);
         }
 
-        // Used for testing purposes only
-        public async Task<WebPage?> GetWebPageAsync(int webPageId)
+        public async Task<IEnumerable<Content>> CreateWebPageContentAsync(WebPage webPage, Content content)
         {
-            return await Repository.GetWebPageAsync(webPageId);
+            content.CreatedDate = DateTime.Now;
+            content.LastModifiedDate = DateTime.Now;
+
+            if (content.OrdinalNumber == 0 || content.OrdinalNumber > webPage.Contents.Count())
+            {
+                content.OrdinalNumber = webPage.Contents.Count();
+            }
+
+            return await Repository.CreateWebPageContentsAsync(webPage, content);
         }
 
         public async Task<IEnumerable<Content>> UpdateWebPageContentsAsync(WebPage webPage, IEnumerable<Content> contents)
         {
+            if (webPage == null) throw new ArgumentNullException(nameof(webPage), "WebPage cannot be null.");
+            if (contents == null) throw new ArgumentNullException(nameof(contents), "Contents cannot be null.");
+
             return await Repository.UpdateWebPageContentsAsync(webPage, contents);
         }
 
         public Task DeleteWebPageAsync(WebPage page)
         {
             return Repository.DeleteWebPageAsync(page);
+        }
+
+        // Used for testing purposes only
+        public async Task<WebPage?> GetWebPageAsync(int webPageId)
+        {
+            return await Repository.GetWebPageAsync(webPageId);
         }
     }
 }

@@ -1,16 +1,25 @@
 ﻿@page "/"
 @using CodeMonkeys.CMS.Public.Components.Shared
-@inherits AuthenticationBaseComponent<Home>
+@inherits BaseComponent<Home>
 @rendermode InteractiveServer
 
 <PageTitle>Home</PageTitle>
 
 @* Never show return button on home page  *@
+
+<AuthorizeView >
+<NotAuthorized >
+<VisitorViewer >
+   <StartPage/>
+</VisitorViewer>
+</NotAuthorized>
+
+<Authorized>
 <UserViewer ShowReturnButton="false">
     <div class="container">
 
         <div class="left-top">
-            <h1>PUBLIC</h1>
+            <h1>Logged in</h1>
             <p>Lorem ipsum dolor sit amet consectetur. Scelerisque egestas id lectus facilisis in sapien ac dui. Sed curabitur urna senectus senectus dapibus tristique. Magna pretium elit netus velit leo facilisis dignissim bibendum eleifend. Non consectetur proin neque in cras lobortis.</p>
         </div>
 
@@ -30,3 +39,5 @@
         </div>
     </div>
 </UserViewer>
+</Authorized>
+</AuthorizeView>

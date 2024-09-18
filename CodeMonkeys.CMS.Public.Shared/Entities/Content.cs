@@ -12,11 +12,16 @@ namespace CodeMonkeys.CMS.Public.Shared.Entities
         public DateTime CreatedDate { get; set; }
         public DateTime LastModifiedDate { get; set; }
         public int OrdinalNumber { get; set; }
-        
+
         public Guid? AuthorId { get; set; }
         public User? Author { get; set; }
 
-        public string Color { get; set; } = "#1e1e1e";
+        public string Color { get; set; } = "#1e1e1e";// Standardfärg är svart
+        public string FontSize { get; set; } = "16px"; // Standardstorlek på text
+        public string FontFamily { get; set; } = "Arial"; // Standard typsnitt
+        public int? WebPageId { get; set; }
+        public WebPage? WebPage { get; set; }
+
 
         public object GetIdentifier() => ContentId;
     }

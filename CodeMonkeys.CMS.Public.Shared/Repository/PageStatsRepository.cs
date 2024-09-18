@@ -8,50 +8,73 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 {
     public class PageStatsRepository : IPageStatsRepository
     {
-        private readonly ApplicationDbContext _context;
-        private readonly DbSet<PageStats> _pageStats;
+        private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
         private readonly ILogger _logger;
 
-        public PageStatsRepository(ApplicationDbContext context, ILogger<PageStatsRepository> logger)
+        public IDbContextFactory<ApplicationDbContext> ContextFactory => _contextFactory;
+
+        public PageStatsRepository(IDbContextFactory<ApplicationDbContext> contextFactory, ILogger<PageStatsRepository> logger)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _contextFactory = contextFactory ?? throw new ArgumentNullException(nameof(contextFactory), "The context factory must not return a null context.");
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _pageStats = _context.Set<PageStats>()
-                ?? throw new InvalidOperationException("PageStats table is missing in the database. Add a PageStats table in the database, please.");
         }
 
-        public async Task UpdatePageCountAsync(string pageUrl)
+        public async Task UpdatePageCountAsync(int siteId, string pageUrl)
         {
-            // TODO: Exception handling
-            // TODO: Transaction handling
-            var visits = await _pageStats.Where(s => s.PageUrl.Equals(pageUrl)).FirstOrDefaultAsync();
-
-            if (visits == null)
+            using (var context = _contextFactory.CreateDbContext())
             {
-                visits = new PageStats
+                using (var transaction = await context.Database.BeginTransactionAsync())
                 {
-                    PageUrl = pageUrl,
-                    PageVisits = 1
-                };
-                await _pageStats.AddAsync(visits);
-            }
-            else
-            {
-                visits.PageVisits++;
-                _pageStats.Update(visits);
-            }
+                    try
+                    {
+                        var pageStats = context.PageStats;
+                        var visits = await pageStats.AsNoTracking().Where(s => s.PageUrl.Equals(pageUrl)).FirstOrDefaultAsync();
 
-            _logger.LogInformation($"StatisticsHandler: Updated visits: {visits.PageVisits}");
+                        if (visits == null)
+                        {
+                            visits = new PageStats
+                            {
+                                PageUrl = pageUrl,
+                                SiteId = siteId,
+                                PageVisits = 1
+                            };
+                            await pageStats.AddAsync(visits);
+                        }
+                        else
+                        {
+                            visits.PageVisits++;
+                            pageStats.Update(visits);
+                        }
 
-            await _context.SaveChangesAsync();
+                        _logger.LogInformation($"StatisticsHandler: Updated visits: {visits.PageVisits}");
+
+                        await context.SaveChangesAsync();
+                        await transaction.CommitAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "An error occurred while updating the page count.");
+                        await transaction.RollbackAsync();
+                        throw new RepositoryException("Error when updating the page count.", ex);
+                    }
+                }
+            }
         }
-
         public async Task<int> GetPageVisitsAsync(string pageUrl)
         {
-            // TODO: Exception Handling
-            return (await _pageStats.Where(page => page.PageUrl.Equals(pageUrl)).FirstOrDefaultAsync())?.PageVisits ?? 0;
+            using (var context = _contextFactory.CreateDbContext())
+            {
+                var visits = await context.PageStats.AsNoTracking().Where(s => s.PageUrl.Equals(pageUrl)).FirstOrDefaultAsync();
+                return visits?.PageVisits ?? 0;
+            }
         }
 
-        public async Task<IEnumerable<PageStats>> GetPageStatsAsync() => await _pageStats.ToListAsync();
+        public async Task<IEnumerable<PageStats>> GetPageStatsAsync(int siteId)
+        {
+            using (var context = _contextFactory.CreateDbContext())
+            {
+                return await context.PageStats.AsNoTracking().ToListAsync();
+            }
+        }
     }
 }

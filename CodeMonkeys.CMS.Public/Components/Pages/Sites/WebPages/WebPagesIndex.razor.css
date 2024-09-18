@@ -1,6 +1,9 @@
-﻿/* Basic Styles */
+﻿/* Grundläggande stil */
+.webpages-card, .webpages-card-header {
+    background-color: #f8f9fa;
+}
+
 .webpages-card {
-    background-color: #fff;
     border: 1px solid #dee2e6;
     border-radius: 0.25rem;
     display: flex;
@@ -10,12 +13,39 @@
 }
 
 .webpages-card-header {
-    background-color: #f8f9fa;
     border-bottom: 1px solid #dee2e6;
     font-size: 1.25rem;
     font-weight: bold;
     padding: 0.75rem 1.25rem;
     text-align: center;
+}
+
+.webpages-card-body {
+    flex: 1 1 auto;
+    padding: 1.25rem;
+}
+
+.webpages-card-footer, .webpages-card-header {
+    border-top: 1px solid #dee2e6;
+}
+
+.webpages-card-footer {
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 0.75rem 1.25rem;
+}
+
+.webpages-card-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 1.25rem;
+}
+
+.webpages-btn {
+    width: 48%;
+    text-align: center;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
 }
 
 .webpages-row {
@@ -73,4 +103,35 @@
     .Content_Layout {
         padding-right: 0; /* Remove right padding on smaller screens */
     }
+}
+
+@media (max-width: 767.98px) {
+    .webpages-card {
+        box-shadow: none;
+        border: none;
+    }
+
+    .webpages-card-body {
+        padding: 1rem;
+    }
+
+    .webpages-card-actions {
+        flex-direction: column;
+        padding: 0.5rem 1rem;
+    }
+
+    .webpages-btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .webpages-empty-box {
+        height: 120px;
+    }
+}
+
+/*Content_placment*/
+
+.Content_Layout {
+    padding-top: 30px;
 }
