@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("CodeMonkeys.CMS.Public.Tests")]
 
 var builder = WebApplication.CreateBuilder(args);
 
