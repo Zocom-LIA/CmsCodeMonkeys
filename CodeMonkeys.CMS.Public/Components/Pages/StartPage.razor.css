@@ -1,5 +1,5 @@
 .StartPage {
-  padding-top: 2%;
+  margin-top: -8%;
   width: auto;
 }
 
@@ -32,6 +32,8 @@ background-image: radial-gradient(18% 28% at 24% 50%, #FFEEEE8A 1%, #073AFF00 10
   font-family:'futura pt book';
   color: #1E1E1E;
 }
+
+
 
 .StartPage-div0 h4 {
   text-align: center;
