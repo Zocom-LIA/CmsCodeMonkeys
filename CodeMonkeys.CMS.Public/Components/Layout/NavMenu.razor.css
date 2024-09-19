@@ -8,9 +8,10 @@ header {
     left: 0;
     right: 0;
     z-index: 1000;
+    
     /* display: flex; */
     align-items: center;
-   
+    padding-left: 250px;
 }
 
 .header-content {
@@ -18,7 +19,7 @@ header {
     align-items: center;
     width: 100%;
     max-width: 1200px; /* Justera till �nskad bredd */
-    margin: 0 auto;
+  
 }
 
 .header-title {
@@ -35,6 +36,7 @@ header {
     padding: 0;
     display: flex;
     align-items: center;
+   
 }
 
 .nav-item {
