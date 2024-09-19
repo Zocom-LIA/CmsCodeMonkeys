@@ -48,7 +48,6 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
             Site = await SiteService.GetUserSiteAsync(User!.Id, siteId);
             if (Site == null)
             {
-                throw new InvalidOperationException($"Site with ID '{siteId}' for User with ID '{User!.Id}' not found.");
                 Logger.LogDebug($"Site with ID '{siteId}' for User with ID '{User!.Id}' not found.");
                 ErrorMessage = "There is no such site available to edit";
                 return;
@@ -128,7 +127,9 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
                 var page = new WebPage
                 {
                     Title = _pageModel.Title,
-                    AuthorId = User?.Id
+                    CreatedDate = DateTime.Now,
+                    LastModifiedDate = DateTime.Now,
+                    Author = User
                 };
 
                 Site!.Pages.Add(page);
@@ -137,7 +138,6 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
             else
             {
                 var page = Site!.Pages.FirstOrDefault(page => page.WebPageId == webPageId);
-
                 if (page == null)
                 {
                     ErrorMessage = "Page not found";
@@ -146,6 +146,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
 
                 page.Title = _pageModel.Title;
                 page.LastModifiedDate = DateTime.Now;
+                page.Author = User;
 
                 await WebPageService.UpdateWebPageAsync(page);
             }
