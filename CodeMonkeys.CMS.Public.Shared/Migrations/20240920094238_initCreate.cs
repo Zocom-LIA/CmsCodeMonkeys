@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CodeMonkeys.CMS.Public.Shared.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class initCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -57,7 +57,8 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     PageStatsId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PageVisits = table.Column<int>(type: "int", nullable: false)
+                    PageVisits = table.Column<int>(type: "int", nullable: false),
+                    SiteId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -184,7 +185,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     OrdinalNumber = table.Column<int>(type: "int", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Color = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    WebPageId = table.Column<int>(type: "int", nullable: true)
+                    FontSize = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FontFamily = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    WebPageId = table.Column<int>(type: "int", nullable: true),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

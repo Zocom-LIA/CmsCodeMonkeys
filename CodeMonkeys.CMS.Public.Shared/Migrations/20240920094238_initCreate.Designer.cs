@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeMonkeys.CMS.Public.Shared.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240916094055_inittoolbar")]
-    partial class inittoolbar
+    [Migration("20240920094238_initCreate")]
+    partial class initCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,6 +67,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("WebPageId")
@@ -142,6 +145,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PageVisits")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SiteId")
                         .HasColumnType("int");
 
                     b.HasKey("PageStatsId");
@@ -418,11 +424,13 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .WithMany()
                         .HasForeignKey("AuthorId");
 
-                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", null)
+                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", "WebPage")
                         .WithMany("Contents")
                         .HasForeignKey("WebPageId");
 
                     b.Navigation("Author");
+
+                    b.Navigation("WebPage");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Menu", b =>

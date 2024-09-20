@@ -1,137 +1,65 @@
-﻿.sites-row {
+﻿.page-layout {
     display: flex;
-    flex-wrap: wrap;
-    padding: 50px;
-    margin-right: -15px;
-    margin-left: -15px;
+    min-height: 100vh;
 }
 
-.sites-col-md-4 {
-    position: relative;
-    width: 100%;
-    padding-right: 15px;
-    padding-left: 15px;
-    flex: 0 0 33.3333%;
-    max-width: 33.3333%;
+.content-area {
+    flex: 1;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* Justera antalet kolumner efter behov */
+    grid-gap: 10px;
+    border-right: 1px solid #ccc;
 }
 
-.sites-mb-4 {
-    margin-bottom: 1.5rem;
+.toolbar {
+    width: 300px; /* Justera bredden efter behov */
+    padding: 10px;
+    background-color: #f9f9f9;
 }
 
-.sites-card {
+.grid-cell {
+    border: 1px dashed #ccc;
+    min-height: 100px;
     background-color: #fff;
-    border: 1px solid #dee2e6;
-    border-radius: 0.25rem;
     display: flex;
-    flex-direction: column;
-}
-
-.sites-card-header {
-    font-size: 1.25rem;
-    font-weight: bold;
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #dee2e6;
-}
-
-.sites-card-body {
-    flex: 1 1 auto;
-    padding: 1.25rem;
-}
-
-.sites-empty-box {
-    background-color: #f8f9fa;
-    border: 1px dashed #6c757d;
-    display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
 }
 
-.sites-card-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 1rem;
-    border-top: 1px solid #dee2e6;
-    background-color: #f8f9fa;
-}
-
-.sites-btn {
-    width: 100%;
+.draggable {
+    padding: 8px;
     margin-bottom: 10px;
+    background-color: #e0e0e0;
+    cursor: move;
     text-align: center;
 }
 
-.sites-btn-delete {
-    background-color: #dc3545;
-    color: white;
-}
-
-.sites-btn-edit {
-    background-color: #007bff;
-    color: white;
-    margin-top: 10px;
-}
-
-.sites-btn-overview {
-    background-color: #6c757d;
-    color: white;
-    margin-top: 10px;
-}
-
-.sites-card-footer {
-    font-size: 0.85rem;
-    text-align: right;
-    background-color: #f8f9fa;
-    border-top: 1px solid #dee2e6;
-    padding: 0.75rem 1.25rem;
-}
-
-/* Responsiv design */
-@media (max-width: 1199.98px) {
-    .sites-col-md-4 {
-        flex: 0 0 50%;
-        max-width: 50%;
-    }
-}
-
-@media (max-width: 991.98px) {
-    .sites-col-md-4 {
-        flex: 0 0 100%;
-        max-width: 100%;
-    }
-}
-
-@media (max-width: 767.98px) {
-    .sites-btn {
-        margin-bottom: 5px;
-    }
-}
-
-
-
-.admin-action-buttons {
+.element-editor {
     display: flex;
-    justify-content: start; /* Knapparna placeras nära varandra */
-    padding: 10px; /* Utrymme runt knapparna */
-    padding-left: 50px;
-    border-radius: 10px; /* Rundade hörn på containern */
+    flex-direction: column;
 }
 
-    .admin-action-buttons a {
-        text-decoration: none;
-        color: #ffffff; /* Vit textfärg, för bättre synlighet på mörk bakgrund */
-        background-color: #007bff; /* Bootstrap's standardblå färg för primary knappar */
-        padding: 8px 16px; /* Padding runt texten */
-        margin-right: 10px; /* Marginal mellan knapparna */
-        border-radius: 5px; /* Rundade hörn för knapparna */
-        transition: background-color 0.3s ease; /* Övergångseffekt för bakgrundsfärgen */
+    .element-editor label {
+        margin-top: 10px;
     }
 
-        .admin-action-buttons a:hover {
-            background-color: #0056b3; /* En mörkare blå nyans för hover-effekt */
-        }
+    .element-editor input,
+    .element-editor select {
+        margin-bottom: 10px;
+    }
 
-        .admin-action-buttons a:last-child {
-            margin-right: 0; /* Ingen marginal på den sista knappen */
-        }
+.toolbar-header h3 {
+    margin-top: 0;
+}
+
+.toolbar-content {
+    margin-top: 20px;
+}
+
+.grid-cell > div {
+    width: 100%;
+    height: 100%;
+}

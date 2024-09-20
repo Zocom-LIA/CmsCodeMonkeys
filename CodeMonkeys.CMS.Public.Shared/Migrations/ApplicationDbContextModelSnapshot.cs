@@ -66,6 +66,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("WebPageId")
                         .HasColumnType("int");
 

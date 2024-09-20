@@ -22,6 +22,8 @@ namespace CodeMonkeys.CMS.Public.Shared.Entities
         public int? WebPageId { get; set; }
         public WebPage? WebPage { get; set; }
 
+        public string? Type { get; set; }
+
 
         public object GetIdentifier() => ContentId;
     }
