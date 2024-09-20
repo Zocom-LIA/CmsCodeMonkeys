@@ -2,15 +2,16 @@
 header {
     background-color: #343a40;
     color: white;
-    padding: 5px 20px;
+    padding: 25px 20px;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 1000;
-    display: flex;
+    
+    /* display: flex; */
     align-items: center;
-    height: 60px; /* Mindre h�jd f�r att matcha en mer traditionell meny */
+    padding-left: 250px;
 }
 
 .header-content {
@@ -18,7 +19,7 @@ header {
     align-items: center;
     width: 100%;
     max-width: 1200px; /* Justera till �nskad bredd */
-    margin: 0 auto;
+  
 }
 
 .header-title {
@@ -35,6 +36,7 @@ header {
     padding: 0;
     display: flex;
     align-items: center;
+   
 }
 
 .nav-item {
@@ -68,8 +70,16 @@ header {
 
 /* Responsive adjustments for navigation */
 @media (max-width: 768px) {
+
+header {
+    height: auto;
+    padding: 15px 20px;
+}
+
+
     .header-content {
         flex-direction: column; /* G�r att elementen staplas vid smala sk�rmar */
+        margin-top: 29%;
     }
 
     .navbar-nav {
