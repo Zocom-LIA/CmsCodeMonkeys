@@ -1,11 +1,9 @@
 ﻿@page "/userPages/{SiteId:int}/{PageName}"
 @inherits ContentBaseComponent<ShowUserPage>
-@rendermode InteractiveServer
 @using CodeMonkeys.CMS.Public.Components.Shared
-@using CodeMonkeys.CMS.Public.Components.Account.Shared
 @using CodeMonkeys.CMS.Public.Shared.Entities
 @using CodeMonkeys.CMS.Public.Shared.Repository
-@inject IJSRuntime JSRuntime
+@using Microsoft.AspNetCore.Components.Web
 
 <PageTitle>@WebPage?.Title</PageTitle>
 
@@ -15,8 +13,8 @@
         @foreach (var cell in GridCells)
         {
             <div class="grid-cell"
-                 @ondragover="OnDragOver"
-                 @ondrop="(e) => OnDrop(e, cell)"
+                 @ondragover:preventDefault="OnDragOver"
+                 @ondrop:preventDefault="(e) => OnDrop(e, cell)"
                  @onclick="() => EditElement(cell.Element)">
                 @if (cell.Element != null)
                 {
@@ -75,10 +73,10 @@
             else
             {
                 <!-- Dragbara element -->
-                <div class="draggable" draggable="true" @ondragstart="OnDragStartTextElement">
+                <div class="draggable" draggable="true" @ondragstart='(e) => OnDragStart(e, "Text")'>
                     Text Element
                 </div>
-                <div class="draggable" draggable="true" @ondragstart="OnDragStartColorBlock">
+                <div class="draggable" draggable="true" @ondragstart='(e) => OnDragStart(e, "ColorBlock")'>
                     Color Block
                 </div>
             }
@@ -91,11 +89,10 @@
     private WebPage? WebPage { get; set; }
     private GridElement? selectedElement { get; set; }
 
-    private bool isRendered = false; // Kontroll för att säkerställa att OnAfterRenderAsync inte körs för tidigt
-
     [Parameter] public required int SiteId { get; set; }
     [Parameter] public string? PageName { get; set; } = null;
     [Inject] public required ISiteRepository Repository { get; set; }
+    [Inject] private IJSRuntime JS { get; set; } = default!;
 
     public class GridCell
     {
@@ -113,76 +110,48 @@
 
     private List<GridCell> GridCells { get; set; } = new List<GridCell>();
 
+    // Variabel för att hålla reda på vilket element som dras
+    private string? DraggedElementType { get; set; }
+
     protected async override Task OnInitializedAsync()
     {
-        SetLoading(true);
-        await base.OnInitializedAsync();
         Site = await Repository.GetSiteWithContentsAsync(SiteId);
         if (Site == null)
         {
-            SetError($"No such site: {SiteId}");
             WebPage = NoSuchSitePage(SiteId);
-            SetLoading(false);
             return;
         }
         if (PageName == null)
         {
             WebPage = Site.LandingPage ?? NoLandingPageConfiguredPage(SiteId);
-            SetLoading(false);
             return;
         }
         WebPage = FindPage(Site, PageName) ?? NoSuchPagePage(PageName);
-        SetLoading(false);
 
         // Initiera rutnätet med t.ex. 25 celler (5x5)
         for (int i = 0; i < 25; i++)
         {
             GridCells.Add(new GridCell());
         }
+
+        await LoadGridState();
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            // Det är nu säkert att utföra JS-anrop
-            await LoadGridState();
-            isRendered = true;
-            StateHasChanged();
-        }
-    }
-
-    async Task OnDragStartTextElement(DragEventArgs e)
-    {
-        if (isRendered)
-        {
-            await OnDragStart(e, "Text");
-        }
-    }
-
-    async Task OnDragStartColorBlock(DragEventArgs e)
-    {
-        if (isRendered)
-        {
-            await OnDragStart(e, "ColorBlock");
-        }
-    }
-
-    async Task OnDragStart(DragEventArgs e, string elementType)
+    void OnDragStart(DragEventArgs e, string elementType)
     {
         e.DataTransfer.EffectAllowed = "move";
-        await JSRuntime.InvokeVoidAsync("dragDropInterop.setData", e, "text/plain", elementType);
+        // Sätt den dragna elementtypen i variabeln
+        DraggedElementType = elementType;
     }
 
-    async Task OnDragOver(DragEventArgs e)
+    void OnDragOver(DragEventArgs e)
     {
-        await JSRuntime.InvokeVoidAsync("dragDropInterop.preventDefault", e);
+        e.DataTransfer.DropEffect = "move";
     }
 
     async void OnDrop(DragEventArgs e, GridCell cell)
     {
-        await JSRuntime.InvokeVoidAsync("dragDropInterop.preventDefault", e);
-        var elementType = await JSRuntime.InvokeAsync<string>("dragDropInterop.getData", e, "text/plain");
+        var elementType = DraggedElementType;
 
         if (elementType == "Text")
         {
@@ -206,6 +175,9 @@
             cell.Element = newElement;
         }
 
+        // Nollställ variabeln efter användning
+        DraggedElementType = null;
+
         await SaveGridState();
         StateHasChanged();
     }
@@ -218,7 +190,7 @@
     async void SaveElementChanges()
     {
         await SaveGridState();
-        selectedElement = null; // Döljer redigeringspanelen efter sparande
+        selectedElement = null;
         StateHasChanged();
     }
 
@@ -228,10 +200,11 @@
 
     private WebPage? FindPageByNumber(Site site, string pageName)
     {
-        int pageNumber;
-        bool isInt = int.TryParse(pageName, out pageNumber);
-        if (!isInt) return null;
-        return site.Pages.FirstOrDefault(p => p.WebPageId == pageNumber);
+        if (int.TryParse(pageName, out int pageNumber))
+        {
+            return site.Pages.FirstOrDefault(p => p.WebPageId == pageNumber);
+        }
+        return null;
     }
 
     private WebPage NoSuchSitePage(int SiteName)
@@ -283,12 +256,12 @@
     {
         var gridState = GridCells.Select(cell => cell.Element).ToList();
         var json = System.Text.Json.JsonSerializer.Serialize(gridState);
-        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "gridState", json);
+        await JS.InvokeVoidAsync("localStorage.setItem", "gridState", json);
     }
 
     async Task LoadGridState()
     {
-        var json = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "gridState");
+        var json = await JS.InvokeAsync<string>("localStorage.getItem", "gridState");
         if (!string.IsNullOrEmpty(json))
         {
             var gridState = System.Text.Json.JsonSerializer.Deserialize<List<GridElement>>(json);
