@@ -7,18 +7,90 @@
 
 <style>
     html {
-        scroll-padding-top: 40px; /* Justera denna höjd baserat på höjden av din navigeringsmeny */
+        scroll-padding-top: 92px;
+         overflow-y: scroll; /* Justera denna höjd baserat på höjden av din navigeringsmeny */
     }
 
     [id]::before {
-        content: "";
+        
         display: block;
-        height: 40px; /* Justera denna höjd baserat på din navigeringsmeny */
-        margin-top: -40px; /* Samma som höjden ovan */
+        height: 25px; /* Justera denna höjd baserat på din navigeringsmeny */
+        margin-top: -30px; /* Samma som höjden ovan */
     }
 </style>
-
 <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#section0">CODE MONKEYS</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mr-auto">
+                    <AuthorizeView>
+                        <Authorized>
+                            <li class="nav-item">
+                                <NavLink class="nav-link" href="/" style="color: white;">Home</NavLink>
+                            </li>
+                            <li class="nav-item">
+                                <NavLink class="nav-link" href="sites" style="color: white;">
+                                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Site Index
+                                </NavLink>
+                            </li>
+                        </Authorized>
+                        <NotAuthorized>
+                            <li class="nav-item">
+                                <NavLink class="nav-link" href="#section0" style="color: white;">Home</NavLink>
+                            </li>
+                              <li class="nav-item">
+                                <NavLink class="nav-link" href="#section1" style="color: white;">Om Verktyget</NavLink>
+                            </li>
+                              <li class="nav-item">
+                                <NavLink class="nav-link" href="#section2" style="color: white;">Våra Mallar</NavLink>
+                            </li>
+                              <li class="nav-item">
+                                <NavLink class="nav-link" href="#section3" style="color: white;">Möt Teamet</NavLink>
+                            </li>
+                              <li class="nav-item">
+                                <NavLink class="nav-link" href="#section4" style="color: white;">ZoCom</NavLink>
+                            </li>
+                              <li class="nav-item">
+                                <NavLink class="nav-link" href="#section5" style="color: white;">Kontakta Oss</NavLink>
+                            </li>
+                             <li class="nav-item">
+                                <NavLink class="nav-link" href="Account/Login" style="color: white;">Login</NavLink>
+                            </li>
+                            <li class="nav-item">
+                                <NavLink class="nav-link" href="Account/Register" style="color: white;">Register</NavLink>
+                            </li>
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </ul>
+                <ul class="navbar-nav">
+                    <AuthorizeView>
+                        <Authorized>
+                            <li class="nav-item">
+                                <form action="Account/Logout" method="post" id="logout-form" class="form-inline">
+                                    <AntiforgeryToken />
+                                    <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                                    <button type="submit" class="btn btn-link nav-link text-white">
+                                        Logout <span class="bi bi-box-arrow-right" aria-hidden="true"></span>
+                                    </button>
+                                </form>
+                            </li>
+                        </Authorized>
+                        <NotAuthorized>
+                           
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<!-- <header>
     <nav class="header-content">
         <div class="nav-item px-3">
             <h1 class="header-title">CODE MONKEYS</h1>
@@ -101,7 +173,7 @@
             </NotAuthorized>
         </AuthorizeView>
     </nav>
-</header>
+</header> -->
 
 @code {
     private string? currentUrl;
