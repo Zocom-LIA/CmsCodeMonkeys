@@ -4,32 +4,18 @@
 @using CodeMonkeys.CMS.Public.Shared.Entities
 @using CodeMonkeys.CMS.Public.Shared.Repository
 @using Microsoft.AspNetCore.Components.Web
+@using CodeMonkeys.CMS.Public.Components.Pages
 
-<PageTitle>@WebPage?.Title</PageTitle>
+<PageTitle>@GetPageTitle()</PageTitle>
 
 <div class="page-layout">
     <!-- Content Area -->
     <div class="content-area">
         @foreach (var cell in GridCells)
         {
-            <div class="grid-cell"
-                 @ondragover:preventDefault="OnDragOver"
-                 @ondrop:preventDefault="(e) => OnDrop(e, cell)"
-                 @onclick="() => EditElement(cell.Element)">
-                @if (cell.Element != null)
-                {
-                    @if (cell.Element.Type == "Text")
-                    {
-                        <span style="color:@cell.Element.Color; font-size:@(cell.Element.FontSize)px; font-family:@cell.Element.FontFamily">
-                            @cell.Element.Body
-                        </span>
-                    }
-                    else if (cell.Element.Type == "ColorBlock")
-                    {
-                        <div style="background-color:@cell.Element.Color; width:100%; height:100%;"></div>
-                    }
-                }
-            </div>
+            <GridCell Element="cell.Element"
+                      OnClick="(element) => EditElement(element)"
+                      OnDrop="(e) => OnDropHandler(e, cell)" />
         }
     </div>
 
@@ -42,29 +28,13 @@
             @if (selectedElement != null)
             {
                 <div class="element-editor">
-                    @if (selectedElement.Type == "Text")
+                    @if (IsTextElement(selectedElement))
                     {
-                        <label for="body">Text:</label>
-                        <input type="text" id="body" @bind="selectedElement.Body" />
-
-                        <label for="fontSize">Textstorlek:</label>
-                        <input type="number" id="fontSize" @bind="selectedElement.FontSize" />
-
-                        <label for="color">Färg:</label>
-                        <input type="color" id="color" @bind="selectedElement.Color" />
-
-                        <label for="fontFamily">Typsnitt:</label>
-                        <select id="fontFamily" @bind="selectedElement.FontFamily">
-                            <option value="Arial">Arial</option>
-                            <option value="Times New Roman">Times New Roman</option>
-                            <option value="Verdana">Verdana</option>
-                            <option value="Georgia">Georgia</option>
-                        </select>
+                        RenderTextElementEditor();
                     }
-                    else if (selectedElement.Type == "ColorBlock")
+                    else if (IsColorBlockElement(selectedElement))
                     {
-                        <label for="color">Färg:</label>
-                        <input type="color" id="color" @bind="selectedElement.Color" />
+                        RenderColorBlockEditor();
                     }
 
                     <button @onclick="SaveElementChanges">Spara ändringar</button>
@@ -72,13 +42,7 @@
             }
             else
             {
-                <!-- Dragbara element -->
-                <div class="draggable" draggable="true" @ondragstart='(e) => OnDragStart(e, "Text")'>
-                    Text Element
-                </div>
-                <div class="draggable" draggable="true" @ondragstart='(e) => OnDragStart(e, "ColorBlock")'>
-                    Color Block
-                </div>
+                RenderToolbarItems();
             }
         </div>
     </div>
@@ -109,157 +73,176 @@
     }
 
     private List<GridCell> GridCells { get; set; } = new List<GridCell>();
-
-    // Variabel för att hålla reda på vilket element som dras
     private string? DraggedElementType { get; set; }
 
     protected async override Task OnInitializedAsync()
+    {
+        await LoadPageData();
+        InitializeGrid(25); // Initiera rutnätet med t.ex. 25 celler (5x5)
+        await LoadGridState();
+    }
+
+    private async Task LoadPageData()
     {
         Site = await Repository.GetSiteWithContentsAsync(SiteId);
         if (Site == null)
         {
             WebPage = NoSuchSitePage(SiteId);
-            return;
         }
-        if (PageName == null)
+        else if (PageName == null)
         {
             WebPage = Site.LandingPage ?? NoLandingPageConfiguredPage(SiteId);
-            return;
         }
-        WebPage = FindPage(Site, PageName) ?? NoSuchPagePage(PageName);
+        else
+        {
+            WebPage = FindPage(Site, PageName) ?? NoSuchPagePage(PageName);
+        }
+    }
 
-        // Initiera rutnätet med t.ex. 25 celler (5x5)
-        for (int i = 0; i < 25; i++)
+    private void InitializeGrid(int cellCount)
+    {
+        GridCells = new List<GridCell>();
+        for (int i = 0; i < cellCount; i++)
         {
             GridCells.Add(new GridCell());
         }
-
-        await LoadGridState();
     }
 
-    void OnDragStart(DragEventArgs e, string elementType)
+    private string GetPageTitle()
+    {
+        return WebPage?.Title ?? "Untitled";
+    }
+
+    private bool IsTextElement(GridElement? element) => element?.Type == "Text";
+    private bool IsColorBlockElement(GridElement? element) => element?.Type == "ColorBlock";
+
+    private void RenderTextElementEditor()
+    {
+        <label for="body">Text:</label>
+        <input type="text" id="body" @bind="selectedElement.Body" />
+
+        <label for="fontSize">Textstorlek:</label>
+        <input type="number" id="fontSize" @bind="selectedElement.FontSize" />
+
+        <label for="color">Färg:</label>
+        <input type="color" id="color" @bind="selectedElement.Color" />
+
+        <label for="fontFamily">Typsnitt:</label>
+        <select id="fontFamily" @bind="selectedElement.FontFamily">
+            <option value="Arial">Arial</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Georgia">Georgia</option>
+        </select>
+    }
+
+    private void RenderColorBlockEditor()
+    {
+        <label for="color">Färg:</label>
+        <input type="color" id="color" @bind="selectedElement.Color" />
+    }
+
+    private void RenderToolbarItems()
+    {
+        <div class="draggable" draggable="true" @ondragstart="OnDragStartText">
+            Text Element
+        </div>
+        <div class="draggable" draggable="true" @ondragstart="OnDragStartColorBlock">
+            Color Block
+        </div>
+    }
+
+    private void OnDragStartText(DragEventArgs e)
     {
         e.DataTransfer.EffectAllowed = "move";
-        // Sätt den dragna elementtypen i variabeln
-        DraggedElementType = elementType;
+        DraggedElementType = "Text";
     }
 
-    void OnDragOver(DragEventArgs e)
+    private void OnDragStartColorBlock(DragEventArgs e)
     {
-        e.DataTransfer.DropEffect = "move";
+        e.DataTransfer.EffectAllowed = "move";
+        DraggedElementType = "ColorBlock";
     }
 
-    async void OnDrop(DragEventArgs e, GridCell cell)
+    private async void OnDropHandler(DragEventArgs e, GridCell cell)
     {
-        var elementType = DraggedElementType;
-
-        if (elementType == "Text")
+        if (DraggedElementType == "Text")
         {
-            var newElement = new GridElement
-                {
-                    Type = "Text",
-                    Body = "Ny Text",
-                    Color = "#000000",
-                    FontSize = "16",
-                    FontFamily = "Arial"
-                };
-            cell.Element = newElement;
+            cell.Element = CreateTextElement();
         }
-        else if (elementType == "ColorBlock")
+        else if (DraggedElementType == "ColorBlock")
         {
-            var newElement = new GridElement
-                {
-                    Type = "ColorBlock",
-                    Color = "#ff0000"
-                };
-            cell.Element = newElement;
+            cell.Element = CreateColorBlockElement();
         }
 
-        // Nollställ variabeln efter användning
         DraggedElementType = null;
-
         await SaveGridState();
         StateHasChanged();
     }
+
+    private GridElement CreateTextElement() => new GridElement
+    {
+        Type = "Text",
+        Body = "Ny Text",
+        Color = "#000000",
+        FontSize = "16",
+        FontFamily = "Arial"
+    };
+
+    private GridElement CreateColorBlockElement() => new GridElement
+    {
+        Type = "ColorBlock",
+        Color = "#ff0000"
+    };
 
     private void EditElement(GridElement? element)
     {
         selectedElement = element;
     }
 
-    async void SaveElementChanges()
+    private async void SaveElementChanges()
     {
         await SaveGridState();
         selectedElement = null;
         StateHasChanged();
     }
 
-    private WebPage? FindPage(Site site, string pageName) => FindPageByNumber(site, pageName) ?? FindPageByTitle(site, pageName);
-
-    private WebPage? FindPageByTitle(Site site, string pageName) => site.Pages.FirstOrDefault(p => p.Title == pageName);
-
-    private WebPage? FindPageByNumber(Site site, string pageName)
+    private WebPage? FindPage(Site site, string pageName)
     {
         if (int.TryParse(pageName, out int pageNumber))
         {
             return site.Pages.FirstOrDefault(p => p.WebPageId == pageNumber);
         }
-        return null;
+
+        return site.Pages.FirstOrDefault(p => p.Title == pageName);
     }
 
-    private WebPage NoSuchSitePage(int SiteName)
+    private WebPage NoSuchSitePage(int siteId) => new WebPage
     {
-        return new WebPage()
-            {
-                Title = "No such site",
-                Contents = new List<Content>
-            {
-                new Content
-                {
-                    Body = $"No such site: {SiteName}"
-                }
-            }
-            };
-    }
+        Title = "No such site",
+        Contents = new List<Content> { new Content { Body = $"No such site: {siteId}" } }
+    };
 
-    private WebPage NoLandingPageConfiguredPage(int SiteName)
+    private WebPage NoLandingPageConfiguredPage(int siteId) => new WebPage
     {
-        return new WebPage()
-            {
-                Title = "No landing page configured",
-                Contents = new List<Content>
-            {
-                new Content
-                {
-                    Body = $"No landing page configured for site: {SiteName}"
-                }
-            }
-            };
-    }
+        Title = "No landing page configured",
+        Contents = new List<Content> { new Content { Body = $"No landing page configured for site: {siteId}" } }
+    };
 
-    private WebPage NoSuchPagePage(string PageName)
+    private WebPage NoSuchPagePage(string pageName) => new WebPage
     {
-        return new WebPage()
-            {
-                Title = "No such page",
-                Contents = new List<Content>
-            {
-                new Content
-                {
-                    Body = $"No such page: {PageName}"
-                }
-            }
-            };
-    }
+        Title = "No such page",
+        Contents = new List<Content> { new Content { Body = $"No such page: {pageName}" } }
+    };
 
-    async Task SaveGridState()
+    private async Task SaveGridState()
     {
         var gridState = GridCells.Select(cell => cell.Element).ToList();
         var json = System.Text.Json.JsonSerializer.Serialize(gridState);
         await JS.InvokeVoidAsync("localStorage.setItem", "gridState", json);
     }
 
-    async Task LoadGridState()
+    private async Task LoadGridState()
     {
         var json = await JS.InvokeAsync<string>("localStorage.getItem", "gridState");
         if (!string.IsNullOrEmpty(json))
@@ -274,4 +257,5 @@
             }
         }
     }
+  }
 }

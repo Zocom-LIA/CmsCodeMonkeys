@@ -1,0 +1,39 @@
+﻿<div class="grid-cell"
+     @ondragover="HandleDragOver"
+     @ondrop="HandleDrop"
+     @onclick="HandleClick">
+    @if (Element != null)
+    {
+        @if (Element.Type == "Text")
+        {
+            <span style="color:@Element.Color; font-size:@(Element.FontSize)px; font-family:@Element.FontFamily">
+                @Element.Body
+            </span>
+        }
+        else if (Element.Type == "ColorBlock")
+        {
+            <div style="background-color:@Element.Color; width:100%; height:100%;"></div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter] public GridElement? Element { get; set; }
+    [Parameter] public EventCallback<GridElement?> OnClick { get; set; }
+    [Parameter] public EventCallback<DragEventArgs> OnDrop { get; set; }
+
+    private void HandleClick()
+    {
+        OnClick.InvokeAsync(Element);
+    }
+
+    private void HandleDragOver(DragEventArgs e)
+    {
+        e.PreventDefault(); // Tillåter att släppa elementet
+    }
+
+    private async Task HandleDrop(DragEventArgs e)
+    {
+        await OnDrop.InvokeAsync(e);
+    }
+}
