@@ -103,9 +103,17 @@ namespace CodeMonkeys.CMS.Public.Tests
         [Test]
         public void RegisterTest()
         {
-            string email = "name@example.com";
-            ApplicationDbContext dbContext1 = new ApplicationDbContext(DbContextOptionsBuilder.Options, new FakeLogger<ApplicationDbContext>());
-            Assert.That(dbContext1.Users.FirstOrDefault(user => user.Email == email), Is.Null);
+            int emailNumber = 0;
+            string email;
+            bool done = false;
+            using (ApplicationDbContext dbContext = new ApplicationDbContext(DbContextOptionsBuilder.Options, new FakeLogger<ApplicationDbContext>()))
+                do
+                {
+                    email = $"name{emailNumber}@example.com";
+                    emailNumber++;
+                    if (dbContext.Users.FirstOrDefault(user => user.Email == email) == null)
+                        done = true;
+                } while (!done);
             Driver.Navigate().GoToUrl(HomeUrl);
             Thread.Sleep(10); // The wait command below only rarely achieves a state where the click succeeds.
             //new WebDriverWait(Driver, TimeSpan.FromSeconds(10)).Until(ExpectedConditions.ElementToBeClickable(By.LinkText("Register")));
@@ -118,8 +126,8 @@ namespace CodeMonkeys.CMS.Public.Tests
             Thread.Sleep(10);
             Driver.FindElement(By.LinkText("Click here to confirm your account")).Click();
             Thread.Sleep(10);
-            ApplicationDbContext dbContext2 = new ApplicationDbContext(DbContextOptionsBuilder.Options, new FakeLogger<ApplicationDbContext>());
-            Assert.That(dbContext2.Users.FirstOrDefault(user => user.Email == email), Is.InstanceOf(typeof(User)));
+            using (ApplicationDbContext dbContext = new ApplicationDbContext(DbContextOptionsBuilder.Options, new FakeLogger<ApplicationDbContext>()))
+                Assert.That(dbContext.Users.FirstOrDefault(user => user.Email == email), Is.InstanceOf(typeof(User)));
         }
     }
 }
