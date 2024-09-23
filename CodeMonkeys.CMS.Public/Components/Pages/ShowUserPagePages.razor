@@ -4,17 +4,19 @@
 @using CodeMonkeys.CMS.Public.Shared.Entities
 @using CodeMonkeys.CMS.Public.Shared.Repository
 @using Microsoft.AspNetCore.Components.Web
-
-@* <PageTitle>@GetPageTitle()</PageTitle> *@
+@inject IJSRuntime JSRuntime
 
 <div class="page-layout">
     <!-- Content Area -->
     <div class="content-area">
         @foreach (var cell in GridCells)
         {
-            <GridCell Element="cell.Element"
-                      OnClick="(element) => EditElement(element)"
-                      OnDrop="(e) => OnDropHandler(e, cell)" />
+            <div @ondragover:preventDefault="true"
+                 @ondragenter="(e) => OnDragEnter(cell)"
+                 @ondragleave="(e) => OnDragLeave(cell)"
+                 @ondrop="(e) => OnDropHandler(e, cell)">
+                <GridCell Element="cell.Element" OnClick="(element) => EditElement(element)" />
+            </div>
         }
     </div>
 
@@ -68,16 +70,31 @@
     </div>
 </div>
 
+<script>
+    window.dragDropInterop = {
+        setData: function (event, data) {
+            event.dataTransfer.setData("text", data);
+            console.log("Set data:", data);
+        },
+        getData: function (event) {
+            const data = event.dataTransfer.getData("text");
+            console.log("Get data:", data);
+            return data;
+        }
+    };
+</script>
+
 @code {
     [Parameter] public int SiteId { get; set; }
     [Parameter] public string? PageName { get; set; }
 
-    private string? DraggedElementType { get; set; } // Ny variabel för att hålla reda på vilken typ som dras
+    private string? DraggedElementType { get; set; }
     private GridElement? selectedElement { get; set; }
 
     public class GridCell
     {
         public GridElement? Element { get; set; }
+        public bool IsDraggedOver { get; set; }
     }
 
     private List<GridCell> GridCells { get; set; } = new List<GridCell>();
@@ -93,6 +110,7 @@
         for (int i = 0; i < cellCount; i++)
         {
             GridCells.Add(new GridCell());
+            Console.WriteLine("grid automated");
         }
     }
 
@@ -103,17 +121,22 @@
 
     private async Task OnDropHandler(DragEventArgs e, GridCell cell)
     {
-        if (DraggedElementType == "Text")
+        var elementType = await JSRuntime.InvokeAsync<string>("dragDropInterop.getData", e);
+
+        if (elementType == "Text")
         {
             cell.Element = CreateTextElement();
         }
-        else if (DraggedElementType == "ColorBlock")
+        else if (elementType == "ColorBlock")
         {
             cell.Element = CreateColorBlockElement();
         }
 
-        DraggedElementType = null; // Nollställ när ett element har släppts
-        StateHasChanged(); // Uppdatera UI
+
+
+        DraggedElementType = null;
+        cell.IsDraggedOver = false;
+        StateHasChanged();
     }
 
     private GridElement CreateTextElement() => new GridElement
@@ -134,22 +157,33 @@
     private bool IsTextElement(GridElement? element) => element?.Type == "Text";
     private bool IsColorBlockElement(GridElement? element) => element?.Type == "ColorBlock";
 
-    private void OnDragStartText(DragEventArgs e)
+    private async Task OnDragStartText(DragEventArgs e)
     {
-        e.DataTransfer.EffectAllowed = "move";
-        DraggedElementType = "Text"; // Markera att vi drar ett text-element
+        await JSRuntime.InvokeVoidAsync("dragDropInterop.setData", e, "Text");
+        DraggedElementType = "Text";
     }
 
-    private void OnDragStartColorBlock(DragEventArgs e)
+    private async Task OnDragStartColorBlock(DragEventArgs e)
     {
-        e.DataTransfer.EffectAllowed = "move";
-        DraggedElementType = "ColorBlock"; // Markera att vi drar ett color block
+        await JSRuntime.InvokeVoidAsync("dragDropInterop.setData", e, "ColorBlock");
+        DraggedElementType = "ColorBlock";
+    }
+
+    private void OnDragEnter(GridCell cell)
+    {
+        cell.IsDraggedOver = true;
+        StateHasChanged();
+    }
+
+    private void OnDragLeave(GridCell cell)
+    {
+        cell.IsDraggedOver = false;
+        StateHasChanged();
     }
 
     private async Task SaveElementChanges()
     {
         selectedElement = null;
         StateHasChanged();
-        // Implementera spara-logik om det behövs
     }
 }
