@@ -29,6 +29,10 @@ namespace CodeMonkeys.CMS.Public.Components.Shared
 
         protected override async Task OnInitializedAsync()
         {
+            if (HttpContextAccessor == null || Navigation == null || AuthenticationStateProvider == null || Logger == null)
+            {
+                throw new InvalidOperationException("One or more dependencies are not injected properly.");
+            }
             await base.OnInitializedAsync();
         }
 
@@ -95,6 +99,12 @@ namespace CodeMonkeys.CMS.Public.Components.Shared
 
         protected void LogError(Exception ex)
         {
+            if (Logger == null)
+            {
+                // Lägg till en åtgärd eller fallback om Logger inte är tillgängligt
+                Console.WriteLine("Logger not available.");
+                return;
+            }
             Logger?.LogError(ex.Message);
         }
     }

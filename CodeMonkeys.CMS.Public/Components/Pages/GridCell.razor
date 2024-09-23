@@ -1,5 +1,5 @@
 ﻿<div class="grid-cell"
-     @ondragover="HandleDragOver"
+@ondragover:preventDefault // Detta ersätter behovet av e.PreventDefault() i koden
      @ondrop="HandleDrop"
      @onclick="HandleClick">
     @if (Element != null)
@@ -22,14 +22,9 @@
     [Parameter] public EventCallback<GridElement?> OnClick { get; set; }
     [Parameter] public EventCallback<DragEventArgs> OnDrop { get; set; }
 
-    private void HandleClick()
+    private async Task HandleClick()
     {
-        OnClick.InvokeAsync(Element);
-    }
-
-    private void HandleDragOver(DragEventArgs e)
-    {
-        e.PreventDefault(); // Tillåter att släppa elementet
+        await OnClick.InvokeAsync(Element);
     }
 
     private async Task HandleDrop(DragEventArgs e)

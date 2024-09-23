@@ -4,9 +4,8 @@
 @using CodeMonkeys.CMS.Public.Shared.Entities
 @using CodeMonkeys.CMS.Public.Shared.Repository
 @using Microsoft.AspNetCore.Components.Web
-@using CodeMonkeys.CMS.Public.Components.Pages
 
-<PageTitle>@GetPageTitle()</PageTitle>
+@* <PageTitle>@GetPageTitle()</PageTitle> *@
 
 <div class="page-layout">
     <!-- Content Area -->
@@ -30,11 +29,27 @@
                 <div class="element-editor">
                     @if (IsTextElement(selectedElement))
                     {
-                        RenderTextElementEditor();
+                        <label for="body">Text:</label>
+                        <input type="text" id="body" @bind="selectedElement.Body" />
+
+                        <label for="fontSize">Textstorlek:</label>
+                        <input type="number" id="fontSize" @bind="selectedElement.FontSize" />
+
+                        <label for="color">Färg:</label>
+                        <input type="color" id="color" @bind="selectedElement.Color" />
+
+                        <label for="fontFamily">Typsnitt:</label>
+                        <select id="fontFamily" @bind="selectedElement.FontFamily">
+                            <option value="Arial">Arial</option>
+                            <option value="Times New Roman">Times New Roman</option>
+                            <option value="Verdana">Verdana</option>
+                            <option value="Georgia">Georgia</option>
+                        </select>
                     }
                     else if (IsColorBlockElement(selectedElement))
                     {
-                        RenderColorBlockEditor();
+                        <label for="color">Färg:</label>
+                        <input type="color" id="color" @bind="selectedElement.Color" />
                     }
 
                     <button @onclick="SaveElementChanges">Spara ändringar</button>
@@ -42,61 +57,34 @@
             }
             else
             {
-                RenderToolbarItems();
+                <div class="draggable" draggable="true" @ondragstart="OnDragStartText">
+                    Text Element
+                </div>
+                <div class="draggable" draggable="true" @ondragstart="OnDragStartColorBlock">
+                    Color Block
+                </div>
             }
         </div>
     </div>
 </div>
 
 @code {
-    private Site? Site { get; set; }
-    private WebPage? WebPage { get; set; }
-    private GridElement? selectedElement { get; set; }
+    [Parameter] public int SiteId { get; set; }
+    [Parameter] public string? PageName { get; set; }
 
-    [Parameter] public required int SiteId { get; set; }
-    [Parameter] public string? PageName { get; set; } = null;
-    [Inject] public required ISiteRepository Repository { get; set; }
-    [Inject] private IJSRuntime JS { get; set; } = default!;
+    private string? DraggedElementType { get; set; } // Ny variabel för att hålla reda på vilken typ som dras
+    private GridElement? selectedElement { get; set; }
 
     public class GridCell
     {
         public GridElement? Element { get; set; }
     }
 
-    public class GridElement
-    {
-        public string? Type { get; set; }
-        public string? Body { get; set; }
-        public string? Color { get; set; }
-        public string? FontSize { get; set; }
-        public string? FontFamily { get; set; }
-    }
-
     private List<GridCell> GridCells { get; set; } = new List<GridCell>();
-    private string? DraggedElementType { get; set; }
 
-    protected async override Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        await LoadPageData();
-        InitializeGrid(25); // Initiera rutnätet med t.ex. 25 celler (5x5)
-        await LoadGridState();
-    }
-
-    private async Task LoadPageData()
-    {
-        Site = await Repository.GetSiteWithContentsAsync(SiteId);
-        if (Site == null)
-        {
-            WebPage = NoSuchSitePage(SiteId);
-        }
-        else if (PageName == null)
-        {
-            WebPage = Site.LandingPage ?? NoLandingPageConfiguredPage(SiteId);
-        }
-        else
-        {
-            WebPage = FindPage(Site, PageName) ?? NoSuchPagePage(PageName);
-        }
+        InitializeGrid(5);
     }
 
     private void InitializeGrid(int cellCount)
@@ -108,63 +96,12 @@
         }
     }
 
-    private string GetPageTitle()
+    private void EditElement(GridElement? element)
     {
-        return WebPage?.Title ?? "Untitled";
+        selectedElement = element;
     }
 
-    private bool IsTextElement(GridElement? element) => element?.Type == "Text";
-    private bool IsColorBlockElement(GridElement? element) => element?.Type == "ColorBlock";
-
-    private void RenderTextElementEditor()
-    {
-        <label for="body">Text:</label>
-        <input type="text" id="body" @bind="selectedElement.Body" />
-
-        <label for="fontSize">Textstorlek:</label>
-        <input type="number" id="fontSize" @bind="selectedElement.FontSize" />
-
-        <label for="color">Färg:</label>
-        <input type="color" id="color" @bind="selectedElement.Color" />
-
-        <label for="fontFamily">Typsnitt:</label>
-        <select id="fontFamily" @bind="selectedElement.FontFamily">
-            <option value="Arial">Arial</option>
-            <option value="Times New Roman">Times New Roman</option>
-            <option value="Verdana">Verdana</option>
-            <option value="Georgia">Georgia</option>
-        </select>
-    }
-
-    private void RenderColorBlockEditor()
-    {
-        <label for="color">Färg:</label>
-        <input type="color" id="color" @bind="selectedElement.Color" />
-    }
-
-    private void RenderToolbarItems()
-    {
-        <div class="draggable" draggable="true" @ondragstart="OnDragStartText">
-            Text Element
-        </div>
-        <div class="draggable" draggable="true" @ondragstart="OnDragStartColorBlock">
-            Color Block
-        </div>
-    }
-
-    private void OnDragStartText(DragEventArgs e)
-    {
-        e.DataTransfer.EffectAllowed = "move";
-        DraggedElementType = "Text";
-    }
-
-    private void OnDragStartColorBlock(DragEventArgs e)
-    {
-        e.DataTransfer.EffectAllowed = "move";
-        DraggedElementType = "ColorBlock";
-    }
-
-    private async void OnDropHandler(DragEventArgs e, GridCell cell)
+    private async Task OnDropHandler(DragEventArgs e, GridCell cell)
     {
         if (DraggedElementType == "Text")
         {
@@ -175,87 +112,44 @@
             cell.Element = CreateColorBlockElement();
         }
 
-        DraggedElementType = null;
-        await SaveGridState();
-        StateHasChanged();
+        DraggedElementType = null; // Nollställ när ett element har släppts
+        StateHasChanged(); // Uppdatera UI
     }
 
     private GridElement CreateTextElement() => new GridElement
-    {
-        Type = "Text",
-        Body = "Ny Text",
-        Color = "#000000",
-        FontSize = "16",
-        FontFamily = "Arial"
-    };
+        {
+            Type = "Text",
+            Body = "Ny Text",
+            Color = "#000000",
+            FontSize = "16",
+            FontFamily = "Arial"
+        };
 
     private GridElement CreateColorBlockElement() => new GridElement
-    {
-        Type = "ColorBlock",
-        Color = "#ff0000"
-    };
+        {
+            Type = "ColorBlock",
+            Color = "#ff0000"
+        };
 
-    private void EditElement(GridElement? element)
+    private bool IsTextElement(GridElement? element) => element?.Type == "Text";
+    private bool IsColorBlockElement(GridElement? element) => element?.Type == "ColorBlock";
+
+    private void OnDragStartText(DragEventArgs e)
     {
-        selectedElement = element;
+        e.DataTransfer.EffectAllowed = "move";
+        DraggedElementType = "Text"; // Markera att vi drar ett text-element
     }
 
-    private async void SaveElementChanges()
+    private void OnDragStartColorBlock(DragEventArgs e)
     {
-        await SaveGridState();
+        e.DataTransfer.EffectAllowed = "move";
+        DraggedElementType = "ColorBlock"; // Markera att vi drar ett color block
+    }
+
+    private async Task SaveElementChanges()
+    {
         selectedElement = null;
         StateHasChanged();
+        // Implementera spara-logik om det behövs
     }
-
-    private WebPage? FindPage(Site site, string pageName)
-    {
-        if (int.TryParse(pageName, out int pageNumber))
-        {
-            return site.Pages.FirstOrDefault(p => p.WebPageId == pageNumber);
-        }
-
-        return site.Pages.FirstOrDefault(p => p.Title == pageName);
-    }
-
-    private WebPage NoSuchSitePage(int siteId) => new WebPage
-    {
-        Title = "No such site",
-        Contents = new List<Content> { new Content { Body = $"No such site: {siteId}" } }
-    };
-
-    private WebPage NoLandingPageConfiguredPage(int siteId) => new WebPage
-    {
-        Title = "No landing page configured",
-        Contents = new List<Content> { new Content { Body = $"No landing page configured for site: {siteId}" } }
-    };
-
-    private WebPage NoSuchPagePage(string pageName) => new WebPage
-    {
-        Title = "No such page",
-        Contents = new List<Content> { new Content { Body = $"No such page: {pageName}" } }
-    };
-
-    private async Task SaveGridState()
-    {
-        var gridState = GridCells.Select(cell => cell.Element).ToList();
-        var json = System.Text.Json.JsonSerializer.Serialize(gridState);
-        await JS.InvokeVoidAsync("localStorage.setItem", "gridState", json);
-    }
-
-    private async Task LoadGridState()
-    {
-        var json = await JS.InvokeAsync<string>("localStorage.getItem", "gridState");
-        if (!string.IsNullOrEmpty(json))
-        {
-            var gridState = System.Text.Json.JsonSerializer.Deserialize<List<GridElement>>(json);
-            for (int i = 0; i < gridState.Count; i++)
-            {
-                if (i < GridCells.Count)
-                {
-                    GridCells[i].Element = gridState[i];
-                }
-            }
-        }
-    }
-  }
 }
