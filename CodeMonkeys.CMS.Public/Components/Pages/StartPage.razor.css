@@ -15,7 +15,7 @@
 .StartPage-div4,
 .StartPage-div5 {
   
-  height: 900px;
+  height: 960px;
 }
 
 .StartPage-div0{
@@ -26,7 +26,7 @@ background-image: radial-gradient(18% 28% at 24% 50%, #FFEEEE8A 1%, #073AFF00 10
 }
 
 .StartPage-div0 h1{
-  padding-top: 12%;
+  padding-top: 350px;
   text-align: center;
   font-size: 150px;
   font-family:'futura pt book';
