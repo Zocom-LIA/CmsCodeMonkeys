@@ -410,11 +410,13 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .WithMany()
                         .HasForeignKey("AuthorId");
 
-                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", null)
+                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", "WebPage")
                         .WithMany("Contents")
                         .HasForeignKey("WebPageId");
 
                     b.Navigation("Author");
+
+                    b.Navigation("WebPage");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Menu", b =>
