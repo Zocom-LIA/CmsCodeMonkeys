@@ -14,6 +14,9 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("CodeMonkeys.CMS.Public.Tests")]
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,8 +42,19 @@ builder.Services.AddAuthentication(options =>
 })
     .AddIdentityCookies();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContextFactory<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+
+Action<DbContextOptionsBuilder> dbConfigFunction;
+if (builder.Configuration["database"] == "inMemory")
+{
+    string databaseName = builder.Configuration["database_name"] ?? "Something";
+    dbConfigFunction = (options) => options.UseInMemoryDatabase(databaseName);
+}
+else
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+    dbConfigFunction = (options) => options.UseSqlServer(connectionString);
+}
+builder.Services.AddDbContextFactory<ApplicationDbContext>(dbConfigFunction);
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirmedAccount = true)
