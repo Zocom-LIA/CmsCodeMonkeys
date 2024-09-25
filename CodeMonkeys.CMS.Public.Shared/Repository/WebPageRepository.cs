@@ -1,10 +1,13 @@
-﻿using Azure;
+﻿using AutoMapper;
+
+using Azure;
 
 using CodeMonkeys.CMS.Public.Shared.Data;
 using CodeMonkeys.CMS.Public.Shared.DTOs;
 using CodeMonkeys.CMS.Public.Shared.Entities;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
 
 using System.Linq;
@@ -13,11 +16,12 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 {
     public class WebPageRepository : RepositoryBase, IWebPageRepository
     {
-        public WebPageRepository(IDbContextFactory<ApplicationDbContext> contextFactory, ILogger<WebPageRepository> logger) : base(contextFactory, logger)
+        public WebPageRepository(IDbContextFactory<ApplicationDbContext> contextFactory, IMapper mapper, ILogger<WebPageRepository> logger)
+            : base(contextFactory, mapper, logger)
         { }
 
 
-        public async Task CreateWebPageAsync(WebPage webPage)
+        public async Task<WebPage> CreateWebPageAsync(WebPage webPage)
         {
             if (webPage == null) throw new ArgumentNullException(nameof(webPage), "WebPage must not be null.");
 
@@ -25,8 +29,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 
             try
             {
-                await context.Pages.AddAsync(webPage);
+                EntityEntry<WebPage> entry = await context.Pages.AddAsync(webPage);
                 await context.SaveChangesAsync();
+
+                return entry.Entity;
             }
             catch (Exception ex)
             {
@@ -39,29 +45,151 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             }
         }
 
-        public async Task<WebPage?> GetSiteWebPageAsync(int siteId, int pageId)
+        public async Task<WebPageIncludeDto?> GetWebPageAsync(
+            int webPageId,
+            bool includeContents = true,
+            bool includeAuthor = true,
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var context = GetContext();
+
+                // Step 1: Select necessary data instead of loading entire entities with Include
+                var webPages = await context.Pages
+                    .AsNoTracking()
+                    .Where(wp => wp.WebPageId == webPageId)
+                    .Select(wp => new
+                    {
+                        wp.WebPageId,
+                        wp.Title,
+                        wp.CreatedDate,
+                        wp.LastModifiedDate,
+                        wp.SiteId,
+                        wp.AuthorId,
+                        Contents = includeContents ? wp.Contents.Select(c => new
+                        {
+                            c.ContentId,
+                            c.Body,
+                            c.Title,
+                            c.Color,
+                            c.CreatedDate,
+                            c.LastModifiedDate,
+                            c.AuthorId
+                        }) : null,
+                    })
+                    .FirstOrDefaultAsync(cancellationToken);
+
+                if (webPages == null) return null;
+
+                // Step 2: Extract all distinct author IDs (ignoring nulls)
+                var authorIds = webPages.Contents?
+                    .Select(c => c.AuthorId)
+                    .Concat(new[] { webPages.AuthorId })
+                    .Where(id => id.HasValue)
+                    .Distinct()
+                    .Select(id => id!.Value);
+
+                // Step 3: Fetch authors in a single query and use projection to avoid loading unnecessary data
+                var authors = includeAuthor ? await context.Users
+                    .AsNoTrackingWithIdentityResolution()
+                    .Where(u => authorIds!.Contains(u.Id))
+                    .Select(u => new { u.Id, User = _mapper.Map<AuthorDto>(u) })  // Project to UserDto for efficiency
+                    .ToDictionaryAsync(u => u.Id, u => u.User, cancellationToken)
+                    : new Dictionary<Guid, AuthorDto>();
+
+                // Step 4: Assign the correct author to each web page and its content
+                var author = webPages.AuthorId.HasValue ? authors.GetValueOrDefault(webPages.AuthorId.Value) : null;
+
+                return new WebPageIncludeDto
+                {
+                    WebPageId = webPages.WebPageId,
+                    Title = webPages.Title,
+                    CreatedDate = webPages.CreatedDate,
+                    LastModifiedDate = webPages.LastModifiedDate,
+                    Contents = (webPages.Contents?.Select(content =>
+                    {
+                        var contentAuthor = content.AuthorId.HasValue ? authors.GetValueOrDefault(content.AuthorId.Value) : null;
+                        return new ContentDto
+                        {
+                            ContentId = content.ContentId,
+                            Author = contentAuthor
+                        };
+                    }) ?? []).ToList(),
+                    Author = author
+                };
+            }
+            catch (TaskCanceledException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error getting web page {webPageId}", ex);
+            }
+        }
+
+        public async Task<WebPage?> GetSiteWebPageAsync(int siteId, int pageId, bool includeContents = false, bool includeAuthor = false, bool includeSite = false)
         {
             if (siteId <= 0) throw new ArgumentOutOfRangeException("SiteId must be greater than zero.");
             if (pageId <= 0) throw new ArgumentOutOfRangeException("PageId must be greater than zero.");
 
             var context = GetContext();
-            WebPage? page = null;
 
             try
             {
-                page = await context.Pages
-                    .Include(page => page.Contents)
-                    .Include(page => page.Site)
-                    .Include(page => page.Author)
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(page => page.SiteId == siteId && page.WebPageId == pageId);
+                bool usedTracking = false;
+                var query = context.Pages
+                    .Where(page => page.WebPageId == pageId && page.SiteId == siteId);
+
+                if (query.TryGetNonEnumeratedCount(out var nonEnumeratedCount))
+                {
+                    if (nonEnumeratedCount == 0) return null;
+                }
+
+                if (includeAuthor)
+                {
+                    query = query.Include(page => page.Author);
+                    query = query.AsNoTrackingWithIdentityResolution();
+                    usedTracking = true;
+                }
+
+                if (includeSite)
+                {
+                    query = query.Include(page => page.Site);
+                }
+
+                if (includeContents)
+                {
+                    query = query
+                        .Include(page => page.Contents)
+                        .AsNoTrackingWithIdentityResolution();
+
+                    if (!usedTracking)
+                    {
+                        query = query.AsNoTrackingWithIdentityResolution();
+                        usedTracking = true;
+                    }
+                }
+
+                if (!usedTracking)
+                {
+                    query = query.AsNoTracking();
+                }
+
+                var page = await query.FirstOrDefaultAsync();
+
+                if (page == null) return null;
+
+                page.Contents = page.Contents.OrderBy(c => c.OrdinalNumber).ToList();
+
+                return page;
             }
             finally
             {
                 await context.DisposeAsync();
             }
-
-            return page;
         }
 
         public async Task<IEnumerable<ContentDto>> GetWebPageContentsAsync(int pageId, bool sortContent = false)
@@ -73,30 +201,32 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 
             try
             {
-                var query = context.Pages
-                    .Where(page => page.WebPageId == pageId)
-                    .Include(page => page.Contents)
-                    .SelectMany(page => page.Contents.Select(content => new ContentDto
+                // Step 1: Select only necessary data
+                var query = context.Contents
+                    .Where(c => c.WebPageId == pageId)
+                    .Select(c => new ContentDto
                     {
-                        Title = content.Title,
-                        ContentType = content.ContentType,
-                        Body = content.Body,
-                        OrdinalNumber = content.OrdinalNumber
-                    }));
+                        Title = c.Title,
+                        ContentType = c.ContentType,
+                        Body = c.Body,
+                        OrdinalNumber = c.OrdinalNumber
+                    });
 
+                // Step 2: Apply sorting if needed
                 if (sortContent)
                 {
-                    contents = contents.OrderBy(content => content.OrdinalNumber);
+                    query = query.OrderBy(content => content.OrdinalNumber);
                 }
 
+                // Step 3: Fetch data efficiently
                 contents = await query.AsNoTracking().ToListAsync();
+
+                return contents;
             }
             finally
             {
                 await context.DisposeAsync();
             }
-
-            return contents;
         }
 
         public async Task<IEnumerable<WebPage>> GetSiteWebPagesAsync(int siteId, int pageIndex = 0, int pageSize = 10)
@@ -218,11 +348,12 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             try
             {
                 page = await context.Pages
+                    .Where(page => page.WebPageId == webPageId)
+                    .AsNoTrackingWithIdentityResolution()
                     .Include(page => page.Contents)
                     .Include(page => page.Site)
                     .Include(page => page.Author)
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(page => page.WebPageId == webPageId);
+                    .FirstOrDefaultAsync();
             }
             finally
             {
@@ -271,23 +402,22 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                     throw new InvalidOperationException("User not found");
                 }
 
-                var newContent = new Content
-                {
-                    Title = content.Title,
-                    Body = content.Body,
-                    ContentType = content.ContentType,
-                    OrdinalNumber = content.OrdinalNumber,
-                    CreatedDate = DateTime.Now,
-                    LastModifiedDate = DateTime.Now,
-                    Color = content.Color,
-                    AuthorId = existingUser.Id,
-                    WebPageId = webPage.WebPageId
-                };
+                var existingPage = await context.Pages.FindAsync(webPage.WebPageId);
 
-                await context.Contents.AddAsync(newContent);
+                if (existingPage == null)
+                {
+                    throw new InvalidOperationException("Page not found");
+                }
+
+                content.AuthorId = existingUser.Id;
+                content.CreatedDate = DateTime.UtcNow;
+                content.LastModifiedDate = DateTime.UtcNow;
+                content.WebPageId = existingPage.WebPageId;
+
+                await context.Contents.AddAsync(content);
                 await context.SaveChangesAsync();
 
-                contents = await context.Pages
+                return await context.Pages
                     .Where(page => page.WebPageId == webPage.WebPageId)
                     .Include(page => page.Contents)
                     .AsNoTracking()
@@ -303,8 +433,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             {
                 await context.DisposeAsync();
             }
-
-            return contents;
         }
         public async Task<IEnumerable<Content>> CreateWebPageContentsAsync2(WebPage webPage, Content content)
         {
@@ -336,7 +464,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                 contents = await context.Pages
                     .Where(page => page.WebPageId == webPage.WebPageId)
                     .Include(page => page.Contents)
-                    .AsNoTracking()
                     .SelectMany(page => page.Contents)
                     .ToListAsync();
             }

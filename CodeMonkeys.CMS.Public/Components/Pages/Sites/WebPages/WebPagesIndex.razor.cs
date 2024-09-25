@@ -121,8 +121,8 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
                     AuthorId = User?.Id
                 };
 
+                page = await WebPageService.CreateWebPageAsync(siteId, page);
                 Site!.Pages.Add(page);
-                await WebPageService.CreateWebPageAsync(siteId, page);
             }
             else
             {

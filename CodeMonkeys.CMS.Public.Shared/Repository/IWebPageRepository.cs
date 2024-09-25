@@ -8,17 +8,14 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 {
     public interface IWebPageRepository
     {
-        IDbContextFactory<ApplicationDbContext> ContextFactory { get; }
-
-        Task CreateWebPageAsync(WebPage webPage);
+        Task<WebPage> CreateWebPageAsync(WebPage webPage);
         Task<IEnumerable<Content>> CreateWebPageContentsAsync(WebPage webPage, Content content);
         Task DeleteWebPageAsync(WebPage page);
-        Task<WebPage?> GetSiteWebPageAsync(int siteId, int pageId);
+        Task<WebPage?> GetSiteWebPageAsync(int siteId, int pageId, bool includeContents = false, bool includeAuthor = false, bool includeSite = false);
         Task<IEnumerable<WebPage>> GetSiteWebPagesAsync(int siteId, int pageIndex = 0, int pageSize = 10);
 
         Task<IEnumerable<WebPageDto>> GetVisitorWebPageAsync(int? pageId);
-        Task<WebPage?> GetWebPageAsync(int webPageId);
-        Task<IEnumerable<ContentDto>> GetWebPageContentsAsync(int pageId, bool sortContent = false);
+        Task<WebPageIncludeDto?> GetWebPageAsync(int webPageId, bool includeContents = true, bool includeAuthor = true, CancellationToken cancellationToken = default);
         Task UpdateWebPageAsync(WebPage webPage);
         Task<IEnumerable<Content>> UpdateWebPageContentsAsync(WebPage webPage, IEnumerable<Content> contents);
     }
