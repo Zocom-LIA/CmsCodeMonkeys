@@ -162,9 +162,16 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 
                 if (includeContents)
                 {
-                    query = query
-                        .Include(page => page.Contents)
-                        .AsNoTrackingWithIdentityResolution();
+                    query = query.Include(page => page.Contents);
+
+                    if (includeAuthor)
+                    {
+                        query = query.Include(page => page.Contents).ThenInclude(content => content.Author);
+                    }
+                    else
+                    {
+                        query = query.Include(page => page.Contents);
+                    }
 
                     if (!usedTracking)
                     {
@@ -326,17 +333,19 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                 await context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                contents = await context.Contents
-                    .Where(content => content.WebPageId == webPage.WebPageId)
-                    .AsNoTracking()
-                    .ToListAsync();
+                return webPage.Contents.OrderBy(content => content.OrdinalNumber);
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                _logger.LogError(ex, "An error occurred while updating the contents.");
+                throw new RepositoryException("Error when updating the contents.", ex);
             }
             finally
             {
                 await context.DisposeAsync();
+                await transaction.DisposeAsync();
             }
-
-            return contents;
         }
 
         // Used for testing purposes only
