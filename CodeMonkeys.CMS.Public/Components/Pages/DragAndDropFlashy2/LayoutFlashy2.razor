@@ -1,0 +1,319 @@
+@page "/LayoutFlashy2"
+@inject TodoService2 TodoService2
+@using CodeMonkeys.CMS.Public.Components.Shared
+@inherits BaseComponent<Home>
+@rendermode InteractiveServer
+
+<AuthorizeView >
+<NotAuthorized >
+<!-- NY DESIGN -->
+<div class="grid-container">
+    <div class="vertical-container">
+        <div class="box box1" @onclick="() => OpenColorPicker(1)" style="background-color:@TodoService2.Box1Color">
+            <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(2)">
+                <h4>Header</h4>
+                <ul>
+                    @foreach (var todo in TodoService2.TodoList2)
+                    {
+                        @RenderTodoItem(todo)
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="box box2" @onclick="() => OpenColorPicker(2)" style="background-color:@TodoService2.Box2Color">
+            <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(3)">
+                <div>BODY</div>
+                <ul>
+                    @foreach (var todo in TodoService2.TodoList3)
+                    {
+                        @RenderTodoItem(todo)
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="box box4" @onclick="() => OpenColorPicker(4)" style="background-color:@TodoService2.Box4Color">
+            <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(4)">
+                <div>Footer</div>
+                <ul>
+                    @foreach (var todo in TodoService2.TodoList4)
+                    {
+                        @RenderTodoItem(todo)
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="box box3">
+        <div>
+            <input @bind="newTodoText" placeholder="Skriv en uppgift" />
+            <select @bind="selectedList">
+                <option value="1">Toolbar</option>
+                <option value="2">Header</option>
+                <option value="3">Body</option>
+                <option value="4">Footer</option>
+            </select>
+            <button @onclick="AddTodo">Lägg till</button>
+            <button @onclick="ClearAll">Rensa Allt</button> 
+        </div>
+        <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(1)">
+            <h4>Toolbar</h4>
+            <ul>
+                @foreach (var todo in TodoService2.TodoList1)
+                {
+                    @RenderTodoItem(todo)
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
+@if (showColorPicker)
+{
+    <div class="color-picker">
+        <h4>Välj Bakgrundsfärg för @selectedBox</h4>
+        <select @bind="selectedColor">
+            @foreach (var color in colorOptions)
+            {
+                <option value="@color.Value">@color.Key</option>
+            }
+        </select>
+        <button @onclick="SaveColor">Spara</button>
+    </div>
+}
+</NotAuthorized>
+</AuthorizeView>
+@code {
+    private string newTodoText = string.Empty;
+    private int selectedList = 1;
+
+  
+
+    private bool showColorPicker = false;
+    private string selectedColor = "White";
+    private int currentBox = 1;
+    private string selectedBox = "Box 1";
+
+    private void OpenColorPicker(int boxNumber)
+    {
+        if (currentBox == boxNumber && showColorPicker)
+        {
+            showColorPicker = false;
+        }
+        else
+        {
+            currentBox = boxNumber;
+            selectedBox = boxNumber switch
+            {
+                1 => "Header",
+                2 => "Body",
+                4 => "Footer",
+                _ => ""
+            };
+            selectedColor = boxNumber switch
+            {
+                1 => TodoService2.Box1Color,
+                2 => TodoService2.Box2Color,
+                4 => TodoService2.Box4Color,
+                _ => "White"
+            };
+            showColorPicker = true;
+        }
+    }
+
+    private void SaveColor()
+    {
+        TodoService2.SaveBoxColor(currentBox, selectedColor);
+        showColorPicker = false;
+        StateHasChanged();
+    }
+
+private void AddTodo()
+{
+    if (!string.IsNullOrWhiteSpace(newTodoText))
+    {
+        TodoService2.AddTodo(selectedList, newTodoText);
+        newTodoText = string.Empty;
+
+        // Kontrollera och ställ in ShowEditButton endast om listan inte är tom
+        if (TodoService2.TodoList1.Any())
+            TodoService2.TodoList1.Last().ShowEditButton = false; 
+        if (TodoService2.TodoList2.Any())
+            TodoService2.TodoList2.Last().ShowEditButton = false; 
+        if (TodoService2.TodoList3.Any())
+            TodoService2.TodoList3.Last().ShowEditButton = false; 
+        if (TodoService2.TodoList4.Any())
+            TodoService2.TodoList4.Last().ShowEditButton = false; 
+
+        StateHasChanged();
+    }
+}
+
+    private void OnDragStart(TodoItem2 todo)
+    {
+        TodoService2.StartDrag(todo);
+    }
+
+    private void OnDrop(int targetListNumber)
+    {
+        TodoService2.DropTodoItem(targetListNumber);
+        StateHasChanged();
+    }
+
+    private void ToggleEdit(TodoItem2 todo)
+    {
+        todo.ShowEditButton = !todo.ShowEditButton; // Toggle the edit button visibility
+        StateHasChanged();
+    }
+
+    private void StartEdit(TodoItem2 todo)
+    {
+        todo.IsEditing = true;
+        todo.ShowEditButton = false; // Hide the "Ändra" button
+        StateHasChanged();
+    }
+
+    private void SaveEdit(TodoItem2 todo)
+    {
+        todo.IsEditing = false; // Save the edit and close the input field
+        StateHasChanged();
+    }
+
+    private void RemoveTodo(TodoItem2 todo)
+    {
+        TodoService2.RemoveTodo(todo);
+        StateHasChanged();
+    }
+    
+    private void ChangeFontSize(TodoItem2 todo, int change)
+    {
+        todo.FontSize += change * 2; // Increase or decrease size by 10 pixels
+        if (todo.FontSize < 10) // Minimum size
+        {
+            todo.FontSize = 10; 
+        }
+        StateHasChanged();
+    }
+
+     private void ClearAll()
+    {
+        TodoService2.TodoList1.Clear();
+        TodoService2.TodoList2.Clear();
+        TodoService2.TodoList3.Clear();
+        TodoService2.TodoList4.Clear();
+        
+        TodoService2.Box1Color = "White";
+        TodoService2.Box2Color = "White";
+        TodoService2.Box4Color = "White";
+
+        StateHasChanged();
+    }
+
+    private Dictionary<string, string> colorOptions = new Dictionary<string, string>
+    {
+        { "Black", "#000000" },
+        { "White", "#FFFFFF" },
+        { "Red", "#FF0000" },
+        { "Green", "#008000" },
+        { "Blue", "#0000FF" },
+        { "Yellow", "#FFFF00" },
+        { "Orange", "#FFA500" },
+        { "Purple", "#800080" },
+        { "Pink", "#FFC0CB" },
+        { "Brown", "#A52A2A" },
+        { "Gray", "#808080" },
+        { "Cyan", "#00FFFF" },
+        { "Magenta", "#FF00FF" },
+        { "LightBlue", "#ADD8E6" },
+        { "DarkBlue", "#00008B" },
+        { "DarkGreen", "#006400" },
+        { "LightGreen", "#90EE90" },
+        { "LightGray", "#D3D3D3" },
+        { "Gold", "#FFD700" },
+        { "Silver", "#C0C0C0" },
+        { "Teal", "#008080" }
+    };
+
+   private Dictionary<string, string> fontFamilyOptions = new Dictionary<string, string>
+{
+    { "Arial", "Arial, sans-serif" },
+    { "Verdana", "Verdana, sans-serif" },
+    { "Tahoma", "Tahoma, sans-serif" },
+    { "Times New Roman", "'Times New Roman', serif" },
+    { "Georgia", "Georgia, serif" },
+    { "Courier New", "'Courier New', monospace" },
+    { "Comic Sans MS", "'Comic Sans MS', cursive" },
+    { "Impact", "Impact, sans-serif" },
+    { "Lucida Console", "'Lucida Console', monospace" },
+    { "Trebuchet MS", "'Trebuchet MS', sans-serif" },
+    { "Palatino Linotype", "'Palatino Linotype', serif" },
+    { "Garamond", "Garamond, serif" },
+    { "Frank Ruhl Libre", "'Frank Ruhl Libre', serif" },
+    { "Arial Black", "'Arial Black', sans-serif" },
+    { "Futura", "Futura, sans-serif" },
+    { "Droid Sans", "'Droid Sans', sans-serif" },
+    { "Segoe UI", "'Segoe UI', sans-serif" },
+    { "Roboto", "'Roboto', sans-serif" },
+    { "Open Sans", "'Open Sans', sans-serif" },
+    { "Montserrat", "'Montserrat', sans-serif" },
+    { "Lato", "'Lato', sans-serif" }
+};
+
+
+
+private RenderFragment RenderTodoItem(TodoItem2 todo) => @<li draggable="true" @ondragstart="() => OnDragStart(todo)">
+    @if (todo.IsEditing)
+    {
+        <input @bind="todo.Text" />
+        <button @onclick="() => SaveEdit(todo)">Spara</button>
+        <button @onclick="() => RemoveTodo(todo)">Ta bort</button>
+        <br />
+        <br />
+        
+        <div>
+    <label>
+        Font Family: 
+        <select @bind="todo.FontFamily">
+            <option value="">Välj en typsnitt</option> <!-- Descriptive option -->
+            @foreach (var font in fontFamilyOptions)
+            {
+                <option value="@font.Value">@font.Key</option>
+            }
+        </select>
+    </label>
+     <br />
+    <label>Text Färg:
+        <select @bind="todo.Color">
+            @foreach (var color in colorOptions)
+            {
+                <option value="@color.Value">@color.Key</option>
+            }
+        </select>
+        </label>
+    </div>
+        <div>
+         <label>
+                <input type="checkbox" @bind="todo.IsBold" />
+                Bold
+            </label>
+            <br />
+            <label>
+                <input type="checkbox" @bind="todo.IsItalic" />
+                Italic
+            </label>
+        </div>
+    }
+    else
+    {
+        <span @onclick="() => ToggleEdit(todo)" style="color:@todo.Color; font-size:@($"{todo.FontSize}px"); font-weight:@(todo.IsBold ? "bold" : "normal"); font-style:@(todo.IsItalic ? "italic" : "normal"); font-family:@todo.FontFamily;">@todo.Text</span>
+        @if (todo.ShowEditButton)
+        {
+            <button @onclick="() => StartEdit(todo)">Ändra</button>
+            <button @onclick="() => ToggleEdit(todo)">Save</button>
+            <button @onclick="() => ChangeFontSize(todo, 1)">↑</button>
+            <button @onclick="() => ChangeFontSize(todo, -1)">↓</button>
+        }
+    }
+</li>;
+
+}
+
