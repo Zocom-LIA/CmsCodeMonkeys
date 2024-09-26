@@ -308,8 +308,8 @@ private RenderFragment RenderTodoItem(TodoItem2 todo) => @<li draggable="true" @
             @if (todo.IsLinkEnabled)
             {
                 <div>
-                    <input type="text" placeholder="Enter link URL (start with https://)" @bind="todo.LinkUrl" />
                     <input type="text" placeholder="Enter link description" @bind="todo.LinkDescription" />
+                    <input type="text" placeholder="Enter link URL (start with https://)" @bind="todo.LinkUrl" />
                 </div>
             }
         </div>
@@ -323,12 +323,12 @@ private RenderFragment RenderTodoItem(TodoItem2 todo) => @<li draggable="true" @
             @if (todo.IsLinkEnabled && !string.IsNullOrEmpty(todo.LinkUrl) && !string.IsNullOrEmpty(todo.LinkDescription))
             {
                 <a href="https://@todo.LinkUrl" target="_blank" style="color:blue; text-decoration:underline;" @onclick:stopPropagation>
-                    - @todo.LinkDescription
+                - @todo.LinkDescription
                 </a>
             }
             else if (!string.IsNullOrEmpty(todo.LinkDescription))
             {
-                <span> - @todo.LinkDescription</span> <!-- Display link description if it exists but is not clickable -->
+                <span>- @todo.LinkDescription</span> <!-- Display link description if it exists but is not clickable -->
             }
         </span>
         @if (todo.ShowEditButton)
