@@ -1,4 +1,6 @@
-﻿using CodeMonkeys.CMS.Public.Shared.Data;
+﻿using AutoMapper;
+
+using CodeMonkeys.CMS.Public.Shared.Data;
 using CodeMonkeys.CMS.Public.Shared.Entities;
 
 using Microsoft.EntityFrameworkCore;
@@ -15,34 +17,31 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 {
     public class SiteRepository : RepositoryBase, ISiteRepository
     {
-        public SiteRepository(IDbContextFactory<ApplicationDbContext> contextFactory, ILogger<SiteRepository> logger) : base(contextFactory, logger) { }
+        public SiteRepository(IDbContextFactory<ApplicationDbContext> contextFactory, IMapper mapper, ILogger<SiteRepository> logger) : base(contextFactory, mapper, logger) { }
 
-        public async Task CreateAsync(Site site, Guid? creatorId = null)
+        public async Task<Site> CreateAsync(Site site, Guid? creatorId = null)
         {
+            ArgumentNullException.ThrowIfNull(site, nameof(site));
+
+
+            if (string.IsNullOrWhiteSpace(site.Name))
+            {
+                throw new ArgumentException("Site must have a valid name.", nameof(site));
+            }
+
             var context = GetContext();
 
             try
             {
-                // Hämta den befintliga användaren från databasen
-                creatorId ??= site.CreatorId;
-                creatorId ??= site.Creator?.Id;
+                var assignedCreatorId = creatorId ?? site.CreatorId ?? site.Creator?.Id;
 
-                // Skapa en ny Site och sätt Creator navigation property till den befintliga användaren
-                var newSite = new Site
-                {
-                    Name = site.Name,
+                site.CreatedDate = DateTime.Now;
+                site.LastModifiedDate = DateTime.Now;
+                site.CreatorId = assignedCreatorId;
 
-                    CreatedDate = DateTime.Now,
-                    LastModifiedDate = DateTime.Now,
-                    CreatorId = creatorId,
-                    LandingPageId = site.LandingPageId
-                };
-
-                // Lägg till den nya Site till kontexten
-                context.Sites.Add(newSite);
-
-                // Spara ändringarna till databasen
+                await context.Sites.AddAsync(site);
                 await context.SaveChangesAsync();
+                return site;
             }
             catch (Exception ex)
             {

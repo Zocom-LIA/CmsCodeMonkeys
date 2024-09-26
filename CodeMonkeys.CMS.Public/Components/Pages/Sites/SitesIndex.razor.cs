@@ -106,7 +106,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites
                     CreatorId = User?.Id
                 };
 
-                await SiteService.CreateSiteAsync(site);
+                site = await SiteService.CreateSiteAsync(site);
 
                 Sites.Add(site);
             }

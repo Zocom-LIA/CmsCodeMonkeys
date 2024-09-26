@@ -1,4 +1,6 @@
-﻿using CodeMonkeys.CMS.Public.Shared.Data;
+﻿using AutoMapper;
+
+using CodeMonkeys.CMS.Public.Shared.Data;
 using CodeMonkeys.CMS.Public.Shared.Entities;
 
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +11,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 {
     public class ContentRepository : RepositoryBase, IContentRepository
     {
-        public ContentRepository(IDbContextFactory<ApplicationDbContext> contextFactory, ILogger<ContentRepository> logger) : base(contextFactory, logger) { }
+        public ContentRepository(IDbContextFactory<ApplicationDbContext> contextFactory, IMapper mapper, ILogger<ContentRepository> logger) : base(contextFactory, mapper, logger) { }
 
         public async Task<Content> CreateContentAsync(Content content)
         {

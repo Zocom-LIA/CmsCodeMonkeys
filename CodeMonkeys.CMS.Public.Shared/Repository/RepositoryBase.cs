@@ -1,4 +1,6 @@
-﻿using CodeMonkeys.CMS.Public.Shared.Data;
+﻿using AutoMapper;
+
+using CodeMonkeys.CMS.Public.Shared.Data;
 using CodeMonkeys.CMS.Public.Shared.Entities;
 
 using Microsoft.EntityFrameworkCore;
@@ -8,14 +10,17 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 {
     public class RepositoryBase
     {
-        public IDbContextFactory<ApplicationDbContext> ContextFactory { get; }
+        private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
+        protected readonly IMapper _mapper;
         protected readonly ILogger _logger;
 
         public RepositoryBase(
             IDbContextFactory<ApplicationDbContext> contextFactory,
+            IMapper mapper,
             ILogger logger)
         {
-            ContextFactory = contextFactory ?? throw new ArgumentNullException(nameof(contextFactory));
+            _contextFactory = contextFactory ?? throw new ArgumentNullException(nameof(contextFactory));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -26,7 +31,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 
         protected ApplicationDbContext GetContext()
         {
-            return ContextFactory.CreateDbContext();
+            return _contextFactory.CreateDbContext();
         }
     }
 }

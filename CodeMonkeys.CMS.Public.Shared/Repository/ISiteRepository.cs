@@ -10,7 +10,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 {
     public interface ISiteRepository
     {
-        Task CreateAsync(Site site, Guid? creatorId = null);
+        Task<Site> CreateAsync(Site site, Guid? creatorId = null);
         Task UpdateSiteAsync(Site site);
         Task<Site?> GetUserSiteAsync(Guid userId, int siteId);
         Task<Site?> GetSiteWithContentsAsync(int siteId);

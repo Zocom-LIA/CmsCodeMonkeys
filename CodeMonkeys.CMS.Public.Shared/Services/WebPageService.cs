@@ -3,6 +3,8 @@ using CodeMonkeys.CMS.Public.Shared.Entities;
 using CodeMonkeys.CMS.Public.Shared.Extensions;
 using CodeMonkeys.CMS.Public.Shared.Repository;
 
+using System.Threading;
+
 namespace CodeMonkeys.CMS.Public.Shared.Services
 {
     public class WebPageService : IWebPageService
@@ -14,7 +16,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
 
         public IWebPageRepository Repository { get; }
 
-        public async Task CreateWebPageAsync(int siteId, WebPage webPage)
+        public async Task<WebPage> CreateWebPageAsync(int siteId, WebPage webPage)
         {
             if (!webPage.SiteId.HasValue)
             {
@@ -28,7 +30,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
             webPage.CreatedDate = DateTime.Now;
             webPage.LastModifiedDate = DateTime.Now;
 
-            await Repository.CreateWebPageAsync(webPage);
+            return await Repository.CreateWebPageAsync(webPage);
         }
 
         public async Task UpdateWebPageAsync(WebPage webPage)
@@ -44,14 +46,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
             return await Repository.GetSiteWebPagesAsync(siteId, pageIndex, pageSize);
         }
 
-        public async Task<WebPage?> GetSiteWebPageAsync(int siteId, int pageId)
+        public async Task<WebPage?> GetSiteWebPageAsync(int siteId, int pageId, bool includeContents = false, bool includeAuthor = false, bool includeSite = false)
         {
-            return await Repository.GetSiteWebPageAsync(siteId, pageId);
-        }
-
-        public async Task<IEnumerable<ContentDto>> GetWebPageContentsAsync(int pageId)
-        {
-            return await Repository.GetWebPageContentsAsync(pageId);
+            return await Repository.GetSiteWebPageAsync(siteId, pageId, includeContents, includeAuthor, includeSite);
         }
 
         public async Task<IEnumerable<WebPageDto>> GetVisitorPageAsync(int? pageId = null)
@@ -140,12 +137,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         public Task DeleteWebPageAsync(WebPage page)
         {
             return Repository.DeleteWebPageAsync(page);
-        }
-
-        // Used for testing purposes only
-        public async Task<WebPage?> GetWebPageAsync(int webPageId)
-        {
-            return await Repository.GetWebPageAsync(webPageId);
         }
     }
 }
