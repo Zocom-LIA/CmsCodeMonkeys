@@ -259,7 +259,6 @@ private void AddTodo()
 };
 
 
-
 private RenderFragment RenderTodoItem(TodoItem2 todo) => @<li draggable="true" @ondragstart="() => OnDragStart(todo)">
     @if (todo.IsEditing)
     {
@@ -270,28 +269,29 @@ private RenderFragment RenderTodoItem(TodoItem2 todo) => @<li draggable="true" @
         <br />
         
         <div>
-    <label>
-        Font Family: 
-        <select @bind="todo.FontFamily">
-            <option value="">Välj en typsnitt</option> <!-- Descriptive option -->
-            @foreach (var font in fontFamilyOptions)
-            {
-                <option value="@font.Value">@font.Key</option>
-            }
-        </select>
-    </label>
-     <br />
-    <label>Text Färg:
-        <select @bind="todo.Color">
-            @foreach (var color in colorOptions)
-            {
-                <option value="@color.Value">@color.Key</option>
-            }
-        </select>
-        </label>
-    </div>
+            <label>
+                Font Family: 
+                <select @bind="todo.FontFamily">
+                    <option value="">Välj en typsnitt</option>
+                    @foreach (var font in fontFamilyOptions)
+                    {
+                        <option value="@font.Value">@font.Key</option>
+                    }
+                </select>
+            </label>
+            <br />
+            <label>Text Färg:
+                <select @bind="todo.Color">
+                    @foreach (var color in colorOptions)
+                    {
+                        <option value="@color.Value">@color.Key</option>
+                    }
+                </select>
+            </label>
+        </div>
+        
         <div>
-         <label>
+            <label>
                 <input type="checkbox" @bind="todo.IsBold" />
                 Bold
             </label>
@@ -300,11 +300,37 @@ private RenderFragment RenderTodoItem(TodoItem2 todo) => @<li draggable="true" @
                 <input type="checkbox" @bind="todo.IsItalic" />
                 Italic
             </label>
+            <br />
+            <label>
+                <input type="checkbox" @bind="todo.IsLinkEnabled" />
+                Enable Link
+            </label>
+            @if (todo.IsLinkEnabled)
+            {
+                <div>
+                    <input type="text" placeholder="Enter link URL (start with https://)" @bind="todo.LinkUrl" />
+                    <input type="text" placeholder="Enter link description" @bind="todo.LinkDescription" />
+                </div>
+            }
         </div>
     }
     else
     {
-        <span @onclick="() => ToggleEdit(todo)" style="color:@todo.Color; font-size:@($"{todo.FontSize}px"); font-weight:@(todo.IsBold ? "bold" : "normal"); font-style:@(todo.IsItalic ? "italic" : "normal"); font-family:@todo.FontFamily;">@todo.Text</span>
+        <span 
+            style="color:@todo.Color; font-size:@($"{todo.FontSize}px"); font-weight:@(todo.IsBold ? "bold" : "normal"); font-style:@(todo.IsItalic ? "italic" : "normal"); font-family:@todo.FontFamily;"
+            @onclick="() => ToggleEdit(todo)">
+            @todo.Text
+            @if (todo.IsLinkEnabled && !string.IsNullOrEmpty(todo.LinkUrl) && !string.IsNullOrEmpty(todo.LinkDescription))
+            {
+                <a href="https://@todo.LinkUrl" target="_blank" style="color:blue; text-decoration:underline;" @onclick:stopPropagation>
+                    - @todo.LinkDescription
+                </a>
+            }
+            else if (!string.IsNullOrEmpty(todo.LinkDescription))
+            {
+                <span> - @todo.LinkDescription</span> <!-- Display link description if it exists but is not clickable -->
+            }
+        </span>
         @if (todo.ShowEditButton)
         {
             <button @onclick="() => StartEdit(todo)">Ändra</button>
@@ -314,6 +340,12 @@ private RenderFragment RenderTodoItem(TodoItem2 todo) => @<li draggable="true" @
         }
     }
 </li>;
+
+
+
+
+
+
 
 }
 
