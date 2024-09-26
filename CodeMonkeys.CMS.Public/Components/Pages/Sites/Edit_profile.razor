@@ -1,0 +1,113 @@
+﻿@page "/edit_profile"
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Components.Forms
+@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<IdentityUser> SignInManager
+@inject NavigationManager NavigationManager
+
+@rendermode InteractiveServer
+
+<PageTitle>@user.UserName</PageTitle>
+
+@if (user != null)
+{
+    <EditForm Model="user" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="username">Username</label>
+            <InputText id="username" class="form-control" @bind-Value="user.UserName" />
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <InputText id="email" class="form-control" @bind-Value="user.Email" />
+        </div>
+
+        <div class="form-group">
+            <label for="phoneNumber">Phone Number</label>
+            <InputText id="phoneNumber" class="form-control" @bind-Value="user.PhoneNumber" />
+        </div>
+
+        <div class="form-group">
+            <label for="currentPassword">Current Password</label>
+            <InputText id="currentPassword" class="form-control" type="password" @bind-Value="currentPassword" />
+        </div>
+
+        <div class="form-group">
+            <label for="newPassword">New Password</label>
+            <InputText id="newPassword" class="form-control" type="password" @bind-Value="newPassword" />
+        </div>
+
+        <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <InputText id="confirmPassword" class="form-control" type="password" @bind-Value="confirmPassword" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </EditForm>
+
+    @if (!string.IsNullOrEmpty(statusMessage))
+    {
+        <div class="alert alert-success">@statusMessage</div>
+    }
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    private IdentityUser user = new();
+    private string currentPassword;
+    private string newPassword;
+    private string confirmPassword;
+    private string statusMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var currentUser = await UserManager.GetUserAsync(SignInManager.Context.User);
+        if (currentUser != null)
+        {
+            user = currentUser;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (!string.IsNullOrEmpty(newPassword) && newPassword != confirmPassword)
+        {
+            statusMessage = "New passwords do not match!";
+            return;
+        }
+
+        var userUpdateResult = await UserManager.UpdateAsync(user);
+        if (!userUpdateResult.Succeeded)
+        {
+            statusMessage = string.Join(", ", userUpdateResult.Errors.Select(e => e.Description));
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(currentPassword) && !string.IsNullOrEmpty(newPassword))
+        {
+            var isPasswordCorrect = await UserManager.CheckPasswordAsync(user, currentPassword);
+            if (!isPasswordCorrect)
+            {
+                statusMessage = "Current password is incorrect!";
+                return;
+            }
+
+            var passwordChangeResult = await UserManager.ChangePasswordAsync(user, currentPassword, newPassword);
+            if (!passwordChangeResult.Succeeded)
+            {
+                statusMessage = string.Join(", ", passwordChangeResult.Errors.Select(e => e.Description));
+                return;
+            }
+        }
+
+        statusMessage = "Profile updated successfully!";
+        await SignInManager.RefreshSignInAsync(user);
+        NavigationManager.NavigateTo("/");
+    }
+}

@@ -3,11 +3,11 @@
 @using CodeMonkeys.CMS.Public.Shared.Services
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Identity
+@inject NavigationManager NavigationManager
 @inherits AuthenticationBaseComponent<SitesIndex>
 @rendermode InteractiveServer
 @attribute [Authorize(Roles = "User, Admin")]
 
-<PageTitle>Sites Overview</PageTitle>
 
 <UserViewer>
     <div class="admin-container">
@@ -28,7 +28,8 @@
                 <li>Lorem ipsum</li>
                 <li>Lorem ipsum</li>
             </ul>
-            <button class="admin-edit-profile-button">Edit profile</button>
+            <!-- Edit profile button that navigates to another page -->
+            <button class="admin-edit-profile-button" @onclick="NavigateToEditProfile">Edit profile</button>
         </div>
         <div class="admin-templates-section">
             <h2 class="admin-templates-title">Available Templates</h2>
@@ -96,6 +97,7 @@
         </div>
     </div>
 </UserViewer>
+
 <ConfirmationDialog @ref="Confirmation" Title="@ConfirmationTitle"
                     ConfirmationButtonText="@ConfirmationButtonText"
                     CancelButtonText="@CancelButtonText"
@@ -127,3 +129,11 @@
         </EditForm>
     </div>
 </ConfirmationDialog>
+
+@code {
+    // Method to navigate to the Edit Profile page
+    private void NavigateToEditProfile()
+    {
+        NavigationManager.NavigateTo("/edit_profile"); // This is the page you want to navigate to
+    }
+}
