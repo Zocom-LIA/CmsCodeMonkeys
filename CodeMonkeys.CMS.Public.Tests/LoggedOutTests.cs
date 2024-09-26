@@ -67,5 +67,77 @@ namespace CodeMonkeys.CMS.Public.Tests
             using (ApplicationDbContext dbContext = new ApplicationDbContext(DbContextOptionsBuilder.Options, new FakeLogger<ApplicationDbContext>()))
                 Assert.That(dbContext.Users.FirstOrDefault(user => user.Email == email), Is.InstanceOf(typeof(User)));
         }
+
+        [Test]
+        public void ShowUserPageTest()
+        {
+            string email = FindFreeEmail();
+            int siteID;
+            string pageTitle = "Title";
+            string testText = "Test Text";
+            using (ApplicationDbContext dbContext = new ApplicationDbContext(DbContextOptionsBuilder.Options, new FakeLogger<ApplicationDbContext>()))
+            {
+                User user = new User { Email = email };
+                Site site = new Site()
+                {
+                    Creator = user,
+                    Name = "Name"
+                };
+                WebPage webPage = new WebPage()
+                {
+                    Site = site,
+                    Title = pageTitle,
+                };
+                Content content = new Content()
+                {
+                    WebPage = webPage,
+                    Body = testText,
+                    ContentType = "text",
+                    Title = ""
+
+                };
+                dbContext.Contents.Add(content);
+                dbContext.SaveChanges();
+                siteID = (int)site.GetIdentifier();
+            }
+            Driver.Navigate().GoToUrl($"{HomeUrl}/userPages/{siteID}/{pageTitle}");
+            Driver.FindElement(By.XPath($"//*[contains(text(), '{testText}')]"));
+        }
+        [Test]
+        public void ShowLandingPageTest()
+        {
+            string email = FindFreeEmail();
+            int siteID;
+            string pageTitle = "Title";
+            string testText = "Test Text";
+            using (ApplicationDbContext dbContext = new ApplicationDbContext(DbContextOptionsBuilder.Options, new FakeLogger<ApplicationDbContext>()))
+            {
+                User user = new User { Email = email };
+                Site site = new Site()
+                {
+                    Creator = user,
+                    Name = "Name"
+                };
+                WebPage webPage = new WebPage()
+                {
+                    Site = site,
+                    Title = pageTitle,
+                };
+                Content content = new Content()
+                {
+                    WebPage = webPage,
+                    Body = testText,
+                    ContentType = "text",
+                    Title = ""
+
+                };
+                site.LandingPage = webPage;
+                dbContext.Contents.Add(content);
+                dbContext.SaveChanges();
+                siteID = (int)site.GetIdentifier();
+            }
+            Driver.Navigate().GoToUrl($"{HomeUrl}/userPages/{siteID}");
+            Driver.FindElement(By.XPath($"//*[contains(text(), '{testText}')]"));
+        }
     }
 }
