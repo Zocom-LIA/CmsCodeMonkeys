@@ -1,11 +1,11 @@
 @page "/LayoutFlashy2"
 @inject TodoService2 TodoService2
 @using CodeMonkeys.CMS.Public.Components.Shared
-@inherits BaseComponent<Home>
+@inherits AuthenticatedBaseComponent<Home>
 @rendermode InteractiveServer
 
 <AuthorizeView >
-<NotAuthorized >
+<Authorized >
 <!-- NY DESIGN -->
 <div class="grid-container">
     <div class="vertical-container">
@@ -80,7 +80,7 @@
         <button @onclick="SaveColor">Spara</button>
     </div>
 }
-</NotAuthorized>
+</Authorized>
 </AuthorizeView>
 @code {
     private string newTodoText = string.Empty;

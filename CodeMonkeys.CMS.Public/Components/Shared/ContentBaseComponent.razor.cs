@@ -1,4 +1,4 @@
-﻿namespace CodeMonkeys.CMS.Public.Components.Shared
+﻿BlazorMarkdownEditor: Ett annat populärt alternativ som erbjuder en komplett Markdown-redaktör för både Blazor WebAssembly och Blazor Server. Den är baserad på EasyMDE version 1.0 och har en mängd olika egenskaper.namespace CodeMonkeys.CMS.Public.Components.Shared
 {
     using CodeMonkeys.CMS.Public.Components.Pages;
     using CodeMonkeys.CMS.Public.Shared;
