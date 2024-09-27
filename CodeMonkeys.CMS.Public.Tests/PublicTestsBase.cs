@@ -1,4 +1,6 @@
 ﻿using CodeMonkeys.CMS.Public.Shared.Data;
+using CodeMonkeys.CMS.Public.Shared.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Testing;
 using OpenQA.Selenium;
@@ -84,6 +86,26 @@ namespace CodeMonkeys.CMS.Public.Tests
                         done = true;
                 } while (!done);
             return email;
+        }
+
+        protected void SetUpUser(string email, string password)
+        {
+            using (ApplicationDbContext dbContext = new ApplicationDbContext(DbContextOptionsBuilder.Options, new FakeLogger<ApplicationDbContext>()))
+            {
+                User user = new User()
+                {
+                    Email = email,
+                    UserName = email,
+                    NormalizedEmail = email.ToUpper(),
+                    NormalizedUserName = email.ToUpper(),
+                    SecurityStamp = "",
+                    EmailConfirmed = true
+                };
+                string hash = new PasswordHasher<User>().HashPassword(user, password);
+                user.PasswordHash = hash;
+                dbContext.Users.Add(user);
+                dbContext.SaveChanges();
+            }
         }
     }
 }

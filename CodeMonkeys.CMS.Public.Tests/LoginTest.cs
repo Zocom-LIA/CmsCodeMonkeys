@@ -47,22 +47,7 @@ namespace CodeMonkeys.CMS.Public.Tests
         {
             string email = FindFreeEmail();
             string password = "Password1!";
-            using (ApplicationDbContext dbContext = new ApplicationDbContext(DbContextOptionsBuilder.Options, new FakeLogger<ApplicationDbContext>()))
-            {
-                User user = new User()
-                {
-                    Email = email,
-                    UserName =email,
-                    NormalizedEmail = email.ToUpper(),
-                    NormalizedUserName = email.ToUpper(),
-                    SecurityStamp = "",
-                    EmailConfirmed = true
-                };
-                string hash = new PasswordHasher<User>().HashPassword(user, password);
-                user.PasswordHash = hash;
-                dbContext.Users.Add(user);
-                dbContext.SaveChanges();
-            }
+            SetUpUser(email, password);
             Driver.Navigate().GoToUrl(HomeUrl);
             Thread.Sleep(10);
             Driver.FindElement(By.LinkText("Login")).Click();
@@ -72,8 +57,6 @@ namespace CodeMonkeys.CMS.Public.Tests
             Driver.FindElement(By.XPath("//form//button")).Click();
             Thread.Sleep(70);
             Assert.That(Driver.FindElement(By.XPath("//main//*[@class='left-top']//h1")).Text, Is.EqualTo("Logged in"));
-
         }
-
     }
 }
