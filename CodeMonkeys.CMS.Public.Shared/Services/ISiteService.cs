@@ -4,7 +4,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
 {
     public interface ISiteService
     {
-        Task CreateSiteAsync(Site site);
+        Task<Site> CreateSiteAsync(Site site);
         Task UpdateSiteAsync(Site site);
         Task DeleteSiteAsync(Site site);
 

@@ -1,16 +1,23 @@
+using AutoMapper;
+
 using CodeMonkeys.CMS.Public.Components;
 using CodeMonkeys.CMS.Public.Components.Account;
 using CodeMonkeys.CMS.Public.Shared;
 using CodeMonkeys.CMS.Public.Shared.Data;
 using CodeMonkeys.CMS.Public.Shared.Entities;
 using CodeMonkeys.CMS.Public.Shared.Middleware;
+using CodeMonkeys.CMS.Public.Shared.Profiles;
 using CodeMonkeys.CMS.Public.Shared.Repository;
 using CodeMonkeys.CMS.Public.Shared.Services;
+using CodeMonkeys.CMS.Public.Components.Pages.DragAndDropFlashy2;
 
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("CodeMonkeys.CMS.Public.Tests")]
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,8 +29,10 @@ builder.Logging.AddConsole();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddAutoMapper(typeof(EntityProfiles).Assembly);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<TodoService2>();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
@@ -35,8 +44,19 @@ builder.Services.AddAuthentication(options =>
 })
     .AddIdentityCookies();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContextFactory<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+
+Action<DbContextOptionsBuilder> dbConfigFunction;
+if (builder.Configuration["database"] == "inMemory")
+{
+    string databaseName = builder.Configuration["database_name"] ?? "Something";
+    dbConfigFunction = (options) => options.UseInMemoryDatabase(databaseName);
+}
+else
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+    dbConfigFunction = (options) => options.UseSqlServer(connectionString);
+}
+builder.Services.AddDbContextFactory<ApplicationDbContext>(dbConfigFunction);
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirmedAccount = true)
