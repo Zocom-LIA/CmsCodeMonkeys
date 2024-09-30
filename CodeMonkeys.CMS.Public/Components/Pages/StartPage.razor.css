@@ -4,7 +4,7 @@
     width: 100%; /* Responsivt */
     background-color: lightgray;
     padding: 0;
-    box-sizing: border-box; /* Ser till att paddings/margins inte överskrider bredden */
+    /*box-sizing: border-box;*/ /* Ser till att paddings/margins inte överskrider bredden */
 }
 
 /* Sektioner */
@@ -53,14 +53,14 @@
 .StartPage-div-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsivt grid */
-    gap: 20px; /* Justerat mellanrum mellan elementen */
+    gap: 5px; /* Justerat mellanrum mellan elementen */
     padding: 20px;
 }
 
     .StartPage-div-grid div {
         background-color: #C9C9C9;
         padding: 20px;
-        border-radius: 10px;
+      /*  border-radius: 10px;*/
     }
 
 /* Grid layout för team sektionen */
@@ -71,12 +71,32 @@
     padding: 20px;
 }
 
+/* Gör så att bilden täcker hela div-behållaren utan att vara rund */
+.imgdator1 {
+    width: 100%; /* Fyller hela div-bredden */
+    height: 100%; /* Fyller hela div-höjden */
+    object-fit: cover; /* Ser till att bilden behåller proportionerna */
+    display: block; /* Tar bort eventuella mellanrum */
+    border-radius: 0; /* Ingen avrundning av hörn */
+}
+
+
+/* Gör så att bilden täcker hela div-behållaren utan att vara rund */
+.imgdator {
+    width: 100%; /* Fyller hela div-bredden */
+    height: 100%; /* Fyller hela div-höjden */
+    object-fit: cover; /* Ser till att bilden behåller proportionerna */
+    display: block; /* Tar bort eventuella mellanrum */
+    border-radius: 0; /* Ingen avrundning av hörn */
+}
+
+
 /* Styling för varje teammedlem */
 .team-member {
     text-align: center;
     background-color: #f9f9f9;
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 5px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 

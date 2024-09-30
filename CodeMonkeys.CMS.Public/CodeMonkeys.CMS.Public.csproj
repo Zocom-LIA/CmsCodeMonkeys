@@ -28,10 +28,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="wwwroot\Image\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <Folder Include="Components\Pages\Contents\" />
 	</ItemGroup>
 
