@@ -37,19 +37,29 @@ namespace CodeMonkeys.CMS.Public.Shared.Middleware
                         var pageUrl = context.Request.Path.Value;
                         if (pageUrl != null)
                         {
-                            // Extract Site ID from the URL if it exists
+                            // Extract Site ID and page ID from the URL if it exists
                             var siteId = 0;
+                            var pageId = 0;
+                            bool siteIdFound = false;
                             var urlParts = pageUrl.Split('/');
                             foreach (var urlPart in urlParts)
                             {
                                 if (int.TryParse(urlPart, out int id))
                                 {
-                                    siteId = id;
-                                    break;
+                                    if (!siteIdFound)
+                                    {
+                                        siteIdFound = true;
+                                        siteId = id;
+                                    }
+                                    else
+                                    {
+                                        pageId = id;
+                                        break;
+                                    }
                                 }
                             }
 
-                            await _repository.UpdatePageCountAsync(siteId, pageUrl);
+                            await _repository.UpdatePageCountAsync(siteId, pageId, pageUrl);
                         }
                     }
                 }
