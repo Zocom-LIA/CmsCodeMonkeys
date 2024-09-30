@@ -1,7 +1,7 @@
 ﻿@page "/userPages/{SiteId:int}"
 @page "/userPages/{SiteId:int}/{PageName}"
 @inherits ContentBaseComponent<ShowUserPage>
-@rendermode InteractiveServer
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
 @using CodeMonkeys.CMS.Public.Components.Shared
 @using CodeMonkeys.CMS.Public.Components.Account.Shared
 @using CodeMonkeys.CMS.Public.Shared.Entities
@@ -12,8 +12,8 @@
 <UserViewer>
     <UserViewHeader>@WebPage?.Title</UserViewHeader>
     <ChildContent>
-        <StatusMessage/>
-        @foreach (ContentItem content in (WebPage?.Contents ?? []).OrderBy(c => c.OrdinalNumber).Cast<ContentItem>())
+        <StatusMessage />
+        @foreach (Content content in (WebPage?.Contents ?? []).OrderBy(c => c.OrdinalNumber))
         {
             <span style="@RenderContent(content)">@content.Body</span>
         }
@@ -26,6 +26,8 @@
     [Parameter] public required int SiteId { get; set; }
     [Parameter] public string? PageName { get; set; } = null;
     [Inject] public required ISiteRepository Repository { get; set; }
+    [Inject] public required IPageStatsRepository StatsRepository { get; set; }
+    [Inject] public required NavigationManager NavigationManager { get; set; }
 
     protected async override Task OnInitializedAsync()
     {
@@ -36,9 +38,6 @@
         {
             SetError($"No such site: {SiteId}");
             WebPage = NoSuchSitePage(SiteId);
-            // TODO return a 404
-            SetLoading(false);
-            return;
         }
         if (PageName == null)
         {
@@ -46,7 +45,6 @@
             SetLoading(false);//TODO handle exceptions
             return;
         }
-        WebPage = FindPage(Site, PageName) ?? NoSuchPagePage(PageName);
         SetLoading(false);
     }
 
@@ -72,7 +70,7 @@
 
     private WebPage NoLandingPageConfiguredPage(int SiteName)
     {
-        return new WebPage() {Title = "No landing page configured", Contents = [new Content() { Body = $"No landing page configured for site: {SiteName}" }] };
+        return new WebPage() { Title = "No landing page configured", Contents = [new Content() { Body = $"No landing page configured for site: {SiteName}" }] };
     }
     private WebPage NoSuchPagePage(string PageName)
     {
