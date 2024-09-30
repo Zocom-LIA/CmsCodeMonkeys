@@ -36,6 +36,8 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+builder.Services.AddScoped<ContentItemRepository>();
+builder.Services.AddScoped<IContentItemService, ContentItemService>();
 
 builder.Services.AddAuthentication(options =>
 {
