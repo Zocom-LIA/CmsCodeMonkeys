@@ -10,6 +10,62 @@
 @inject SignInManager<User> SignInManager
 @inject IdentityRedirectManager RedirectManager
 
+<h1>Confirm email change</h1>
+
+<StatusMessage Message="@message" />
+
+@code {
+    private string? message;
+
+    [Parameter] public string? UserId { get; set; }
+    [Parameter] public string? Email { get; set; }
+    [Parameter] public string? Code { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (UserId is null || Email is null || Code is null)
+        {
+            message = "Error: Invalid email change confirmation link.";
+            return;
+        }
+
+        var user = await UserManager.FindByIdAsync(UserId);
+        if (user is null)
+        {
+            message = $"Unable to find user with Id '{UserId}'";
+            return;
+        }
+
+        var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(Code));
+        var result = await UserManager.ChangeEmailAsync(user, Email, code);
+        if (!result.Succeeded)
+        {
+            message = "Error changing email.";
+            return;
+        }
+
+        var setUserNameResult = await UserManager.SetUserNameAsync(user, Email);
+        if (!setUserNameResult.Succeeded)
+        {
+            message = "Error changing user name.";
+            return;
+        }
+
+        await SignInManager.RefreshSignInAsync(user);
+        message = "Thank you for confirming your email change.";
+    }
+}
+
+@* @using System.Text
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.WebUtilities
+@using CodeMonkeys.CMS.Public.Shared.Data
+@using CodeMonkeys.CMS.Public.Shared.Entities
+
+@inject UserManager<User> UserManager
+@inject SignInManager<User> SignInManager
+@inject IdentityRedirectManager RedirectManager
+
 <PageTitle>Confirm email change</PageTitle>
 
 <h1>Confirm email change</h1>
@@ -66,4 +122,4 @@
         await SignInManager.RefreshSignInAsync(user);
         message = "Thank you for confirming your email change.";
     }
-}
+} *@

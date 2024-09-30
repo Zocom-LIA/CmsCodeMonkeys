@@ -1,13 +1,14 @@
 ﻿@page "/edit_profile"
 @using Microsoft.AspNetCore.Identity
-@using Microsoft.AspNetCore.Components.Forms
-@inject UserManager<IdentityUser> UserManager
-@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<User> UserManager
+@inject SignInManager<User> SignInManager
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JS
 
 @rendermode InteractiveServer
 
-<PageTitle>@user.UserName</PageTitle>
+
+<PageTitle>Edit Profile</PageTitle>
 
 @if (user != null)
 {
@@ -15,34 +16,16 @@
         <DataAnnotationsValidator />
         <ValidationSummary />
 
+        <!-- Ändra användarnamn -->
         <div class="form-group">
             <label for="username">Username</label>
             <InputText id="username" class="form-control" @bind-Value="user.UserName" />
         </div>
 
-        <div class="form-group">
-            <label for="email">Email</label>
-            <InputText id="email" class="form-control" @bind-Value="user.Email" />
-        </div>
-
+        <!-- Ändra telefonnummer -->
         <div class="form-group">
             <label for="phoneNumber">Phone Number</label>
             <InputText id="phoneNumber" class="form-control" @bind-Value="user.PhoneNumber" />
-        </div>
-
-        <div class="form-group">
-            <label for="currentPassword">Current Password</label>
-            <InputText id="currentPassword" class="form-control" type="password" @bind-Value="currentPassword" />
-        </div>
-
-        <div class="form-group">
-            <label for="newPassword">New Password</label>
-            <InputText id="newPassword" class="form-control" type="password" @bind-Value="newPassword" />
-        </div>
-
-        <div class="form-group">
-            <label for="confirmPassword">Confirm Password</label>
-            <InputText id="confirmPassword" class="form-control" type="password" @bind-Value="confirmPassword" />
         </div>
 
         <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -52,6 +35,46 @@
     {
         <div class="alert alert-success">@statusMessage</div>
     }
+
+    <!-- Sektion för att ändra e-post -->
+    <h3>Change Email</h3>
+    <EditForm Model="emailModel" OnValidSubmit="HandleEmailChange">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="newEmail">New Email</label>
+            <InputText id="newEmail" class="form-control" @bind-Value="emailModel.NewEmail" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Change Email</button>
+
+        <AntiforgeryToken />
+    </EditForm>
+
+    <!-- Sektion för att ändra lösenord -->
+    <h3>Change Password</h3>
+    <EditForm Model="passwordModel" OnValidSubmit="HandlePasswordChange">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="currentPassword">Current Password</label>
+            <InputText type="password" id="currentPassword" class="form-control" @bind-Value="passwordModel.CurrentPassword" />
+        </div>
+
+        <div class="form-group">
+            <label for="newPassword">New Password</label>
+            <InputText type="password" id="newPassword" class="form-control" @bind-Value="passwordModel.NewPassword" />
+        </div>
+
+        <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <InputText type="password" id="confirmPassword" class="form-control" @bind-Value="passwordModel.ConfirmPassword" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Change Password</button>
+    </EditForm>
 }
 else
 {
@@ -59,14 +82,17 @@ else
 }
 
 @code {
-    private IdentityUser user = new();
-    private string currentPassword;
-    private string newPassword;
-    private string confirmPassword;
+
+    // skriv över cookien med en ny som är tom, dvs sätt användaren till logout
+    private User user = new();
     private string statusMessage;
+
+    private EmailModel emailModel = new();
+    private PasswordModel passwordModel = new();
 
     protected override async Task OnInitializedAsync()
     {
+        // Hämta den aktuella användaren
         var currentUser = await UserManager.GetUserAsync(SignInManager.Context.User);
         if (currentUser != null)
         {
@@ -74,40 +100,114 @@ else
         }
     }
 
+    // Hantera profiländringar (användarnamn och telefonnummer)
     private async Task HandleValidSubmit()
     {
-        if (!string.IsNullOrEmpty(newPassword) && newPassword != confirmPassword)
+        var result = await UserManager.UpdateAsync(user);
+        if (result.Succeeded)
         {
-            statusMessage = "New passwords do not match!";
+            statusMessage = "Profile updated successfully!";
+            await SignInManager.RefreshSignInAsync(user);
+
+            // Refresh
+            NavigationManager.NavigateTo("/sites");
+        }
+        else
+        {
+            statusMessage = "Error updating profile.";
+        }
+    }
+
+    private async Task HandleEmailChange()
+    {
+        if (string.IsNullOrEmpty(emailModel.NewEmail))
+        {
+            statusMessage = "Email is required.";
             return;
         }
 
-        var userUpdateResult = await UserManager.UpdateAsync(user);
-        if (!userUpdateResult.Succeeded)
+        var code = await UserManager.GenerateChangeEmailTokenAsync(user, emailModel.NewEmail);
+        var emailChangeResult = await UserManager.ChangeEmailAsync(user, emailModel.NewEmail, code);
+
+        if (emailChangeResult.Succeeded)
         {
-            statusMessage = string.Join(", ", userUpdateResult.Errors.Select(e => e.Description));
-            return;
-        }
+            statusMessage = "Email changed successfully!";
 
-        if (!string.IsNullOrEmpty(currentPassword) && !string.IsNullOrEmpty(newPassword))
+            // Försök att uppdatera användarnamn till den nya e-postadressen
+            var userNameResult = await UserManager.SetUserNameAsync(user, emailModel.NewEmail);
+
+            if (userNameResult.Succeeded)
+            {
+                // Logga ut användaren och visa ett popup-meddelande
+                await SignInManager.SignOutAsync();
+
+                // Visa popup-meddelande (kan implementeras via JS eller som en komponent)
+                await ShowPopupMessage("Email changed", "Your email has been changed successfully. You will be logged out now to update your session.");
+
+                // Omdirigera användaren till inloggningssidan
+                NavigationManager.NavigateTo("/login", forceLoad: true);
+            }
+            else
+            {
+                statusMessage = "Email was changed, but there was an error updating the username.";
+            }
+        }
+        else
         {
-            var isPasswordCorrect = await UserManager.CheckPasswordAsync(user, currentPassword);
-            if (!isPasswordCorrect)
-            {
-                statusMessage = "Current password is incorrect!";
-                return;
-            }
-
-            var passwordChangeResult = await UserManager.ChangePasswordAsync(user, currentPassword, newPassword);
-            if (!passwordChangeResult.Succeeded)
-            {
-                statusMessage = string.Join(", ", passwordChangeResult.Errors.Select(e => e.Description));
-                return;
-            }
+            statusMessage = "Error changing email.";
         }
+    }
 
-        statusMessage = "Profile updated successfully!";
-        await SignInManager.RefreshSignInAsync(user);
-        NavigationManager.NavigateTo("/");
+    // Popup-meddelande (implementera via JS interop eller en komponent)
+    private async Task ShowPopupMessage(string title, string message)
+    {
+        // Anropa JavaScript via JS interop för att visa popup, eller använd en Blazor-komponent
+        await JS.InvokeVoidAsync("alert", $"{title}: {message}");
+    }
+
+
+
+
+    // Hantera lösenordsändring
+    private async Task HandlePasswordChange()
+    {
+        var result = await UserManager.ChangePasswordAsync(user, passwordModel.CurrentPassword, passwordModel.NewPassword);
+
+        if (result.Succeeded)
+        {
+            statusMessage = "Password changed successfully!";
+            await SignInManager.RefreshSignInAsync(user);
+
+            // Refresh
+            NavigationManager.NavigateTo("/sites");
+        }
+        else
+        {
+            statusMessage = "Error changing password.";
+        }
+    }
+
+    // Modeller för e-post och lösenord
+    private class EmailModel
+    {
+        [Required]
+        [EmailAddress]
+        public string NewEmail { get; set; } = "";
+    }
+
+    private class PasswordModel
+    {
+        [Required]
+        [DataType(DataType.Password)]
+        public string CurrentPassword { get; set; } = "";
+
+        [Required]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        public string NewPassword { get; set; } = "";
+
+        [DataType(DataType.Password)]
+        [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; } = "";
     }
 }
