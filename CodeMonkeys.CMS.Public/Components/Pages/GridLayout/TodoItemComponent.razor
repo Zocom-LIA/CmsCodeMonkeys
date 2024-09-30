@@ -1,0 +1,16 @@
+@using CodeMonkeys.CMS.Public.Components.Pages.GridLayout // Importera rätt namespace
+
+<li draggable="true" @ondragstart="StartDrag">
+    @todo.Text
+</li>
+
+@code {
+    [Parameter] public TodoItem todo { get; set; }
+    [Parameter] public EventCallback<TodoItem> OnDragStartTodo { get; set; }
+
+    private void StartDrag()
+    {
+        // Anropa den överordnade komponentens drag-start hanterare
+        OnDragStartTodo.InvokeAsync(todo);
+    }
+}

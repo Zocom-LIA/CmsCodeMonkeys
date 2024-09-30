@@ -10,6 +10,7 @@ using CodeMonkeys.CMS.Public.Shared.Profiles;
 using CodeMonkeys.CMS.Public.Shared.Repository;
 using CodeMonkeys.CMS.Public.Shared.Services;
 using CodeMonkeys.CMS.Public.Components.Pages.DragAndDropFlashy2;
+using CodeMonkeys.CMS.Public.Components.Pages.GridLayout;
 
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -33,6 +34,7 @@ builder.Services.AddAutoMapper(typeof(EntityProfiles).Assembly);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<TodoService2>();
+builder.Services.AddScoped<TodoService>();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();

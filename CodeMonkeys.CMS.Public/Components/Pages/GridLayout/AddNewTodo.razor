@@ -1,0 +1,43 @@
+@page "/AddNewTodo"
+@inject TodoService TodoService
+@using CodeMonkeys.CMS.Public.Components.Pages.GridLayout
+@rendermode InteractiveServer
+
+<div class="AddNewTodo">
+    <h3>Add Todo</h3>
+
+    <input @bind="newTodoText" placeholder="Add a new todo" />
+    <button @onclick="AddNewTodoItem">Add Todo</button> <!-- Ändrat till AddNewTodoItem -->
+
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success">@successMessage</div>
+    }
+
+    <ul>
+        @foreach (var todo in TodoService.ToolbarTodos)
+        {
+            <li>@todo.Text</li> <!-- List all todos in the toolbar -->
+        }
+    </ul>
+</div>
+
+@code {
+    private string newTodoText = string.Empty;
+    private string successMessage = string.Empty;
+
+    private void AddNewTodoItem() // Se till att detta matchar knappen
+    {
+        if (!string.IsNullOrWhiteSpace(newTodoText) && 
+            !TodoService.ToolbarTodos.Any(todo => todo.Text.Equals(newTodoText, StringComparison.OrdinalIgnoreCase)))
+        {
+            TodoService.AddTodoToToolbar(newTodoText);
+            successMessage = "Todo added successfully!";
+            newTodoText = string.Empty; // Clear the input field after adding a todo
+        }
+        else
+        {
+            successMessage = "Please enter a valid todo or avoid duplicates.";
+        }
+    }
+}

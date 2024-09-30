@@ -1,0 +1,80 @@
+@page "/grids"
+@inject TodoService TodoService
+@using CodeMonkeys.CMS.Public.Components.Pages.GridLayout
+
+@rendermode InteractiveServer
+<h3>Grid Layout with Drag and Drop</h3>
+<AddNewTodo />
+<div class="grid-container">
+    <!-- Toolbar Section -->
+    <div class="toolbar" @ondrop="OnDropToolbar" @ondragover="OnDragOver">
+        <h4>Toolbar</h4>
+        <ul>
+            @foreach (var todo in TodoService.ToolbarTodos)
+            {
+                <TodoItemComponent todo="todo" OnDragStartTodo="HandleDragStart" />
+            }
+        </ul>
+    </div>
+
+    <!-- Box 1 -->
+    <div class="box1" @ondrop="e => OnDrop(e, Box1Identifier)" @ondragover="OnDragOver">
+        <h4>Box 1</h4>
+        <ul>
+            @foreach (var todo in TodoService.TodoList1)
+            {
+                <TodoItemComponent todo="todo" OnDragStartTodo="HandleDragStart" />
+            }
+        </ul>
+    </div>
+
+    <!-- Box 2 -->
+    <div class="box2" @ondrop="e => OnDrop(e, Box2Identifier)" @ondragover="OnDragOver">
+        <h4>Box 2</h4>
+        <ul>
+            @foreach (var todo in TodoService.TodoList2)
+            {
+                <TodoItemComponent todo="todo" OnDragStartTodo="HandleDragStart" />
+            }
+        </ul>
+    </div>
+</div>
+
+@code {
+    private const string Box1Identifier = "box1";
+    private const string Box2Identifier = "box2";
+    private TodoItem? draggedTodo; // Gör draggedTodo nullable
+
+    private void HandleDragStart(TodoItem todo)
+    {
+        draggedTodo = todo; // Spara den dragna todo
+    }
+
+    private void OnDrop(DragEventArgs e, string targetBox)
+    {
+        // Ta bort e.PreventDefault(); eftersom det inte finns i Blazor
+        if (draggedTodo != null)
+        {
+            Console.WriteLine($"Dropping {draggedTodo.Text} to {targetBox}");
+            TodoService.MoveTodo(draggedTodo, targetBox);
+            draggedTodo = null;
+            StateHasChanged();
+        }
+    }
+
+    private void OnDragOver(DragEventArgs e)
+    {
+        // Ta bort e.PreventDefault(); 
+    }
+
+    private void OnDropToolbar(DragEventArgs e)
+    {
+        if (draggedTodo != null)
+        {
+            // Flytta todo till toolbar
+            TodoService.MoveTodo(draggedTodo, "toolbar");
+            draggedTodo = null; // Rensa efter flytt
+            StateHasChanged(); // Uppdatera UI
+        }
+    }
+}
