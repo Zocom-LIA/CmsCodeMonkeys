@@ -14,5 +14,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Entities
         required public string PageUrl { get; set; }
         public int PageVisits { get; set; }
         public int SiteId { get; set; }
+        public int PageId { get; set; }
     }
 }
