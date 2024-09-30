@@ -15,8 +15,9 @@
 .StartPage-div4,
 .StartPage-div5 {
     min-height: 100vh; /* Fyller skärmen */
-    padding: 20px; /* Bättre spacing */
-    height: 960px;
+    padding: 20px 40px; /* Justerad padding för att minska utrymmet */
+    margin-bottom: 30px; /* Minskat mellanrum mellan sektioner */
+    height: auto; /* Anpassa höjd efter innehåll */
 }
 
 /* Sektion 0 - Bakgrund och text */
@@ -29,25 +30,28 @@
     justify-content: center;
     align-items: center;
     text-align: center;
+    padding: 60px 20px; /* Justerad padding för bättre centrerad layout */
 }
 
     .StartPage-div0 h1 {
-        font-size: 10vw; /* Anpassar storlek efter skärmbredd */
+        font-size: 8vw; /* Anpassar storlek efter skärmbredd */
         font-family: 'futura pt book';
         color: #1E1E1E;
+        margin-bottom: 10px;
     }
 
     .StartPage-div0 h4 {
-        font-size: 5vw; /* Anpassar storlek efter skärmbredd */
+        font-size: 4vw; /* Anpassar storlek efter skärmbredd */
         font-family: 'futura pf light';
         color: #1E1E1E;
+        margin-bottom: 20px;
     }
 
 /* Sektion 1 och 2 grid-system */
 .StartPage-div-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsivt grid */
-    gap: 30px;
+    gap: 20px; /* Justerat mellanrum mellan elementen */
     padding: 20px;
 }
 
@@ -95,18 +99,14 @@
         color: #555;
     }
 
-/* Styling för sista medlemmen med större ram */
-.large-member {
-    grid-column: span 2; /* Tar upp två kolumner på större skärmar */
-    background-color: #f0f0f0;
-    padding: 40px; /* Större padding */
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+/* Grid layout för team sektionen som inte ska försvinna */
+.StartPage-div-grid2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Anpassar sig automatiskt efter skärmens storlek */
+    gap: 20px;
+    padding: 20px;
+    margin-bottom: 40px; /* Tillräckligt med utrymme mellan sektionerna */
 }
-
-    .large-member img {
-        width: 200px;
-        height: 200px;
-    }
 
 /* Kontaktsektionen */
 .StartPage-div5-Contact p {
@@ -141,6 +141,11 @@
     .map-iframe {
         height: 300px;
     }
+
+    /* Säkerställ att teammedlemmar har mellanrum även på små skärmar */
+    .team-member {
+        margin-bottom: 20px;
+    }
 }
 
 /* Liten surfplatta (481px till 768px) */
@@ -157,6 +162,7 @@
         height: 400px;
     }
 
+    /* Justera teammedlemmar och innehåll för små skärmar */
     .large-member {
         grid-column: span 1; /* Mindre på små skärmar */
     }
