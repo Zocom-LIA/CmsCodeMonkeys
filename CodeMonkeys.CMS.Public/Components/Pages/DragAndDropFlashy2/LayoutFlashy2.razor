@@ -1,5 +1,5 @@
 @page "/LayoutFlashy2"
-@inject TodoService2 TodoService2
+@inject ContentItemService ContentItems 
 @using CodeMonkeys.CMS.Public.Components.Shared
 @inherits BaseComponent<Home>
 @rendermode InteractiveServer
@@ -9,35 +9,35 @@
 <!-- NY DESIGN -->
 <div class="grid-container">
     <div class="vertical-container">
-        <div class="box box1" @onclick="() => OpenColorPicker(1)" style="background-color:@TodoService2.Box1Color">
-            <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(2)">
+        <div class="box box1" @onclick="() => OpenColorPicker(0)" style="background-color:@ContentItemService.GetBoxColor(0)">
+            <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(1)">
                 <h4>Header</h4>
                 <ul>
-                    @foreach (var todo in TodoService2.TodoList2)
+                    @foreach (var todo in ContentItemService.GetContentItem(1))
                     {
-                        @RenderTodoItem(todo)
+                        @RenderContentItem(todo)
                     }
                 </ul>
             </div>
         </div>
-        <div class="box box2" @onclick="() => OpenColorPicker(2)" style="background-color:@TodoService2.Box2Color">
-            <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(3)">
+        <div class="box box2" @onclick="() => OpenColorPicker(2)" style="background-color:@ContentItemService.GetBoxColor(1)">
+            <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(2)">
                 <div>BODY</div>
                 <ul>
-                    @foreach (var todo in TodoService2.TodoList3)
+                    @foreach (var todo in ContentItemService.GetContentItem(2))
                     {
-                        @RenderTodoItem(todo)
+                        @RenderContentItem(todo)
                     }
                 </ul>
             </div>
         </div>
-        <div class="box box4" @onclick="() => OpenColorPicker(4)" style="background-color:@TodoService2.Box4Color">
-            <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(4)">
+        <div class="box box4" @onclick="() => OpenColorPicker(4)" style="background-color:@ContentItemService.GetBoxColor(3)">
+            <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(3)">
                 <div>Footer</div>
                 <ul>
-                    @foreach (var todo in TodoService2.TodoList4)
+                    @foreach (var todo in ContentItemService.GetContentItem(3))
                     {
-                        @RenderTodoItem(todo)
+                        @RenderContentItem(todo)
                     }
                 </ul>
             </div>
@@ -55,12 +55,12 @@
             <button @onclick="AddTodo">Lägg till</button>
             <button @onclick="ClearAll">Rensa Allt</button> 
         </div>
-        <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(1)">
+        <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(0)">
             <h4>Toolbar</h4>
             <ul>
-                @foreach (var todo in TodoService2.TodoList1)
+                @foreach (var todo in ContentItemService.GetContentItem(0))
                 {
-                    @RenderTodoItem(todo)
+                    @RenderContentItem(todo)
                 }
             </ul>
         </div>
@@ -86,12 +86,12 @@
     private string newTodoText = string.Empty;
     private int selectedList = 1;
 
-  
+
 
     private bool showColorPicker = false;
     private string selectedColor = "White";
-    private int currentBox = 1;
-    private string selectedBox = "Box 1";
+    private int currentBox = 0;
+    private Box selectedBox = ContentItemService.GetBox(1);
 
     private void OpenColorPicker(int boxNumber)
     {
@@ -102,27 +102,15 @@
         else
         {
             currentBox = boxNumber;
-            selectedBox = boxNumber switch
-            {
-                1 => "Header",
-                2 => "Body",
-                4 => "Footer",
-                _ => ""
-            };
-            selectedColor = boxNumber switch
-            {
-                1 => TodoService2.Box1Color,
-                2 => TodoService2.Box2Color,
-                4 => TodoService2.Box4Color,
-                _ => "White"
-            };
+            selectedBox = ContentItemService.GetBoxName(boxNumber);
+            selectedColor = ContentItemService.GetBoxColor(boxNumber);
             showColorPicker = true;
         }
     }
 
     private void SaveColor()
     {
-        TodoService2.SaveBoxColor(currentBox, selectedColor);
+        ContentItemService.SaveBoxColor(currentBox, selectedColor);
         showColorPicker = false;
         StateHasChanged();
     }
@@ -131,60 +119,60 @@ private void AddTodo()
 {
     if (!string.IsNullOrWhiteSpace(newTodoText))
     {
-        TodoService2.AddTodo(selectedList, newTodoText);
+        ContentItemService.AddTodo(selectedList, newTodoText);
         newTodoText = string.Empty;
 
         // Kontrollera och ställ in ShowEditButton endast om listan inte är tom
-        if (TodoService2.TodoList1.Any())
-            TodoService2.TodoList1.Last().ShowEditButton = false; 
-        if (TodoService2.TodoList2.Any())
-            TodoService2.TodoList2.Last().ShowEditButton = false; 
-        if (TodoService2.TodoList3.Any())
-            TodoService2.TodoList3.Last().ShowEditButton = false; 
-        if (TodoService2.TodoList4.Any())
-            TodoService2.TodoList4.Last().ShowEditButton = false; 
+        if (ContentItemService.TodoList1.Any())
+            ContentItemService.TodoList1.Last().ShowEditButton = false; 
+        if (ContentItemService.TodoList2.Any())
+            ContentItemService.TodoList2.Last().ShowEditButton = false; 
+        if (ContentItemService.TodoList3.Any())
+            ContentItemService.TodoList3.Last().ShowEditButton = false; 
+        if (ContentItemService.TodoList4.Any())
+            ContentItemService.TodoList4.Last().ShowEditButton = false; 
 
         StateHasChanged();
     }
 }
 
-    private void OnDragStart(TodoItem2 todo)
+    private void OnDragStart(ContentItem todo)
     {
-        TodoService2.StartDrag(todo);
+        ContentItemService.StartDrag(todo);
     }
 
     private void OnDrop(int targetListNumber)
     {
-        TodoService2.DropTodoItem(targetListNumber);
+        ContentItemService.DropContentItem(targetListNumber);
         StateHasChanged();
     }
 
-    private void ToggleEdit(TodoItem2 todo)
+    private void ToggleEdit(ContentItem todo)
     {
         todo.ShowEditButton = !todo.ShowEditButton; // Toggle the edit button visibility
         StateHasChanged();
     }
 
-    private void StartEdit(TodoItem2 todo)
+    private void StartEdit(ContentItem todo)
     {
         todo.IsEditing = true;
         todo.ShowEditButton = false; // Hide the "Ändra" button
         StateHasChanged();
     }
 
-    private void SaveEdit(TodoItem2 todo)
+    private void SaveEdit(ContentItem todo)
     {
         todo.IsEditing = false; // Save the edit and close the input field
         StateHasChanged();
     }
 
-    private void RemoveTodo(TodoItem2 todo)
+    private void RemoveTodo(ContentItem todo)
     {
-        TodoService2.RemoveTodo(todo);
+        ContentItemService.RemoveTodo(todo);
         StateHasChanged();
     }
     
-    private void ChangeFontSize(TodoItem2 todo, int change)
+    private void ChangeFontSize(ContentItem todo, int change)
     {
         todo.FontSize += change * 2; // Increase or decrease size by 10 pixels
         if (todo.FontSize < 10) // Minimum size
@@ -196,14 +184,15 @@ private void AddTodo()
 
      private void ClearAll()
     {
-        TodoService2.TodoList1.Clear();
-        TodoService2.TodoList2.Clear();
-        TodoService2.TodoList3.Clear();
-        TodoService2.TodoList4.Clear();
         
-        TodoService2.Box1Color = "White";
-        TodoService2.Box2Color = "White";
-        TodoService2.Box4Color = "White";
+        ContentItemService.TodoList1.Clear();
+        ContentItemService.TodoList2.Clear();
+        ContentItemService.TodoList3.Clear();
+        ContentItemService.TodoList4.Clear();
+        
+        ContentItemService.Box1Color = "White";
+        ContentItemService.Box2Color = "White";
+        ContentItemService.Box4Color = "White";
 
         StateHasChanged();
     }
@@ -259,7 +248,7 @@ private void AddTodo()
 };
 
 
-private RenderFragment RenderTodoItem(TodoItem2 todo) => @<li draggable="true" @ondragstart="() => OnDragStart(todo)">
+private RenderFragment RenderContentItem(ContentItem todo) => @<li draggable="true" @ondragstart="() => OnDragStart(todo)">
     @if (todo.IsEditing)
     {
         <input @bind="todo.Text" />

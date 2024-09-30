@@ -32,7 +32,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddAutoMapper(typeof(EntityProfiles).Assembly);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddScoped<TodoService2>();
+builder.Services.AddScoped<ContentItemService>();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();

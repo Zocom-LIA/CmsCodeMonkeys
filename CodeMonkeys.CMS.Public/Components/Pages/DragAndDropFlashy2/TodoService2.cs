@@ -3,104 +3,78 @@ using System.Collections.Generic;
 
 namespace CodeMonkeys.CMS.Public.Components.Pages.DragAndDropFlashy2
 {
-    public class TodoService2
+    public class Box
     {
-        // Todo lists
-        public List<TodoItem2> TodoList1 { get; set; } = new List<TodoItem2>();
-        public List<TodoItem2> TodoList2 { get; set; } = new List<TodoItem2>();
-        public List<TodoItem2> TodoList3 { get; set; } = new List<TodoItem2>();
-        public List<TodoItem2> TodoList4 { get; set; } = new List<TodoItem2>();
+        public string Color { get; set; }
+        public string Name { get; set; }
+    }
 
-        // Box background colors
-        public string Box1Color { get; set; } = "White";
-        public string Box2Color { get; set; } = "White";
-        public string Box3Color { get; set; } = "White"; // For Toolbar
-        public string Box4Color { get; set; } = "White";
-        private TodoItem2? draggedTodoItem;
+    public class ContentItemService
+    {
+        private List<ContentItem>[] _items;
+        private Box[] _boxes = new Box[4];
+        private ContentItem? draggedContentItem;
+
+        public ContentItemService()
+        {
+            _items = new List<ContentItem>[4];
+            for (int i = 0; i < 4; i++)
+            {
+                _items[i] = new();
+            }
+            _boxes = new Box[4]
+            {
+                new Box{ Color = "White", Name = "Header" },
+                new Box{ Color = "White", Name = "Body" },
+                new Box{ Color = "White", Name = "Toolbar" },
+                new Box{ Color = "White", Name = "Footer" }
+            };
+        }
+        public Box GetBox(int boxNumber) => _boxes[boxNumber];
+        public string GetBoxColor(int boxNumber) => _boxes[boxNumber].Color;
+        public string GetBoxName(int boxNumber) => _boxes[boxNumber].Name;
+
+        public IEnumerable<ContentItem> GetContentItems(int boxNumber)
+        {
+            return _items[boxNumber];
+        }
 
         // Add a new todo item to a specific list
-        public void AddTodo(int listNumber, string text)
+        public void AddTodo(int listNumber, string text, int boxNumber)
         {
-            var newTodo = new TodoItem2 { Text = text, FontSize = 16 }; 
-            switch (listNumber)
-            {
-                case 1:
-                    TodoList1.Add(newTodo);
-                    break;
-                case 2:
-                    TodoList2.Add(newTodo);
-                    break;
-                case 3:
-                    TodoList3.Add(newTodo);
-                    break;
-                case 4:
-                    TodoList4.Add(newTodo);
-                    break;
-            }
+            var newTodo = new ContentItem { Text = text, FontSize = 16, Box = boxNumber };
+            _items[boxNumber].Add(newTodo);
         }
 
         // Remove a todo item from all lists
-        public void RemoveTodo(TodoItem2 todo)
+        public void RemoveTodo(ContentItem todo)
         {
-            TodoList1.Remove(todo);
-            TodoList2.Remove(todo);
-            TodoList3.Remove(todo);
-            TodoList4.Remove(todo);
+            int boxNumber = todo.Box;
+            _items[boxNumber].Remove(todo);
         }
 
         // Start dragging a todo item
-        public void StartDrag(TodoItem2 todo)
+        public void StartDrag(ContentItem todo)
         {
-            draggedTodoItem = todo;
+            draggedContentItem = todo;
         }
 
         // Drop the dragged todo item into the target list
-        public void DropTodoItem(int targetListNumber)
+        public void DropContentItem(int newBoxNumber)
         {
-            if (draggedTodoItem != null)
+            if (draggedContentItem != null)
             {
-                TodoList1.Remove(draggedTodoItem);
-                TodoList2.Remove(draggedTodoItem);
-                TodoList3.Remove(draggedTodoItem);
-                TodoList4.Remove(draggedTodoItem);
-
-                switch (targetListNumber)
-                {
-                    case 1:
-                        TodoList1.Add(draggedTodoItem);
-                        break;
-                    case 2:
-                        TodoList2.Add(draggedTodoItem);
-                        break;
-                    case 3:
-                        TodoList3.Add(draggedTodoItem);
-                        break;
-                    case 4:
-                        TodoList4.Add(draggedTodoItem);
-                        break;
-                }
-                draggedTodoItem = null;
+                int oldBoxNumber = draggedContentItem.Box;
+                _items[oldBoxNumber].Remove(draggedContentItem);
+                _items[newBoxNumber].Add(draggedContentItem);
+                draggedContentItem = null;
             }
         }
 
         // Save the background color for a specific box
         public void SaveBoxColor(int boxNumber, string color)
         {
-            switch (boxNumber)
-            {
-                case 1:
-                    Box1Color = color;
-                    break;
-                case 2:
-                    Box2Color = color;
-                    break;
-                case 3:
-                    Box3Color = color;
-                    break;
-                case 4:
-                    Box4Color = color;
-                    break;
-            }
+            _boxes[boxNumber].Color = color;
         }
     }
 }
