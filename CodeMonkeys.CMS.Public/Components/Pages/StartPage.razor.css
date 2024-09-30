@@ -1,280 +1,203 @@
+/* Grundläggande styling */
 .StartPage {
-  margin-top: -8%;
-  width: auto;
+    margin-top: -8%;
+    width: 100%; /* Responsivt */
+    background-color: lightgray;
+    padding: 0;
+    box-sizing: border-box; /* Ser till att paddings/margins inte överskrider bredden */
 }
 
-/* Standard bakgrundsfärg */
-.StartPage {
-  background-color: lightgray;
-}
-
+/* Sektioner */
 .StartPage-div0,
 .StartPage-div1,
 .StartPage-div2,
 .StartPage-div3,
 .StartPage-div4,
 .StartPage-div5 {
-  
-  height: 960px;
+    min-height: 100vh; /* Fyller skärmen */
+    padding: 20px; /* Bättre spacing */
 }
 
-.StartPage-div0{
-  /* background: radial-gradient(circle at 50% 50%, #ffe5ce, #fcc6b4, #faa8b0, #f795ca, #e589f4, #9c71f2); */
-background-size: 100% 100%;
-background-position: 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px;
-background-image: radial-gradient(18% 28% at 24% 50%, #FFEEEE8A 1%, #073AFF00 100%), radial-gradient(18% 28% at 18% 71%, #FFFFFF59 6%, #073AFF00 100%), radial-gradient(70% 53% at 36% 76%, #FF8E737A 31%, #073AFF00 100%), radial-gradient(42% 53% at 15% 94%, #FFFFFFFF 7%, #073AFF00 100%), radial-gradient(18% 28% at 35% 87%, #FFFFFFFF 7%, #073AFF00 100%), radial-gradient(31% 43% at 7% 98%, #FFFFFFFF 24%, #073AFF00 100%), radial-gradient(21% 37% at 72% 23%, #6DE9FF99 1%, #073AFF00 100%), radial-gradient(35% 56% at 91% 74%, #8A4FFFF5 9%, #073AFF00 100%), radial-gradient(74% 86% at 67% 38%, #FF6DDFF5 24%, #073AFF00 100%), linear-gradient(125deg, #FF7F4EFF 1%, #4C00FCFF 100%);
+/* Sektion 0 - Bakgrund och text */
+.StartPage-div0 {
+    background-size: cover;
+    background-position: center;
+    background-image: radial-gradient(18% 28% at 24% 50%, #FFEEEE8A 1%, #073AFF00 100%), radial-gradient(18% 28% at 18% 71%, #FFFFFF59 6%, #073AFF00 100%), radial-gradient(70% 53% at 36% 76%, #FF8E737A 31%, #073AFF00 100%), radial-gradient(42% 53% at 15% 94%, #FFFFFFFF 7%, #073AFF00 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
-.StartPage-div0 h1{
-  padding-top: 350px;
-  text-align: center;
-  font-size: 150px;
-  font-family:'futura pt book';
-  color: #1E1E1E;
-}
+    .StartPage-div0 h1 {
+        font-size: 10vw; /* Anpassar storlek efter skärmbredd */
+        font-family: 'futura pt book';
+        color: #1E1E1E;
+    }
 
+    .StartPage-div0 h4 {
+        font-size: 5vw; /* Anpassar storlek efter skärmbredd */
+        font-family: 'futura pf light';
+        color: #1E1E1E;
+    }
 
-
-.StartPage-div0 h4 {
-  text-align: center;
-  font-size: 50px;
-  font-family: 'futura pf light';
-  color: #1E1E1E;
-}
-
-/* Om Verktyget Section 1*/
-.StartPage-div1{
-  background-color: #ffffff;
-}
-
-.StartPage-div1 h1,
-.StartPage-div2 h1,
-.StartPage-div3 h1,
-.StartPage-div4 h1,
-.StartPage-div5 h1 {
-  text-align: center;
-  font-size: 40px;
-  font-family: 'futura pt book';
-  color: #1E1E1E;
-  margin-top: 14px;
-}
-
-.StartPage-div1 p,
-.StartPage-div2 p,
-.StartPage-div3 p,
-.StartPage-div4 p,
-.StartPage-div5 p {
-  font-size: 20px;
-  font-family: 'futura pf light';
-  color: #1E1E1E;
-}
-
-/* GRID SYSTEM */
-
+/* Sektion 1 och 2 grid-system */
 .StartPage-div-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 90px;
-  padding: 20px;
-}
-.StartPage-div-grid div {
-  background-color: #C9C9C9;
-  /* Bakgrundsfärg för boxarna */
-  padding: 20px;
-  /* Inre marginal */
- /* border: 1px solid #ccc;*/
-  /* Ram runt boxarna */
-  /*border-radius: 50px;*/
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsivt grid */
+    gap: 30px;
+    padding: 20px;
 }
 
-/* Custom layout 2 */
+    .StartPage-div-grid div {
+        background-color: #C9C9C9;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+/* Grid layout för team sektionen */
 .StartPage-div-grid2 {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 10px;
-  height: 750px;
-  
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Anpassar sig automatiskt efter skärmens storlek */
+    gap: 20px;
+    padding: 20px;
 }
 
-.StartPage-div-grid2 div {
-  border-radius: 50px;
-  padding: 10px;
-  background-color: #C9C9C9;
+/* Styling för varje teammedlem */
+.team-member {
+    text-align: center;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Möt Teamet inline */
-/* Övergripande layout för sektionen */
-.StartPage-div3 {
-  padding: 20px;
-  background-color: #ffffff;
-  text-align: center;
+    .team-member img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 10px;
+    }
+
+    .team-member p {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .team-member ul {
+        list-style: none;
+        padding: 0;
+        font-size: 16px;
+        color: #555;
+    }
+
+/* Styling för sista medlemmen med större ram */
+.large-member {
+    grid-column: span 2; /* Tar upp två kolumner på större skärmar */
+    background-color: #f0f0f0;
+    padding: 40px; /* Större padding */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 
-.StartPage-div3 h1 {
-  font-size: 32px;
-  margin-bottom: 20px;
-}
+    .large-member img {
+        width: 200px;
+        height: 200px;
+    }
 
-/* Grid layout för teamsektionen */
-.StartPage-div-grid2 {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
-  padding: 20px;
-}
-
-.a-team {
-  font-size: 28px;
-  margin-bottom: 20px;
-}
-
-/* Layout för teammedlemmarnas bilder */
-.StartPage-div-teamet {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 20px;
-  justify-items: center;
-  margin-bottom: 20px;
-}
-
-.StartPage-div-teamet div {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Stil för bilderna */
-.StartPage-div-teamet img {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #ccc;
-  margin-bottom: 10px;
-}
-
-/* Namn under varje bild */
-.StartPage-div-teamet div {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-/* Specifik styling för Angelia, där det finns en lista */
-.StartPage-div-teamet div p {
-  margin-bottom: 10px;
-}
-
-.StartPage-div-teamet ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  text-align: left;
-  font-size: 14px;
-}
-
-/* Lista för Angelia */
-.StartPage-div-teamet ul li {
-  margin: 5px 0;
-}
-
-
-
-/* Våra Mallar Section 2 */
-
-/* Möt Teamet Section 3 */
-
-
-/* ZoCom  Section 4*/
-
-/* Kontakt Section 5*/
+/* Kontaktsektionen */
 .StartPage-div5-Contact p {
-  margin-left: 40px;
+    margin-left: 20px;
+    font-size: 18px;
 }
 
 .map-container {
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-  
+    display: flex;
+    justify-content: center;
+    padding: 20px;
 }
 
 .map-iframe {
-  margin-top: 20px;
-  width: 750px;
-  height: 600px;
-/*  border: 0;*/
-/*  border-radius: 10px;*/
+    width: 100%;
+    max-width: 750px;
+    height: 600px;
 }
 
-.imgdator {
-  border-radius: 50px;
-  max-width: 90%;
-  margin-left: 5%;
-}
+/* Media Queries för olika enheter */
 
 /* Mobil (upp till 480px) */
 @media (max-width: 480px) {
-  .StartPage {
-    background-color: lightblue;
-    /* Bakgrundsfärg för mobil */
-  }
+    .StartPage-div0 h1 {
+        font-size: 14vw; /* Anpassad fontstorlek för små skärmar */
+    }
+
+    .StartPage-div0 h4 {
+        font-size: 7vw; /* Mindre textstorlek */
+    }
+
+    .map-iframe {
+        height: 300px;
+    }
 }
 
 /* Liten surfplatta (481px till 768px) */
 @media (min-width: 481px) and (max-width: 768px) {
-  .StartPage {
-    background-color: lightgreen;
-    /* Bakgrundsfärg för liten surfplatta */
-  }
+    .StartPage-div0 h1 {
+        font-size: 12vw;
+    }
+
+    .StartPage-div0 h4 {
+        font-size: 6vw;
+    }
+
+    .map-iframe {
+        height: 400px;
+    }
+
+    .large-member {
+        grid-column: span 1; /* Mindre på små skärmar */
+    }
 }
 
-/* Surfplatta (769px till 1024px) */
+/* Surfplatta och små laptops (769px till 1024px) */
 @media (min-width: 769px) and (max-width: 1024px) {
-  .StartPage {
-    background-color: lightcoral;
-    /* Bakgrundsfärg för större surfplattor */
-  }
+    .StartPage-div0 h1 {
+        font-size: 10vw;
+    }
+
+    .StartPage-div0 h4 {
+        font-size: 5vw;
+    }
+
+    .map-iframe {
+        height: 500px;
+    }
+
+    .large-member {
+        grid-column: span 2;
+    }
 }
 
 /* Liten laptop eller mindre desktop (1025px till 1280px) */
 @media (min-width: 1025px) and (max-width: 1280px) {
-  .StartPage {
-    background-color: lightgoldenrodyellow;
-    /* Bakgrundsfärg för små laptops */
-  }
-}
+    .StartPage-div0 h1 {
+        font-size: 8vw;
+    }
 
-/* Laptop eller desktop (1281px till 1600px) */
-@media (min-width: 1281px) and (max-width: 1400px) {
-  .StartPage {
-    background-color: lightsalmon;
-    /* Bakgrundsfärg för laptops/desktops */
-  }
-}
+    .StartPage-div0 h4 {
+        font-size: 4vw;
+    }
 
-@media (min-width: 1400px) and (max-width: 1600px) {
-  .StartPage {
-    background-color: lightsalmon;
-    
-   
-    /* Bakgrundsfärg för laptops/desktops */
-  }
-}
-
-/* Full HD 1920x1080 (1601px till 1920px) */
-@media (min-width: 1601px) and (max-width: 1920px) {
-  .StartPage {
-    background-color: lightseagreen;
-
-    /* Bakgrundsfärg för Full HD-skärmar */
-  }
+    .map-iframe {
+        height: 600px;
+    }
 }
 
 /* Stora skärmar och 4K (1921px och uppåt) */
 @media (min-width: 1921px) {
-  .StartPage {
-    background-color: lightsteelblue;
-    /* Bakgrundsfärg för stora skärmar eller 4K */
-  }
+    .map-iframe {
+        height: 700px;
+    }
 }
