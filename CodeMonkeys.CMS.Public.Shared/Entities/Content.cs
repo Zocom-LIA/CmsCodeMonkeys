@@ -23,4 +23,40 @@ namespace CodeMonkeys.CMS.Public.Shared.Entities
 
         public object GetIdentifier() => ContentId;
     }
+    public class TextContent : Content
+    {
+        public string Text { get; set; }
+    }
+
+    public class ImageContent : Content
+    {
+        public string ImageUrl { get; set; }
+    }
+    public class VideoContent : Content
+    {
+        public string VideoUrl { get; set; }
+    }
+
+    public class LinkContent : Content
+    {
+        public string LinkUrl { get; set; }
+        public string LinkDescription { get; set; }
+        public bool IsEnabled { get; set; }
+    }
+
+    public class FileContent : Content
+    {
+        public string FileUrl { get; set; }
+    }
+
+    public class QuoteContent : Content
+    {
+        public string Quote { get; set; }
+        public string QuoteAuthor { get; set; }
+    }
+
+    public class CodeContent : Content
+    {
+        public string Code { get; set; }
+    }
 }

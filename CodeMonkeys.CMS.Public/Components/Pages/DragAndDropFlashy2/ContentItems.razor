@@ -1,0 +1,347 @@
+@page "/content-items"
+@inject IContentItemService ContentItemService
+@using CodeMonkeys.CMS.Public.Components.Shared
+@inherits AuthenticationBaseComponent<ContentItems>
+@rendermode InteractiveServer
+
+<UserViewer>
+    <!-- NY DESIGN -->
+    <div class="grid-container">
+        <div class="vertical-container">
+            <div class="box box1" @onclick="() => OpenColorPicker(1)" style="background-color:@ContentItemStorage.Box1Color">
+                <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(2)">
+                    <h4>Header</h4>
+                    <ul>
+                        @foreach (var contentItem in ContentItemStorage.ContentItemList2)
+                        {
+                            @RenderContentItemItem(contentItem)
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div class="box box2" @onclick="() => OpenColorPicker(2)" style="background-color:@ContentItemStorage.Box2Color">
+                <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(3)">
+                    <div>BODY</div>
+                    <ul>
+                        @foreach (var contentItem in ContentItemStorage.ContentItemList3)
+                        {
+                            @RenderContentItemItem(contentItem)
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div class="box box4" @onclick="() => OpenColorPicker(4)" style="background-color:@ContentItemStorage.Box4Color">
+                <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(4)">
+                    <div>Footer</div>
+                    <ul>
+                        @foreach (var contentItem in ContentItemStorage.ContentItemList4)
+                        {
+                            @RenderContentItemItem(contentItem)
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="box box3">
+            <div>
+                <input @bind="newContentItemText" placeholder="Skriv en uppgift" />
+                <select @bind="selectedList">
+                    <option value="1">Toolbar</option>
+                    <option value="2">Header</option>
+                    <option value="3">Body</option>
+                    <option value="4">Footer</option>
+                </select>
+                <button @onclick="AddContentItem">Lägg till</button>
+                <button @onclick="ClearAll">Rensa Allt</button>
+            </div>
+            <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(1)">
+                <h4>Toolbar</h4>
+                <ul>
+                    @foreach (var contentItem in ContentItemStorage.ContentItemList1)
+                    {
+                        @RenderContentItemItem(contentItem)
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    @if (showColorPicker)
+    {
+        <div class="color-picker">
+            <h4>Välj Bakgrundsfärg för @selectedBox</h4>
+            <select @bind="selectedColor">
+                @foreach (var color in colorOptions)
+                {
+                    <option value="@color.Value">@color.Key</option>
+                }
+            </select>
+            <button @onclick="SaveColor">Spara</button>
+        </div>
+    }
+</UserViewer>
+
+@code {
+    protected override void OnInitialized()
+    {
+        // Copy a reference to the ContentItemStorage object for easier access
+        ContentItemStorage = ContentItemService.ContentItemStorage;
+    }
+
+    private ContentItemStorage ContentItemStorage { get; set; }
+    private string newContentItemText = string.Empty;
+    private int selectedList = 1;
+
+    private bool showColorPicker = false;
+    private string selectedColor = "White";
+    private int currentBox = 1;
+    private string selectedBox = "Box 1";
+
+    private void OpenColorPicker(int boxNumber)
+    {
+        if (currentBox == boxNumber && showColorPicker)
+        {
+            showColorPicker = false;
+        }
+        else
+        {
+            currentBox = boxNumber;
+            selectedBox = boxNumber switch
+            {
+                1 => "Header",
+                2 => "Body",
+                4 => "Footer",
+                _ => ""
+            };
+            selectedColor = boxNumber switch
+            {
+                1 => ContentItemStorage.Box1Color,
+                2 => ContentItemStorage.Box2Color,
+                4 => ContentItemStorage.Box4Color,
+                _ => "White"
+            };
+            showColorPicker = true;
+        }
+    }
+
+    private void SaveColor()
+    {
+        ContentItemService.SaveBoxColor(currentBox, selectedColor);
+        showColorPicker = false;
+        StateHasChanged();
+    }
+
+    private void AddContentItem()
+    {
+        if (!string.IsNullOrWhiteSpace(newContentItemText))
+        {
+            ContentItemService.AddContentItem(selectedList, newContentItemText);
+            newContentItemText = string.Empty;
+
+            // Kontrollera och ställ in ShowEditButton endast om listan inte är tom
+            if (ContentItemStorage.ContentItemList1.Any())
+                ContentItemStorage.ContentItemList1.Last().ShowEditButton = false;
+            if (ContentItemStorage.ContentItemList2.Any())
+                ContentItemStorage.ContentItemList2.Last().ShowEditButton = false;
+            if (ContentItemStorage.ContentItemList3.Any())
+                ContentItemStorage.ContentItemList3.Last().ShowEditButton = false;
+            if (ContentItemStorage.ContentItemList4.Any())
+                ContentItemStorage.ContentItemList4.Last().ShowEditButton = false;
+
+            StateHasChanged();
+        }
+    }
+
+    private void OnDragStart(ContentItem contentItem)
+    {
+        ContentItemService.StartDrag(contentItem);
+    }
+
+    private void OnDrop(int targetListNumber)
+    {
+        ContentItemService.DropContentItemItem(targetListNumber);
+        StateHasChanged();
+    }
+
+    private void ToggleEdit(ContentItem contentItem)
+    {
+        contentItem.ShowEditButton = !contentItem.ShowEditButton; // Toggle the edit button visibility
+        StateHasChanged();
+    }
+
+    private void StartEdit(ContentItem contentItem)
+    {
+        contentItem.IsEditing = true;
+        contentItem.ShowEditButton = false; // Hide the "Ändra" button
+        StateHasChanged();
+    }
+
+    private void SaveEdit(ContentItem contentItem)
+    {
+        contentItem.IsEditing = false; // Save the edit and close the input field
+        StateHasChanged();
+    }
+
+    private void RemoveContentItem(ContentItem contentItem)
+    {
+        ContentItemService.RemoveContentItem(contentItem);
+        StateHasChanged();
+    }
+
+    private void ChangeFontSize(ContentItem contentItem, int change)
+    {
+        contentItem.FontSize += change * 2; // Increase or decrease size by 10 pixels
+        if (contentItem.FontSize < 10) // Minimum size
+        {
+            contentItem.FontSize = 10;
+        }
+        StateHasChanged();
+    }
+
+    private void ClearAll()
+    {
+        ContentItemStorage.ContentItemList1.Clear();
+        ContentItemStorage.ContentItemList2.Clear();
+        ContentItemStorage.ContentItemList3.Clear();
+        ContentItemStorage.ContentItemList4.Clear();
+
+        ContentItemStorage.Box1Color = "White";
+        ContentItemStorage.Box2Color = "White";
+        ContentItemStorage.Box4Color = "White";
+
+        StateHasChanged();
+    }
+
+    private Dictionary<string, string> colorOptions = new Dictionary<string, string>
+                {
+        { "Black", "#000000" },
+        { "White", "#FFFFFF" },
+        { "Red", "#FF0000" },
+        { "Green", "#008000" },
+        { "Blue", "#0000FF" },
+        { "Yellow", "#FFFF00" },
+        { "Orange", "#FFA500" },
+        { "Purple", "#800080" },
+        { "Pink", "#FFC0CB" },
+        { "Brown", "#A52A2A" },
+        { "Gray", "#808080" },
+        { "Cyan", "#00FFFF" },
+        { "Magenta", "#FF00FF" },
+        { "LightBlue", "#ADD8E6" },
+        { "DarkBlue", "#00008B" },
+        { "DarkGreen", "#006400" },
+        { "LightGreen", "#90EE90" },
+        { "LightGray", "#D3D3D3" },
+        { "Gold", "#FFD700" },
+        { "Silver", "#C0C0C0" },
+        { "Teal", "#008080" }
+                };
+
+    private Dictionary<string, string> fontFamilyOptions = new Dictionary<string, string>
+            {
+    { "Arial", "Arial, sans-serif" },
+    { "Verdana", "Verdana, sans-serif" },
+    { "Tahoma", "Tahoma, sans-serif" },
+    { "Times New Roman", "'Times New Roman', serif" },
+    { "Georgia", "Georgia, serif" },
+    { "Courier New", "'Courier New', monospace" },
+    { "Comic Sans MS", "'Comic Sans MS', cursive" },
+    { "Impact", "Impact, sans-serif" },
+    { "Lucida Console", "'Lucida Console', monospace" },
+    { "Trebuchet MS", "'Trebuchet MS', sans-serif" },
+    { "Palatino Linotype", "'Palatino Linotype', serif" },
+    { "Garamond", "Garamond, serif" },
+    { "Frank Ruhl Libre", "'Frank Ruhl Libre', serif" },
+    { "Arial Black", "'Arial Black', sans-serif" },
+    { "Futura", "Futura, sans-serif" },
+    { "Droid Sans", "'Droid Sans', sans-serif" },
+    { "Segoe UI", "'Segoe UI', sans-serif" },
+    { "Roboto", "'Roboto', sans-serif" },
+    { "Open Sans", "'Open Sans', sans-serif" },
+    { "Montserrat", "'Montserrat', sans-serif" },
+    { "Lato", "'Lato', sans-serif" }
+            };
+
+
+    private RenderFragment RenderContentItemItem(ContentItem contentItem) => @<li draggable="true" @ondragstart="() => OnDragStart(contentItem)">
+    @if (contentItem.IsEditing)
+    {
+        <input @bind="contentItem.Text" />
+        <button @onclick="() => SaveEdit(contentItem)">Spara</button>
+        <button @onclick="() => RemoveContentItem(contentItem)">Ta bort</button>
+        <br />
+        <br />
+
+        <div>
+            <label>
+                Font Family:
+                <select @bind="contentItem.FontFamily">
+                    <option value="">Välj en typsnitt</option>
+                    @foreach (var font in fontFamilyOptions)
+                {
+                    <option value="@font.Value">@font.Key</option>
+                }
+                </select>
+            </label>
+            <br />
+            <label>
+                Text Färg:
+                <select @bind="contentItem.Color">
+                    @foreach (var color in colorOptions)
+                {
+                    <option value="@color.Value">@color.Key</option>
+                }
+                </select>
+            </label>
+        </div>
+
+        <div>
+            <label>
+                <input type="checkbox" @bind="contentItem.IsBold" />
+                Bold
+            </label>
+            <br />
+            <label>
+                <input type="checkbox" @bind="contentItem.IsItalic" />
+                Italic
+            </label>
+            <br />
+            <label>
+                <input type="checkbox" @bind="contentItem.IsLinkEnabled" />
+                Enable Link
+            </label>
+            @if (contentItem.IsLinkEnabled)
+        {
+            <div>
+                <input type="text" placeholder="Enter link description" @bind="contentItem.LinkDescription" />
+                <input type="text" placeholder="Enter link URL (start with https://)" @bind="contentItem.LinkUrl" />
+            </div>
+        }
+        </div>
+    }
+    else
+    {
+        <span style="color:@contentItem.Color; font-size:@($"{contentItem.FontSize}px"); font-weight:@(contentItem.IsBold ? "bold" : "normal"); font-style:@(contentItem.IsItalic ? "italic" : "normal"); font-family:@contentItem.FontFamily;"
+              @onclick="() => ToggleEdit(contentItem)">
+            @contentItem.Text
+            @if (contentItem.IsLinkEnabled && !string.IsNullOrEmpty(contentItem.LinkUrl) && !string.IsNullOrEmpty(contentItem.LinkDescription))
+        {
+            <a href="https://@contentItem.LinkUrl" target="_blank" style="color:blue; text-decoration:underline;" @onclick:stopPropagation>
+                - @contentItem.LinkDescription
+            </a>
+        }
+        else if (!string.IsNullOrEmpty(contentItem.LinkDescription))
+        {
+            <span>- @contentItem.LinkDescription</span> <!-- Display link description if it exists but is not clickable -->
+        }
+        </span>
+    @if (contentItem.ShowEditButton)
+    {
+        <button @onclick="() => StartEdit(contentItem)">Ändra</button>
+        <button @onclick="() => ToggleEdit(contentItem)">Save</button>
+        <button @onclick="() => ChangeFontSize(contentItem, 1)">↑</button>
+        <button @onclick="() => ChangeFontSize(contentItem, -1)">↓</button>
+    }
+    }
+    </li>;
+}

@@ -1,11 +1,9 @@
-using System;
-
-namespace CodeMonkeys.CMS.Public.Components.Pages.DragAndDropFlashy2
+﻿namespace CodeMonkeys.CMS.Public.Shared.Entities
 {
-    public class ContentItem
+    public class ContentItem : IEntity
     {
-        public string Text { get; set; } = string.Empty;
-        public int Box { get; set; }
+        public int ContentItemId { get; set; }
+        required public string Text { get; set; } = string.Empty;
         public bool IsEditing { get; set; } = false;
         public bool ShowEditButton { get; set; } = true;
         public int FontSize { get; set; } = 16; // Default font size
@@ -33,5 +31,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.DragAndDropFlashy2
 
         public string? LinkUrl { get; set; } // For the link URL
         public string? LinkDescription { get; set; } = string.Empty; // For the link description
+
+        public object GetIdentifier() => ContentItemId;
     }
 }
