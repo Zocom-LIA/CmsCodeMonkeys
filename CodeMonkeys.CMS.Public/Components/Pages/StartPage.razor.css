@@ -8,7 +8,6 @@
 }
 
 /* Sektioner */
-.StartPage-div0,
 .StartPage-div1,
 .StartPage-div2,
 .StartPage-div3,
@@ -30,7 +29,10 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 60px 20px; /* Justerad padding för bättre centrerad layout */
+    min-height: 100vh; /* Fyller skärmen */
+    padding: 20px 40px; /* Justerad padding för att minska utrymmet */
+    margin-bottom: 30px; /* Minskat mellanrum mellan sektioner */
+    height: 960px; /* Anpassa höjd efter innehåll */
 }
 
     .StartPage-div0 h1 {
