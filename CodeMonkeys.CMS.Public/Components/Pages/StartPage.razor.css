@@ -16,6 +16,7 @@
 .StartPage-div5 {
     min-height: 100vh; /* Fyller skärmen */
     padding: 20px; /* Bättre spacing */
+    height: 960px;
 }
 
 /* Sektion 0 - Bakgrund och text */
