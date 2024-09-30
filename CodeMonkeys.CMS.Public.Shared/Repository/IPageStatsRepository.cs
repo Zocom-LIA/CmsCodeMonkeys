@@ -7,6 +7,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
     {
         Task<IEnumerable<PageStats>> GetPageStatsAsync(int siteId);
         Task<int> GetPageVisitsAsync(string pageUrl);
-        Task UpdatePageCountAsync(int siteId, string pageUrl);
+        Task UpdatePageCountAsync(int siteId, int pageId, string pageUrl);
     }
 }
