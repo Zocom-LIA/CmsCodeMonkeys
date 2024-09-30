@@ -82,9 +82,9 @@ background-image: radial-gradient(18% 28% at 24% 50%, #FFEEEE8A 1%, #073AFF00 10
   /* Bakgrundsfärg för boxarna */
   padding: 20px;
   /* Inre marginal */
-  border: 1px solid #ccc;
+ /* border: 1px solid #ccc;*/
   /* Ram runt boxarna */
-  border-radius: 50px;
+  /*border-radius: 50px;*/
 }
 
 /* Custom layout 2 */
@@ -203,8 +203,8 @@ background-image: radial-gradient(18% 28% at 24% 50%, #FFEEEE8A 1%, #073AFF00 10
   margin-top: 20px;
   width: 750px;
   height: 600px;
-  border: 0;
-  border-radius: 10px;
+/*  border: 0;*/
+/*  border-radius: 10px;*/
 }
 
 .imgdator {
