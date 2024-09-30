@@ -1,43 +1,23 @@
 ﻿using CodeMonkeys.CMS.Public.Shared.Entities;
+using CodeMonkeys.CMS.Public.Shared.Repository;
 
 namespace CodeMonkeys.CMS.Public.Shared.Services
 {
-    public class ContentItemService : IContentItemService
+    public class ContentItemService(ContentItemRepository repository) : IContentItemService
     {
         // ContentItem lists
-        public ContentItemStorage ContentItemStorage => _storage;
-        private ContentItemStorage _storage = new ContentItemStorage();
         private ContentItem? _draggedContentItem;
+        private ContentItemRepository _repository = repository;
 
         // Add a new ContentItem item to a specific list
-        public void AddContentItem(int listNumber, string text)
-        {
-            var newContentItem = new ContentItem { Text = text, FontSize = 16 };
-            switch (listNumber)
-            {
-                case 1:
-                    _storage.ContentItemList1.Add(newContentItem);
-                    break;
-                case 2:
-                    _storage.ContentItemList2.Add(newContentItem);
-                    break;
-                case 3:
-                    _storage.ContentItemList3.Add(newContentItem);
-                    break;
-                case 4:
-                    _storage.ContentItemList4.Add(newContentItem);
-                    break;
-            }
-        }
-
-        // Remove a ContentItem item from all lists
-        public void RemoveContentItem(ContentItem ContentItem)
-        {
-            _storage.ContentItemList1.Remove(ContentItem);
-            _storage.ContentItemList2.Remove(ContentItem);
-            _storage.ContentItemList3.Remove(ContentItem);
-            _storage.ContentItemList4.Remove(ContentItem);
-        }
+        public async Task AddContentItemAsync(int listNumber, string text) => await _repository.AddContentItemAsync(listNumber, text);
+        public async Task DeleteContentItemAsync(ContentItem contentItem) => await _repository.DeleteContentItemAsync(contentItem);
+        public async Task UpdateContentItemAsync(ContentItem contentItem) => await _repository.UpdateContentItemAsync(contentItem);
+        public async Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<ContentItem> contentItems) => await _repository.GetContentItemsAsync(contentItems);
+        public async Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<int> contentItemIds) => await _repository.GetContentItemsAsync(contentItemIds);
+        public async Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<Section> sections) => await _repository.GetContentItemsAsync(sections);
+        public async Task<IEnumerable<ContentItem>> GetContentItemsAsync(int sectionId) => await _repository.GetContentItemsAsync(sectionId);
+        public async Task<Dictionary<int, Section>> GetSectionContentItemsAsync(int webPageId) => await _repository.GetSectionContentItemsAsync(webPageId);
 
         // Start dragging a ContentItem item
         public void StartDrag(ContentItem contentItem)
@@ -46,56 +26,20 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         }
 
         // Drop the dragged ContentItem item into the target list
-        public void DropContentItemItem(int targetListNumber)
+        public async Task DropContentItemAsync(int newSectionId)
         {
             if (_draggedContentItem != null)
             {
-                _storage.ContentItemList1.Remove(_draggedContentItem);
-                _storage.ContentItemList2.Remove(_draggedContentItem);
-                _storage.ContentItemList3.Remove(_draggedContentItem);
-                _storage.ContentItemList4.Remove(_draggedContentItem);
+                _draggedContentItem.SectionId = newSectionId;
 
-                switch (targetListNumber)
-                {
-                    case 1:
-                        _storage.ContentItemList1.Add(_draggedContentItem);
-                        break;
-                    case 2:
-                        _storage.ContentItemList2.Add(_draggedContentItem);
-                        break;
-                    case 3:
-                        _storage.ContentItemList3.Add(_draggedContentItem);
-                        break;
-                    case 4:
-                        _storage.ContentItemList4.Add(_draggedContentItem);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(targetListNumber));
-                }
+                await _repository.UpdateContentItemAsync(_draggedContentItem);
                 _draggedContentItem = null;
             }
         }
 
-        // Save the background color for a specific box
-        public void SaveBoxColor(int boxNumber, string color)
+        public async Task RemoveContentItemAsync(ContentItem contentItem)
         {
-            switch (boxNumber)
-            {
-                case 1:
-                    _storage.Box1Color = color;
-                    break;
-                case 2:
-                    _storage.Box2Color = color;
-                    break;
-                case 3:
-                    _storage.Box3Color = color;
-                    break;
-                case 4:
-                    _storage.Box4Color = color;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(boxNumber));
-            }
+            await _repository.DeleteContentItemAsync(contentItem);
         }
     }
 }

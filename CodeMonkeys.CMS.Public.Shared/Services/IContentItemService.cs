@@ -4,12 +4,16 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
 {
     public interface IContentItemService
     {
-        ContentItemStorage ContentItemStorage { get; }
-
-        void AddContentItem(int listNumber, string text);
-        void DropContentItemItem(int targetListNumber);
-        void RemoveContentItem(ContentItem ContentItem);
-        void SaveBoxColor(int boxNumber, string color);
+        Task AddContentItemAsync(int listNumber, string text);
+        Task DeleteContentItemAsync(ContentItem contentItem);
+        Task DropContentItemAsync(int newSectionId);
+        Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<ContentItem> contentItems);
+        Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<int> contentItemIds);
+        Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<Section> sections);
+        Task<IEnumerable<ContentItem>> GetContentItemsAsync(int sectionId);
+        Task<Dictionary<int, Section>> GetSectionContentItemsAsync(int webPageId);
+        Task RemoveContentItemAsync(ContentItem contentItem);
         void StartDrag(ContentItem contentItem);
+        Task UpdateContentItemAsync(ContentItem contentItem);
     }
 }

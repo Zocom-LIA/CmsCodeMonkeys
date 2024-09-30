@@ -48,6 +48,11 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
+
                     b.Property<DateTime>("LastModifiedDate")
                         .HasColumnType("datetime2");
 
@@ -68,6 +73,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.HasIndex("WebPageId");
 
                     b.ToTable("Contents");
+
+                    b.HasDiscriminator().HasValue("Content");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Menu", b =>
@@ -148,25 +157,17 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Site", b =>
@@ -212,12 +213,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
@@ -229,12 +228,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
@@ -252,20 +249,11 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", b =>
@@ -320,9 +308,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetRoleClaims", (string)null);
+                    b.ToTable("RoleClaims");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
@@ -344,9 +330,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AspNetUserClaims", (string)null);
+                    b.ToTable("UserClaims");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
@@ -365,9 +349,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AspNetUserLogins", (string)null);
+                    b.ToTable("UserLogins");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
@@ -380,9 +362,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasKey("UserId", "RoleId");
 
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
@@ -401,7 +381,53 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens", (string)null);
+                    b.ToTable("UserTokens");
+                });
+
+            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.ContentItem", b =>
+                {
+                    b.HasBaseType("CodeMonkeys.CMS.Public.Shared.Entities.Content");
+
+                    b.Property<int>("ContentItemId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FontFamily")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FontSize")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsBold")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEditing")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsItalic")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsLinkEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LinkDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LinkUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("ShowEditButton")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TextColor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasDiscriminator().HasValue("ContentItem");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Content", b =>
@@ -478,57 +504,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.Navigation("Author");
 
                     b.Navigation("Site");
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
-                {
-                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.Role", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
-                {
-                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
-                {
-                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
-                {
-                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.Role", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
-                {
-                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Menu", b =>

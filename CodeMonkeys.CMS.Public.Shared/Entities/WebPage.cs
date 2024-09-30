@@ -15,6 +15,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Entities
         public User? Author { get; set; }
 
         public ICollection<Content> Contents { get; set; } = new List<Content>();
+        public ICollection<Section> Sections { get; set; } = new List<Section>();
 
         public object GetIdentifier() => WebPageId;
     }
