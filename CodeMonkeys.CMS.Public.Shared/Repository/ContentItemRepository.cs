@@ -17,19 +17,16 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
         {
         }
 
-        public async Task AddContentItemAsync(int listNumber, string text, CancellationToken cancellation = default)
+        public async Task AddContentItemAsync(ContentItem contentItem, CancellationToken cancellation = default)
         {
-            var contentItem = new ContentItem
-            {
-                Text = text,
-                SectionId = listNumber
-            };
-
             var context = GetContext();
 
             try
             {
                 cancellation.ThrowIfCancellationRequested();
+                contentItem.CreatedDate = DateTime.UtcNow;
+                contentItem.ContentType = "TextContent";
+                contentItem.LastModifiedDate = DateTime.UtcNow;
                 await context.ContentItems.AddAsync(contentItem, cancellation);
                 await context.SaveChangesAsync(cancellation);
             }

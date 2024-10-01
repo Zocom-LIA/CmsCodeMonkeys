@@ -10,7 +10,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         private ContentItemRepository _repository = repository;
 
         // Add a new ContentItem item to a specific list
-        public async Task AddContentItemAsync(int listNumber, string text) => await _repository.AddContentItemAsync(listNumber, text);
+        public async Task AddContentItemAsync(ContentItem contentItem) => await _repository.AddContentItemAsync(contentItem);
         public async Task DeleteContentItemAsync(ContentItem contentItem) => await _repository.DeleteContentItemAsync(contentItem);
         public async Task UpdateContentItemAsync(ContentItem contentItem) => await _repository.UpdateContentItemAsync(contentItem);
         public async Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<ContentItem> contentItems) => await _repository.GetContentItemsAsync(contentItems);

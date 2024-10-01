@@ -4,7 +4,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 {
     public interface IContentItemRepository
     {
-        Task AddContentItemAsync(int listNumber, string text, CancellationToken cancellation = default);
+        Task AddContentItemAsync(ContentItem contentItem, CancellationToken cancellation = default);
         Task DeleteContentItemAsync(ContentItem contentItem, CancellationToken cancellation = default);
         Task<ContentItem?> GetContentItemAsync(int contentItemId, CancellationToken cancellation = default);
         Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<ContentItem> contentItems, CancellationToken cancellation = default);

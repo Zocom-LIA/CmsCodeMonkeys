@@ -4,7 +4,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
 {
     public interface IContentItemService
     {
-        Task AddContentItemAsync(int listNumber, string text);
+        Task AddContentItemAsync(ContentItem contentItem);
         Task DeleteContentItemAsync(ContentItem contentItem);
         Task DropContentItemAsync(int webPageId, int newSectionId);
         Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<ContentItem> contentItems);

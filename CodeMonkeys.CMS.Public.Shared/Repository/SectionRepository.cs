@@ -161,20 +161,46 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 
             try
             {
-                return await context.Sections
-                    .FirstOrDefaultAsync(s => s.WebPageId == webPageId && s.Name == name, cancellation);
+                cancellation.ThrowIfCancellationRequested();
+
+                // Check if webPageId is valid
+                var pageExists = await context.Pages.FindAsync(new object[] { webPageId }, cancellation) != null;
+                if (!pageExists)
+                {
+                    _logger.LogWarning("Web page ID {0} does not exist.", webPageId);
+                    return null;
+                }
+
+                var section = await context.Sections
+                    .Where(s => s.WebPageId == webPageId && s.Name == name)
+                    .Include(s => s.ContentItems)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(cancellation);
+
+                if (section == null)
+                {
+                    _logger.LogInformation("No section found with name {0} for web page ID {1}.", name, webPageId);
+                }
+
+                return section;
+            }
+            catch (OperationCanceledException)
+            {
+                _logger.LogWarning("Operation was canceled while fetching section with name {0}.", name);
+                throw; // Rethrow if necessary
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to get section with name {0}", name);
-
-                throw;
+                await Console.Out.WriteLineAsync($"Exception ({ex.GetType().Name}): {ex.Message}");
+                _logger.LogError(ex, "Failed to get section with name {0} for web page ID {1}.", name, webPageId);
+                throw; // Rethrow to let the caller handle it
             }
             finally
             {
-                await context.DisposeAsync();
+                await context.DisposeAsync(); // Ensure proper disposal of the context
             }
         }
+
 
         public async Task<IEnumerable<Section>> GetSectionsAsync(int webPageId, CancellationToken cancellation = default)
         {

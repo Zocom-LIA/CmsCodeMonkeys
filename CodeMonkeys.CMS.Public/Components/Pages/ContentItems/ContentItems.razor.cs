@@ -27,8 +27,18 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
         private int _sectionId3;
         private int _sectionId4;
 
+        // private ContentItemStorage ContentItemStorage { get; set; }
+        private string newContentItemText = string.Empty;
+        private int selectedList = 1;
+
+        private bool showColorPicker = false;
+        private string selectedColor = "White";
+        private int currentBox = 1;
+        private string selectedBox = "Box 1";
+
         protected override async Task OnInitializedAsync()
         {
+            await base.OnInitializedAsync();
             try
             {
                 await LoadSectionsAsync();
@@ -55,24 +65,22 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
             };
         }
 
+        private async Task<Section> EnsureSectionAsync(string name)
+        {
+            var section = await SectionService.GetSectionByNameAsync(WebPageId, name);
+            if (section == null)
+            {
+                section = new Section { Name = name, Color = "#fefefe", WebPageId = WebPageId };
+                section = await SectionService.CreateSectionAsync(section)
+                    ?? throw new InvalidOperationException($"Error creating section: {name}");
+            }
+            return section;
+        }
+
         private async Task ResetSectionsAsync()
         {
             await SectionService.DropWebPageSectionsAsync(WebPageId);
             await LoadSectionsAsync();
-        }
-
-        // private ContentItemStorage ContentItemStorage { get; set; }
-        private string newContentItemText = string.Empty;
-        private int selectedList = 1;
-
-        private bool showColorPicker = false;
-        private string selectedColor = "White";
-        private int currentBox = 1;
-        private string selectedBox = "Box 1";
-
-        private Section? GetNamedSection(string name, Dictionary<int, Section> sections)
-        {
-            return sections.Values.FirstOrDefault(s => s.Name == name);
         }
 
         private void OpenColorPicker(int boxNumber)
@@ -110,7 +118,20 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
         {
             if (!string.IsNullOrWhiteSpace(newContentItemText))
             {
-                await ContentItemService.AddContentItemAsync(selectedList, newContentItemText);
+                var contentItems = _sections[selectedList]?.ContentItems ?? [];
+                var contentItem = new ContentItem
+                {
+                    SectionId = selectedList,
+                    Text = newContentItemText,
+                    Title = newContentItemText,
+                    Body = newContentItemText,
+                    OrdinalNumber = contentItems.Count(),
+                    AuthorId = User!.Id,
+                    WebPageId = WebPageId
+                };
+
+                await ContentItemService.AddContentItemAsync(contentItem);
+                await LoadSectionsAsync();
                 newContentItemText = string.Empty;
 
                 // Kontrollera och ställ in ShowEditButton endast om listan inte är tom
@@ -128,18 +149,6 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
             {
                 section1.ContentItems.Last().ShowEditButton = false;
             }
-        }
-
-        private async Task<Section> EnsureSectionAsync(string name)
-        {
-            var section = await SectionService.GetSectionByNameAsync(WebPageId, name);
-            if (section == null)
-            {
-                section = new Section { Name = name, Color = "#fefefe", WebPageId = WebPageId };
-                section = await SectionService.CreateSectionAsync(section)
-                    ?? throw new InvalidOperationException($"Error creating section: {name}");
-            }
-            return section;
         }
 
         private void OnDragStart(ContentItem contentItem)
@@ -175,6 +184,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
         private async Task RemoveContentItemAsync(ContentItem contentItem)
         {
             await ContentItemService.RemoveContentItemAsync(contentItem);
+            await LoadSectionsAsync();
             StateHasChanged();
         }
 
@@ -190,7 +200,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
 
         private void ClearAll()
         {
-            _sections = new();
+            ResetSectionsAsync().Wait();
 
             StateHasChanged();
         }

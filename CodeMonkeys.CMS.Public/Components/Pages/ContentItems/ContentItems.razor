@@ -3,79 +3,97 @@
 @inherits AuthenticationBaseComponent<ContentItems>
 @rendermode InteractiveServer
 
-    <!-- NY DESIGN -->
-    <div class="grid-container">
-        <div class="vertical-container">
-            <div class="box box1" @onclick="() => OpenColorPicker(1)" style="background-color:@_section1.Color">
-                <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(2)">
-                    <h4>Header</h4>
-                    <ul>
-                        @foreach (var contentItem in _section2?.ContentItems ?? [])
-                        {
-                            @RenderContentItemItem(contentItem)
-                        }
-                    </ul>
-                </div>
-            </div>
-            <div class="box box2" @onclick="() => OpenColorPicker(2)" style="background-color:@_section2.Color">
-                <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(3)">
-                    <div>BODY</div>
-                    <ul>
-                        @foreach (var contentItem in _section3?.ContentItems ?? [])
-                        {
-                            @RenderContentItemItem(contentItem)
-                        }
-                    </ul>
-                </div>
-            </div>
-            <div class="box box4" @onclick="() => OpenColorPicker(4)" style="background-color:@_section4.Color">
-                <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(4)">
-                    <div>Footer</div>
-                    <ul>
-                        @foreach (var contentItem in _section4?.ContentItems ?? [])
-                        {
-                            @RenderContentItemItem(contentItem)
-                        }
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="box box3">
-            <div>
-                <input @bind="newContentItemText" placeholder="Skriv en uppgift" />
-                <select @bind="selectedList">
-                    <option value="1">Toolbar</option>
-                    <option value="2">Header</option>
-                    <option value="3">Body</option>
-                    <option value="4">Footer</option>
-                </select>
-                <button @onclick="AddContentItem">Lägg till</button>
-                <button @onclick="ClearAll">Rensa Allt</button>
-            </div>
-            <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(1)">
-                <h4>Toolbar</h4>
+<!-- NY DESIGN -->
+<div class="grid-container">
+    <div class="vertical-container">
+        @if (_section1 == null)
+        {
+            <h1>Section 1 is null</h1>
+        }
+        else {
+        <div class="box box1" @onclick="() => OpenColorPicker(1)" style="background-color:@_section1.Color">
+            <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(2)">
+                <h4>Header</h4>
                 <ul>
-                    @foreach (var contentItem in _section1?.ContentItems ?? [])
+                    @foreach (var contentItem in _section2?.ContentItems ?? [])
                     {
                         @RenderContentItemItem(contentItem)
                     }
                 </ul>
             </div>
         </div>
-    </div>
-    @if (showColorPicker)
-    {
-        <div class="color-picker">
-            <h4>Välj Bakgrundsfärg för @selectedBox</h4>
-            <select @bind="selectedColor">
-                @foreach (var color in colorOptions)
-                {
-                    <option value="@color.Value">@color.Key</option>
-                }
-            </select>
-            <button @onclick="SaveColorAsync">Spara</button>
+        }
+        @if (_section2 == null)
+        {
+            <h1>Section 2 is null</h1>
+        }
+        else {
+        <div class="box box2" @onclick="() => OpenColorPicker(2)" style="background-color:@_section2.Color">
+            <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(3)">
+                <div>BODY</div>
+                <ul>
+                    @foreach (var contentItem in _section3?.ContentItems ?? [])
+                    {
+                        @RenderContentItemItem(contentItem)
+                    }
+                </ul>
+            </div>
         </div>
-    }
+        }
+        @if (_section4 == null)
+        {
+            <h1>Section 4 is null</h1>
+        }
+        else {
+        <div class="box box4" @onclick="() => OpenColorPicker(4)" style="background-color:@_section4.Color">
+            <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(4)">
+                <div>Footer</div>
+                <ul>
+                    @foreach (var contentItem in _section4?.ContentItems ?? [])
+                    {
+                        @RenderContentItemItem(contentItem)
+                    }
+                </ul>
+            </div>
+        </div>
+        }
+    </div>
+    <div class="box box3">
+        <div>
+            <input @bind="newContentItemText" placeholder="Skriv en uppgift" />
+            <select @bind="selectedList">
+                <option value="1">Toolbar</option>
+                <option value="2">Header</option>
+                <option value="3">Body</option>
+                <option value="4">Footer</option>
+            </select>
+            <button @onclick="AddContentItem">Lägg till</button>
+            <button @onclick="ClearAll">Rensa Allt</button>
+        </div>
+        <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(1)">
+            <h4>Toolbar</h4>
+            <ul>
+                @foreach (var contentItem in _section1?.ContentItems ?? [])
+                {
+                    @RenderContentItemItem(contentItem)
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+@if (showColorPicker)
+{
+    <div class="color-picker">
+        <h4>Välj Bakgrundsfärg för @selectedBox</h4>
+        <select @bind="selectedColor">
+            @foreach (var color in colorOptions)
+            {
+                <option value="@color.Value">@color.Key</option>
+            }
+        </select>
+        <button @onclick="SaveColorAsync">Spara</button>
+    </div>
+}
 
 @code 
 {
