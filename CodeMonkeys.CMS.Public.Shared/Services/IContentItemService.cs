@@ -6,7 +6,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
     {
         Task AddContentItemAsync(int listNumber, string text);
         Task DeleteContentItemAsync(ContentItem contentItem);
-        Task DropContentItemAsync(int newSectionId);
+        Task DropContentItemAsync(int webPageId, int newSectionId);
         Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<ContentItem> contentItems);
         Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<int> contentItemIds);
         Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<Section> sections);

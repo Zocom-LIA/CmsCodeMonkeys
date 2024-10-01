@@ -155,6 +155,27 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             }
         }
 
+        public async Task<Section?> GetSectionByNameAsync(int webPageId, string name, CancellationToken cancellation)
+        {
+            var context = GetContext();
+
+            try
+            {
+                return await context.Sections
+                    .FirstOrDefaultAsync(s => s.WebPageId == webPageId && s.Name == name, cancellation);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get section with name {0}", name);
+
+                throw;
+            }
+            finally
+            {
+                await context.DisposeAsync();
+            }
+        }
+
         public async Task<IEnumerable<Section>> GetSectionsAsync(int webPageId, CancellationToken cancellation = default)
         {
             var context = GetContext();
@@ -164,13 +185,14 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                 cancellation.ThrowIfCancellationRequested();
                 return await context.Sections
                     .Where(s => s.WebPageId == webPageId)
+                    .Include(s => s.ContentItems)
+                    .AsNoTracking()
                     .ToListAsync(cancellation);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to get sections for web page with ID {0}", webPageId);
-
-                throw;
+                return Enumerable.Empty<Section>();
             }
             finally
             {

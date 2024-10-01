@@ -9,12 +9,15 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
     public partial class ContentItems : AuthenticationBaseComponent<ContentItems>
     {
         [Parameter] public int WebPageId { get; set; }
+        public WebPage WebPage { get; set; }
+
+        [Parameter] public int SiteId { get; set; }
+        public WebPage Site { get; set; }
 
         [Inject] IContentItemService ContentItemService { get; set; }
         [Inject] ISectionService SectionService { get; set; }
 
         private Dictionary<int, Section> _sections = new();
-
         private Section _section1;
         private Section _section2;
         private Section _section3;
@@ -24,68 +27,38 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
         private int _sectionId3;
         private int _sectionId4;
 
-
         protected override async Task OnInitializedAsync()
         {
             try
             {
-                var page = await WebPageService.GetVisitorPageAsync(WebPageId);
-
-                if (page == null)
-                {
-                    Logger.LogWarning("No web page found with ID {0}", WebPageId);
-                    ErrorMessage = "No web page found with that ID. Please, try again!";
-                    return;
-                }
-
-                _sections = await ContentItemService.GetSectionContentItemsAsync(WebPageId);
+                await LoadSectionsAsync();
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Error loading content items for web page {0}", WebPageId);
-                _sections = new();
             }
+        }
 
-            if (_sections.Count() == 0)
+        private async Task LoadSectionsAsync()
+        {
+            _section1 = await EnsureSectionAsync(SectionNames.Header.ToString());
+            _section2 = await EnsureSectionAsync(SectionNames.Body.ToString());
+            _section4 = await EnsureSectionAsync(SectionNames.Footer.ToString());
+            _section3 = new Section { SectionId = 0, Name = "Toolbar", Color = "#fefefe", WebPageId = WebPageId };
+
+            _sections = new()
             {
-                await ResetSectionsAsync();
-            }
-
-            await GetSectionsAsync();
+                { _section1.SectionId, _section1 },
+                { _section2.SectionId, _section2 },
+                { _section3.SectionId, _section3 },
+                { _section4.SectionId, _section4 }
+            };
         }
 
         private async Task ResetSectionsAsync()
         {
-            await SectionService.DropWebPageSections(WebPageId);
-            await GetSectionsAsync();
-        }
-
-        private async Task GetSectionsAsync(CancellationToken cancellation = default)
-        {
-            try
-            {
-                _sections = await ContentItemService.GetSectionContentItemsAsync(WebPageId);
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, "Error loading content items for web page {0}", WebPageId);
-                _sections = new();
-            }
-            finally
-            {
-                _section1 = GetNamedSection("Header", _sections)!;
-                _section2 = GetNamedSection("Body", _sections)!;
-                _section3 = new Section { SectionId = 0, Name = "Toolbar", Color = "#fefefe", WebPageId = WebPageId };
-                _section4 = GetNamedSection("Footer", _sections)!;
-                _sectionId1 = _section1.SectionId;
-                _sectionId2 = _section2.SectionId;
-                _sectionId3 = _section3.SectionId;
-                _sectionId4 = _section4.SectionId;
-                selectedList = _section1.SectionId;
-                showColorPicker = false;
-                currentBox = selectedList;
-                selectedBox = _section1.Name;
-            }
+            await SectionService.DropWebPageSectionsAsync(WebPageId);
+            await LoadSectionsAsync();
         }
 
         // private ContentItemStorage ContentItemStorage { get; set; }
@@ -157,6 +130,18 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
             }
         }
 
+        private async Task<Section> EnsureSectionAsync(string name)
+        {
+            var section = await SectionService.GetSectionByNameAsync(WebPageId, name);
+            if (section == null)
+            {
+                section = new Section { Name = name, Color = "#fefefe", WebPageId = WebPageId };
+                section = await SectionService.CreateSectionAsync(section)
+                    ?? throw new InvalidOperationException($"Error creating section: {name}");
+            }
+            return section;
+        }
+
         private void OnDragStart(ContentItem contentItem)
         {
             ContentItemService.StartDrag(contentItem);
@@ -164,8 +149,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
 
         private void OnDrop(int targetListNumber)
         {
-            ContentItemService.DropContentItemAsync(targetListNumber).Wait();
-            GetSectionsAsync().Wait();
+            ContentItemService.DropContentItemAsync(WebPageId, targetListNumber).Wait();
             StateHasChanged();
         }
 
@@ -260,5 +244,12 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
                 { "Montserrat", "'Montserrat', sans-serif" },
                 { "Lato", "'Lato', sans-serif" }
             };
+    }
+    public enum SectionNames
+    {
+        Header,
+        Body,
+        Footer,
+        Toolbar
     }
 }

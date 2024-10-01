@@ -44,11 +44,16 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
             await _repository.SaveSectionColorAsync(boxNumber, color, cancellation);
         }
 
-        public async Task DropWebPageSections(int webPageId, CancellationToken cancellation = default)
+        public async Task DropWebPageSectionsAsync(int webPageId, CancellationToken cancellation = default)
         {
             var sections = await GetSectionsAsync(webPageId, cancellation);
 
             await _repository.DeleteSectionsAsync(sections, cancellation);
+        }
+
+        public async Task<Section?> GetSectionByNameAsync(int webPageId, string name, CancellationToken cancellation = default)
+        {
+            return await _repository.GetSectionByNameAsync(webPageId, name, cancellation);
         }
     }
 }

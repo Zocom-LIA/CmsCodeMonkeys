@@ -17,7 +17,13 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         public async Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<int> contentItemIds) => await _repository.GetContentItemsAsync(contentItemIds);
         public async Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<Section> sections) => await _repository.GetContentItemsAsync(sections);
         public async Task<IEnumerable<ContentItem>> GetContentItemsAsync(int sectionId) => await _repository.GetContentItemsAsync(sectionId);
-        public async Task<Dictionary<int, Section>> GetSectionContentItemsAsync(int webPageId) => await _repository.GetSectionContentItemsAsync(webPageId);
+
+
+        // Get sections and their ContentItem items if they exist; otherwise, create a new section
+        public async Task<Dictionary<int, Section>> GetSectionContentItemsAsync(int webPageId)
+        {
+            return await _repository.GetSectionContentItemsAsync(webPageId);
+        }
 
         // Start dragging a ContentItem item
         public void StartDrag(ContentItem contentItem)
@@ -41,5 +47,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         {
             await _repository.DeleteContentItemAsync(contentItem);
         }
+
+        public Task DropContentItemAsync(int webPageId, int newSectionId) => throw new NotImplementedException();
     }
 }

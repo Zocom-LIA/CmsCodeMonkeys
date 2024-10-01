@@ -1,9 +1,8 @@
-@page "/content-items/{webPageId:int}"
+@page "/content-items/{siteId:int}/{webPageId:int}"
 @using CodeMonkeys.CMS.Public.Components.Shared
 @inherits AuthenticationBaseComponent<ContentItems>
 @rendermode InteractiveServer
 
-<UserViewer>
     <!-- NY DESIGN -->
     <div class="grid-container">
         <div class="vertical-container">
@@ -11,7 +10,7 @@
                 <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(2)">
                     <h4>Header</h4>
                     <ul>
-                        @foreach (var contentItem in _section2.ContentItems)
+                        @foreach (var contentItem in _section2?.ContentItems ?? [])
                         {
                             @RenderContentItemItem(contentItem)
                         }
@@ -22,7 +21,7 @@
                 <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(3)">
                     <div>BODY</div>
                     <ul>
-                        @foreach (var contentItem in _section3.ContentItems)
+                        @foreach (var contentItem in _section3?.ContentItems ?? [])
                         {
                             @RenderContentItemItem(contentItem)
                         }
@@ -33,7 +32,7 @@
                 <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(4)">
                     <div>Footer</div>
                     <ul>
-                        @foreach (var contentItem in _section4.ContentItems)
+                        @foreach (var contentItem in _section4?.ContentItems ?? [])
                         {
                             @RenderContentItemItem(contentItem)
                         }
@@ -56,7 +55,7 @@
             <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(1)">
                 <h4>Toolbar</h4>
                 <ul>
-                    @foreach (var contentItem in _section1.ContentItems)
+                    @foreach (var contentItem in _section1?.ContentItems ?? [])
                     {
                         @RenderContentItemItem(contentItem)
                     }
@@ -64,7 +63,6 @@
             </div>
         </div>
     </div>
-
     @if (showColorPicker)
     {
         <div class="color-picker">
@@ -78,7 +76,6 @@
             <button @onclick="SaveColorAsync">Spara</button>
         </div>
     }
-</UserViewer>
 
 @code 
 {

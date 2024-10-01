@@ -74,6 +74,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             {
                 var sections = await context.Sections
                     .Where(s => s.WebPageId == webPageId)
+                    .Include(s => s.ContentItems)
                     .ToListAsync(cancellation);
 
                 var sectionContentItems = new Dictionary<int, Section>();

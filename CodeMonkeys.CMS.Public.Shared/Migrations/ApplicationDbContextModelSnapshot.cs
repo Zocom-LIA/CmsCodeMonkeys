@@ -170,6 +170,36 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.ToTable("Roles");
                 });
 
+            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Section", b =>
+                {
+                    b.Property<int>("SectionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SectionId"));
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("WebPageId")
+                        .HasColumnType("int");
+
+                    b.HasKey("SectionId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("WebPageId");
+
+                    b.ToTable("Sections");
+                });
+
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Site", b =>
                 {
                     b.Property<int>("SiteId")
@@ -388,6 +418,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 {
                     b.HasBaseType("CodeMonkeys.CMS.Public.Shared.Entities.Content");
 
+                    b.Property<int>("BoxNumber")
+                        .HasColumnType("int");
+
                     b.Property<int>("ContentItemId")
                         .HasColumnType("int");
 
@@ -416,6 +449,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.Property<string>("LinkUrl")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("SectionId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("ShowEditButton")
                         .HasColumnType("bit");
 
@@ -426,6 +462,8 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.Property<string>("TextColor")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.HasIndex("SectionId");
 
                     b.HasDiscriminator().HasValue("ContentItem");
                 });
@@ -475,6 +513,17 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.Navigation("WebPage");
                 });
 
+            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Section", b =>
+                {
+                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", "WebPage")
+                        .WithMany("Sections")
+                        .HasForeignKey("WebPageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("WebPage");
+                });
+
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Site", b =>
                 {
                     b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.User", "Creator")
@@ -506,9 +555,25 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.Navigation("Site");
                 });
 
+            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.ContentItem", b =>
+                {
+                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.Section", "Section")
+                        .WithMany("ContentItems")
+                        .HasForeignKey("SectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Section");
+                });
+
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Menu", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Section", b =>
+                {
+                    b.Navigation("ContentItems");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Site", b =>
@@ -526,6 +591,8 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", b =>
                 {
                     b.Navigation("Contents");
+
+                    b.Navigation("Sections");
                 });
 #pragma warning restore 612, 618
         }

@@ -74,6 +74,11 @@
                     <AuthorizeView>
                         <Authorized>
                             <li class="nav-item">
+                                <NavLink class="nav-link" href="content-items/1/1" style="color: white;">
+                                    <span class="bi bi-person" aria-hidden="true"></span> Profile
+                                </NavLink>
+                            </li>
+                            <li class="nav-item">
                                 <form action="Account/Logout" method="post" id="logout-form" class="form-inline">
                                     <AntiforgeryToken />
                                     <input type="hidden" name="ReturnUrl" value="@currentUrl" />

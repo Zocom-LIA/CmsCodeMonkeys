@@ -10,23 +10,15 @@ namespace CodeMonkeys.CMS.Public.Shared.Configuration
     {
         public void Configure(EntityTypeBuilder<Section> builder)
         {
-            builder.Property(section => section.Name)
-                .IsRequired()
-                .HasMaxLength(100);
+            // Configure primary key
+            builder.HasKey(s => s.SectionId);
 
-            //builder.Property(section => section.Description)
-            //    .IsRequired()
-            //    .HasMaxLength(1000);
+            // Configure other properties (e.g., required, maxlength, navigation properties)
+            builder.Property(s => s.Name).IsRequired().HasMaxLength(50);
+            builder.HasOne(s => s.WebPage).WithMany(wp => wp.Sections).HasForeignKey(s => s.WebPageId);
+            builder.HasMany(s => s.ContentItems).WithOne(ci => ci.Section).HasForeignKey(ci => ci.SectionId);
 
-            //builder.Property(section => section.OrdinalNumber)
-            //    .IsRequired();
-
-            //builder.Property(section => section.IsVisible)
-            //    .IsRequired();
-
-            builder.HasOne(section => section.WebPage)
-                .WithMany(page => page.Sections)
-                .HasForeignKey(section => section.WebPageId);
+            // Add any custom configurations or constraints here
         }
     }
 }

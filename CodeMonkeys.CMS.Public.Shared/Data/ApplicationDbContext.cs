@@ -27,27 +27,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Data
         public DbSet<ContentItem> ContentItems => Set<ContentItem>();
         public DbSet<Section> Sections => Set<Section>();
         public DbSet<Menu> Menus => Set<Menu>();
-        //public DbSet<TextContent> TextContents => Set<TextContent>();
-        //public DbSet<ImageContent> ImageContent => Set<ImageContent>();
-        //public DbSet<VideoContent> VideoContent => Set<VideoContent>();
-        //public DbSet<LinkContent> LinkContent => Set<LinkContent>();
-        //public DbSet<CodeContent> CodeContent => Set<CodeContent>();
-        //public DbSet<FileContent> FileContent => Set<FileContent>();
-        //public DbSet<QuoteContent> QuoteContent => Set<QuoteContent>();
-        //public DbSet<Section> Sections => Set<Section>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<Content>()
-            //    .ToTable("Contents")
-            //    .HasDiscriminator(c => c.ContentType)
-            //    .HasValue<TextContent>("TextContent")
-            //    .HasValue<ImageContent>("ImageContent")
-            //    .HasValue<VideoContent>("VideoContent")
-            //    .HasValue<LinkContent>("LinkContent")
-            //    .HasValue<CodeContent>("CodeContent")
-            //    .HasValue<FileContent>("FileContent")
-            //    .HasValue<QuoteContent>("QuoteContent");
 
             // Configure the one-to-many relationship between Site and WebPage
             modelBuilder.Entity<Site>()
