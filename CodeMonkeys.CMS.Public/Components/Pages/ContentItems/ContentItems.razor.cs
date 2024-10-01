@@ -41,6 +41,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
             await base.OnInitializedAsync();
             try
             {
+                _sections = await SectionService.GetSectionsAsync(WebPageId);
                 await LoadSectionsAsync();
             }
             catch (Exception ex)
@@ -108,44 +109,52 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
             }
         }
 
-    private async Task SaveColorAsync()
-{
-    if (_sections.TryGetValue(currentBox, out var section))
-    {
-        section.Color = selectedColor; // Uppdatera färgen lokalt också
-        await SectionService.SaveSectionColorAsync(currentBox, selectedColor); // Spara i backend
-        showColorPicker = false;
-        await InvokeAsync(StateHasChanged); // Se till att uppdatera komponenten
-    }
-}
-
+        private async Task SaveColorAsync()
+        {
+            if (_sections.TryGetValue(currentBox, out var section))
+            {
+                section.Color = selectedColor; // Uppdatera färgen lokalt också
+                await SectionService.SaveSectionColorAsync(currentBox, selectedColor); // Spara i backend
+                showColorPicker = false;
+                await InvokeAsync(StateHasChanged); // Se till att uppdatera komponenten
+            }
+        }
 
         private async Task AddContentItem()
         {
             if (!string.IsNullOrWhiteSpace(newContentItemText))
             {
-                var contentItems = _sections[selectedList]?.ContentItems ?? [];
-                var contentItem = new ContentItem
+                if (_sections.TryGetValue(selectedList, out var section))
                 {
-                    SectionId = selectedList,
-                    Text = newContentItemText,
-                    Title = newContentItemText,
-                    Body = newContentItemText,
-                    OrdinalNumber = contentItems.Count(),
-                    AuthorId = User!.Id,
-                    WebPageId = WebPageId
-                };
+                    section.ContentItems ??= new List<ContentItem>();
+                    var contentItems = section.ContentItems;
+                    var contentItem = new ContentItem
+                    {
+                        SectionId = selectedList,
+                        Text = newContentItemText,
+                        Title = newContentItemText,
+                        Body = newContentItemText,
+                        OrdinalNumber = contentItems.Count(),
+                        AuthorId = User!.Id,
+                        WebPageId = WebPageId
+                    };
 
-                await ContentItemService.AddContentItemAsync(contentItem);
-                await LoadSectionsAsync();
-                newContentItemText = string.Empty;
+                    section.ContentItems.Add(contentItem);
 
-                // Kontrollera och ställ in ShowEditButton endast om listan inte är tom
-                ResetShowEditButton(_section1);
-                ResetShowEditButton(_section2);
-                ResetShowEditButton(_section3);
-                ResetShowEditButton(_section4);
-                StateHasChanged();
+                    await ContentItemService.AddContentItemAsync(contentItem);
+                    newContentItemText = string.Empty;
+
+                    // Kontrollera och ställ in ShowEditButton endast om listan inte är tom
+                    ResetShowEditButton(_section1);
+                    ResetShowEditButton(_section2);
+                    ResetShowEditButton(_section3);
+                    ResetShowEditButton(_section4);
+                    StateHasChanged();
+                }
+                else
+                {
+                    Logger.LogWarning("Section with ID {0} does not exist.", selectedList);
+                }
             }
         }
 
@@ -162,9 +171,23 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
             ContentItemService.StartDrag(contentItem);
         }
 
-        private void OnDrop(int targetListNumber)
+        private void OnDrop(int targetSectionId)
         {
-            ContentItemService.MoveContentItemAsync(targetListNumber).Wait();
+            var draggedItem = ContentItemService.DraggedContentItem;
+            if (draggedItem == null)
+            {
+                Logger.LogWarning("ContentItems.OnDrop called when no content item is being dragged.");
+                return;
+            }
+
+            int sourceSectionId = draggedItem.SectionId;
+            if (_sections.TryGetValue(sourceSectionId, out var sourceSection) && _sections.TryGetValue(targetSectionId, out var targetSection))
+            {
+                sourceSection.ContentItems.Remove(draggedItem);
+                targetSection.ContentItems.Add(draggedItem);
+            }
+            ContentItemService.MoveContentItemAsync(targetSectionId).Wait();
+
             LoadSectionsAsync().Wait();
             StateHasChanged();
         }
@@ -196,26 +219,26 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
         }
 
 
-private async Task RemoveAllContentItemsAsync()
-{
-    // Gå igenom alla sektioner och ta bort deras innehåll
-    foreach (var section in _sections.Values)
-    {
-        // Ta bort alla content items i sektionen
-        var contentItems = section.ContentItems.ToList(); // Hämta en lista med innehållsobjekt
-        foreach (var item in contentItems)
+        private async Task RemoveAllContentItemsAsync()
         {
-            await ContentItemService.RemoveContentItemAsync(item);
+            // Gå igenom alla sektioner och ta bort deras innehåll
+            foreach (var section in _sections.Values)
+            {
+                // Ta bort alla content items i sektionen
+                var contentItems = section.ContentItems.ToList(); // Hämta en lista med innehållsobjekt
+                foreach (var item in contentItems)
+                {
+                    await ContentItemService.RemoveContentItemAsync(item);
+                }
+
+                // Sätt färgen på sektionen till vit
+                section.Color = "#FFFFFF"; // Sätt färgen till vit (hex-koden för vit)
+                await SectionService.SaveSectionColorAsync(section.SectionId, section.Color);
+            }
+
+            await LoadSectionsAsync(); // Uppdatera sektionerna efter borttagningen
+            StateHasChanged();
         }
-
-        // Sätt färgen på sektionen till vit
-        section.Color = "#FFFFFF"; // Sätt färgen till vit (hex-koden för vit)
-        await SectionService.SaveSectionColorAsync(section.SectionId, section.Color);
-    }
-
-    await LoadSectionsAsync(); // Uppdatera sektionerna efter borttagningen
-    StateHasChanged();
-}
 
 
         private void ChangeFontSize(ContentItem contentItem, int change)

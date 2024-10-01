@@ -9,7 +9,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
     {
         private readonly ISectionRepository _repository = repository;
 
-        public async Task<IEnumerable<Section>> GetSectionsAsync(int webPageId, CancellationToken cancellation = default)
+        public async Task<Dictionary<int, Section>> GetSectionsAsync(int webPageId, CancellationToken cancellation = default)
         {
             return await _repository.GetSectionsAsync(webPageId, cancellation);
         }
@@ -46,7 +46,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
 
         public async Task DropWebPageSectionsAsync(int webPageId, CancellationToken cancellation = default)
         {
-            var sections = await GetSectionsAsync(webPageId, cancellation);
+            var sections = (await GetSectionsAsync(webPageId, cancellation)).Select(kvp => kvp.Value);
 
             await _repository.DeleteSectionsAsync(sections, cancellation);
         }

@@ -4,6 +4,8 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
 {
     public interface IContentItemService
     {
+        ContentItem? DraggedContentItem { get; }
+
         Task AddContentItemAsync(ContentItem contentItem);
         Task DeleteContentItemAsync(ContentItem contentItem);
         Task MoveContentItemAsync(int newSectionId);

@@ -6,7 +6,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
     public class ContentItemService(ContentItemRepository repository) : IContentItemService
     {
         // ContentItem lists
-        private ContentItem? _draggedContentItem;
+        public ContentItem? DraggedContentItem { get; private set; }
         private ContentItemRepository _repository = repository;
 
         // Add a new ContentItem item to a specific list
@@ -28,18 +28,18 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         // Start dragging a ContentItem item
         public void StartDrag(ContentItem contentItem)
         {
-            _draggedContentItem = contentItem;
+            DraggedContentItem = contentItem;
         }
 
         // Drop the dragged ContentItem item into the target list
         public async Task MoveContentItemAsync(int newSectionId)
         {
-            if (_draggedContentItem != null)
+            if (DraggedContentItem != null)
             {
-                _draggedContentItem.SectionId = newSectionId;
+                DraggedContentItem.SectionId = newSectionId;
 
-                await _repository.UpdateContentItemAsync(_draggedContentItem);
-                _draggedContentItem = null;
+                await _repository.UpdateContentItemAsync(DraggedContentItem);
+                DraggedContentItem = null;
             }
         }
 

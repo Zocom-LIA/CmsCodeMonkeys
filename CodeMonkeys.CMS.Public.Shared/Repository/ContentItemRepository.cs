@@ -49,6 +49,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 
             try
             {
+                //context.Entry<ContentItem>(contentItem).State = EntityState.Modified;
                 context.ContentItems.Update(contentItem);
                 await context.SaveChangesAsync(cancellation);
             }

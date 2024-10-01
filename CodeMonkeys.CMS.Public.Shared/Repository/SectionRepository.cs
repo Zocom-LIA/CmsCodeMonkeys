@@ -6,6 +6,8 @@ using CodeMonkeys.CMS.Public.Shared.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
+using System.Collections.Generic;
+
 namespace CodeMonkeys.CMS.Public.Shared.Repository
 {
     public class SectionRepository(IDbContextFactory<ApplicationDbContext> contextFactory, IMapper mapper, ILogger<SectionRepository> logger)
@@ -202,7 +204,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
         }
 
 
-        public async Task<IEnumerable<Section>> GetSectionsAsync(int webPageId, CancellationToken cancellation = default)
+        public async Task<Dictionary<int, Section>> GetSectionsAsync(int webPageId, CancellationToken cancellation = default)
         {
             var context = GetContext();
 
@@ -213,12 +215,12 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                     .Where(s => s.WebPageId == webPageId)
                     .Include(s => s.ContentItems)
                     .AsNoTracking()
-                    .ToListAsync(cancellation);
+                .ToDictionaryAsync(source => source.SectionId);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to get sections for web page with ID {0}", webPageId);
-                return Enumerable.Empty<Section>();
+                return new();
             }
             finally
             {

@@ -13,7 +13,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
         Task DeleteSectionsAsync(IEnumerable<Section> sections, CancellationToken cancellation);
         Task<Section?> GetSectionAsync(int sectionId, CancellationToken cancellation);
         Task<Section?> GetSectionByNameAsync(int webPageId, string name, CancellationToken cancellation);
-        Task<IEnumerable<Section>> GetSectionsAsync(int webPageId, CancellationToken cancellation);
+        Task<Dictionary<int, Section>> GetSectionsAsync(int webPageId, CancellationToken cancellation);
         Task SaveSectionColorAsync(int boxNumber, string color, CancellationToken cancellation);
         Task<Section?> UpdateSectionAsync(Section section, CancellationToken cancellation);
     }
