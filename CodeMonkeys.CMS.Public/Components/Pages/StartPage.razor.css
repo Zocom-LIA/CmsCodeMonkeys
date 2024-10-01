@@ -102,10 +102,10 @@ p {
     max-width: 600px;
 }
 
-.imgdator1 {
-    max-width: 700px;
-    padding-left: 10px;
-    height: auto;
+/* Bildinställningar för responsiv design */
+.imgdator1, .imgdator {
+    max-width: 100%; /* Bilderna kan inte bli större än sin container */
+    height: auto; /* Bibehåller proportionerna */
     object-fit: contain;
     border-radius: 5px;
 }
@@ -257,8 +257,14 @@ p {
     }
 
     .grid-container {
-        flex-direction: column;
-        gap: 10px;
+        display: flex;
+        flex-direction: column; /* Ändrar layouten så att bilderna lägger sig under texten */
+        align-items: center;
+        gap: 20px; /* Ger lite avstånd mellan elementen */
+    }
+
+    .imgdator1, .imgdator {
+        max-width: 90%; /* Gör att bilderna anpassar sig till storleken på små skärmar */
     }
 
     .StartPage-div-grid,
@@ -280,6 +286,17 @@ p {
 
     .StartPage-div0 h4 {
         font-size: 1.5rem;
+    }
+
+    .grid-container {
+        display: flex;
+        flex-direction: column; /* Samma som för mobil, bilderna under texten */
+        align-items: center;
+        gap: 20px;
+    }
+
+    .imgdator1, .imgdator {
+        max-width: 90%; /* Ser till att bilderna inte blir för små */
     }
 
     .map-iframe {
