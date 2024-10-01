@@ -24,8 +24,6 @@
     }
 }
 
-
-
 h1 {
     font-size: 2rem;
     margin-bottom: 20px;
@@ -46,10 +44,6 @@ h1 {
         background-position: 0% 50%;
     }
 }
-
-
-
-
 
 p {
     font-size: 1.1rem;
@@ -86,13 +80,13 @@ p {
     text-align: center;
 }
 
-.StartPage-div1 h1 {
-    padding-left: 50px;
-}
+    .StartPage-div1 h1 {
+        padding-left: 50px;
+    }
 
 .grid-container {
     display: grid;
-    grid-template-columns: auto auto; 
+    grid-template-columns: auto auto;
     padding: 10px;
     flex-wrap: wrap;
     align-items: center;
@@ -103,10 +97,10 @@ p {
     text-align: center;
 }
 
-    .grid-container p {
-        flex: 1;
-        max-width: 600px;
-    }
+.grid-container p {
+    flex: 1;
+    max-width: 600px;
+}
 
 .imgdator1 {
     max-width: 700px;
@@ -198,18 +192,23 @@ p {
     text-align: center;
 }
 
+.StartPage-div-grid4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Två kolumner */
+    gap: 20px; /* Avstånd mellan artiklarna */
+}
 
+.about-us, .why-choose-us {
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-    /*.StartPage-div-grid div {*/
-        /*background-color: #fff;*/
-        /*padding: 20px;
-        border-radius: 5px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }*/
-
-    .StartPage-div-grid p {
-        margin-bottom: 15px;
-    }
+.StartPage-div-grid4 p {
+    margin-bottom: 15px;
+}
 
 /* Styling för kontakt-sektionen */
 .StartPage-div5 {
@@ -238,29 +237,21 @@ p {
     50% {
         background-position: 100% 100%;
     }
-/*.StartPage-div5-Contact {
-    text-align: center;
-    padding: 20px;
-}*/
 
     100% {
         background-position: 0% 0%;
     }
 }
 
-
 .div-grid-section5 {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 40px;
 }
-   
-
 
 .map-container {
     display: flex;
     justify-content: center;
-  /*  padding: 20px;*/
 }
 
 .map-iframe {
