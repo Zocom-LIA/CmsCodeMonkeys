@@ -7,5 +7,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
     {
         Task<int> GetPageVisitsAsync(string pageUrl);
         Task<IEnumerable<PageStats>> GetPageStatsAsync();
+        Task<IEnumerable<PageStats>> GetPageStatsAsync(int siteId);
     }
 }
