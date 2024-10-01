@@ -24,9 +24,10 @@
     }
 }
 
+/* Dynamisk storlek för text och rubriker */
 h1 {
-    font-size: 2rem;
-    margin-bottom: 20px;
+    font-size: 5vw;
+    margin-bottom: 2vw;
     background: linear-gradient(90deg, yellow, green, blue);
     background-size: 400% 100%;
     -webkit-background-clip: text;
@@ -46,7 +47,7 @@ h1 {
 }
 
 p {
-    font-size: 1.1rem;
+    font-size: 1.5vw;
     color: #555;
     line-height: 1.6;
 }
@@ -55,7 +56,7 @@ p {
 .StartPage-div0 {
     background: url('/Image/background.jpg') no-repeat center center;
     background-size: cover;
-    height: 100vh; /* Full höjd */
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -64,102 +65,120 @@ p {
 }
 
     .StartPage-div0 h1 {
-        font-size: 4rem;
+        font-size: 6vw;
         margin: 0;
     }
 
     .StartPage-div0 h4 {
-        font-size: 1.5rem;
-        margin-top: 20px;
+        font-size: 2.5vw;
+        margin-top: 2vw;
     }
 
-/* Styling för sektion 1 */
+/* Sektion 1 */
 .StartPage-div1 {
-    padding: 50px 50px;
+    padding: 5vw;
     background-color: #ffffff;
     text-align: center;
-    min-height: 90vh; /* Gör sektionen större */
+    min-height: 100vh;
+    box-sizing: border-box;
 }
 
 .grid-container {
     display: grid;
     grid-template-columns: auto auto;
-    padding: 10px;
+    gap: 2vw;
     align-items: center;
 }
 
 .grid-item {
-    padding: 20px;
+    padding: 2vw;
     text-align: center;
 }
 
 .grid-container p {
-    flex: 1;
-    max-width: 600px;
+    max-width: 80vw;
+    font-size: 1.5vw;
 }
 
-/* Bildinställningar för responsiv design */
+/* Dynamisk storlek för bilder */
 .imgdator1, .imgdator {
-    max-width: 100%;
+    max-width: 90vw;
     height: auto;
     object-fit: contain;
     border-radius: 5px;
 }
 
-/* Styling för sektion 2 */
+/* Sektion 2 */
 .StartPage-div2 {
-    padding: 50px 50px;
+    padding: 5vw;
     background-color: #343a40;
     color: white;
     text-align: center;
-    min-height: 90vh; /* Gör sektionen större */
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 .StartPage-div-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 40px;
+    gap: 3vw;
 }
 
 .imgdator {
-    max-width: 600px;
+    max-width: 80vw;
     height: auto;
     object-fit: contain;
     border-radius: 5px;
 }
 
-/* Styling för team-sektionen */
+/* Sektion 3 (Möt Teamet) */
 .StartPage-div3 {
-    padding: 50px 20px;
+    padding: 5vw;
     background-color: #ffffff;
     text-align: center;
-    min-height: 90vh; /* Gör sektionen större */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .StartPage-div-grid2 {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 3vw;
+    width: 100%;
+    max-width: 1200px;
 }
 
 .team-member {
     background-color: #f9f9f9;
-    padding: 20px;
+    padding: 3vw;
     border-radius: 5px;
     text-align: center;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: auto;
+    max-width: 350px;
+    min-width: 250px;
+    height: auto;
+    margin: 0 auto;
+    word-wrap: break-word;
 }
 
     .team-member img {
-        width: 120px;
-        height: 120px;
+        width: 100%;
+        max-width: 150px;
+        height: auto;
         border-radius: 50%;
         object-fit: cover;
         margin-bottom: 15px;
     }
 
     .team-member p {
-        font-size: 1.2rem;
+        font-size: 1.8vw;
         font-weight: bold;
         margin-bottom: 10px;
     }
@@ -170,7 +189,7 @@ p {
     }
 
     .team-member li {
-        font-size: 1rem;
+        font-size: 1.4vw;
         color: #666;
         margin-bottom: 10px;
     }
@@ -184,44 +203,56 @@ p {
             text-decoration: underline;
         }
 
-/* Styling för ZoCom sektionen */
+/* Sektion ZoCom */
 .StartPage-div4 {
-    padding: 50px 20px;
+    padding: 5vw;
     background-color: #f4f4f4;
     text-align: center;
-    min-height: 90vh; /* Gör sektionen större */
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 .StartPage-div-grid4 {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    gap: 3vw;
+    width: 80vw;
 }
 
 .about-us, .why-choose-us {
     background-color: #ffffff;
-    padding: 20px;
+    padding: 4vw;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
+    height: 100%;
 }
 
 .StartPage-div-grid4 p {
-    margin-bottom: 15px;
+    font-size: 1.5vw;
+    margin-bottom: 2vw;
 }
 
-/* Styling för kontakt-sektionen */
+/* Kontakt-sektion */
 .StartPage-div5 {
-    padding: 60px 20px;
+    padding: 5vw;
     background-image: radial-gradient(at 45% 30%, hsla(241,77%,65%,1) 0px, transparent 50%), radial-gradient(at 17% 10%, hsla(271,87%,70%,1) 0px, transparent 50%), radial-gradient(at 59% 50%, hsla(318,69%,68%,1) 0px, transparent 50%), radial-gradient(at 49% 78%, hsla(224,65%,69%,1) 0px, transparent 50%), radial-gradient(at 23% 68%, hsla(266,84%,73%,1) 0px, transparent 50%), radial-gradient(at 13% 15%, hsla(267,96%,62%,1) 0px, transparent 50%), radial-gradient(at 69% 56%, hsla(263,65%,70%,1) 0px, transparent 50%), radial-gradient(at 2% 0%, hsla(320,61%,60%,1) 0px, transparent 50%), radial-gradient(at 17% 58%, hsla(296,84%,77%,1) 0px, transparent 50%), radial-gradient(at 95% 67%, hsla(181,83%,66%,1) 0px, transparent 50%);
     background-size: 200% 200%;
     font-family: 'Arial', sans-serif;
     animation: moveBackground 30s ease-in-out infinite;
     text-align: center;
-    min-height: 90vh; /* Gör sektionen större */
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 .imgdator2 {
-    padding-top: 20px;
-    max-width: 250px;
+    padding-top: 5vw;
+    max-width: 40vw;
     height: auto;
     object-fit: contain;
     border-radius: 5px;
@@ -230,7 +261,8 @@ p {
 .div-grid-section5 {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 40px;
+    gap: 3vw;
+    width: 80vw;
 }
 
 .map-container {
@@ -241,87 +273,73 @@ p {
 .map-iframe {
     width: 100%;
     max-width: 700px;
-    height: 1000px;
+    height: 60vh;
 }
 
-/* Media Queries för responsiv design */
-
-/* För mobil (upp till 480px) */
+/* Responsiv design med media queries */
 @media (max-width: 480px) {
-    .StartPage-div0 h1 {
-        font-size: 2.5rem;
+    h1 {
+        font-size: 6vw;
     }
 
-    .StartPage-div0 h4 {
-        font-size: 1.2rem;
+    h4 {
+        font-size: 3vw;
     }
 
-    .grid-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
+    p {
+        font-size: 2vw;
     }
 
-    .imgdator1, .imgdator {
-        max-width: 90%;
+    .team-member img {
+        width: 30vw;
+        height: 30vw;
     }
 
-    .StartPage-div-grid,
-    .StartPage-div-grid2,
-    .StartPage-div-grid4 {
+    .grid-container, .StartPage-div-grid, .StartPage-div-grid4, .div-grid-section5 {
         grid-template-columns: 1fr;
-    }
-
-    .map-iframe {
-        height: 300px;
+        width: 90vw;
     }
 }
 
-/* För mindre skärmar (481px till 768px) */
 @media (min-width: 481px) and (max-width: 768px) {
-    .StartPage-div0 h1 {
-        font-size: 3.5rem;
+    h1 {
+        font-size: 5vw;
     }
 
-    .StartPage-div0 h4 {
-        font-size: 1.5rem;
+    h4 {
+        font-size: 2.5vw;
     }
 
-    .grid-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
+    p {
+        font-size: 1.8vw;
     }
 
-    .imgdator1, .imgdator {
-        max-width: 90%;
+    .team-member img {
+        width: 25vw;
+        height: 25vw;
     }
 
-    .map-iframe {
-        height: 350px;
+    .grid-container, .StartPage-div-grid, .StartPage-div-grid4, .div-grid-section5 {
+        grid-template-columns: 1fr;
+        width: 90vw;
     }
 }
 
-/* För mindre laptops (769px till 1024px) */
 @media (min-width: 769px) and (max-width: 1024px) {
-    .StartPage-div0 h1 {
-        font-size: 4rem;
+    h1 {
+        font-size: 4vw;
     }
 
-    .StartPage-div0 h4 {
-        font-size: 1.8rem;
+    h4 {
+        font-size: 2vw;
     }
 
-    .map-iframe {
-        height: 400px;
+    p {
+        font-size: 1.6vw;
     }
-}
 
-/* För större skärmar (1025px och uppåt) */
-@media (min-width: 1025px) {
-    .map-iframe {
-        height: 450px;
+    .team-member img {
+        width: 22vw;
+        height: 22vw;
     }
 }
