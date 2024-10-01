@@ -28,7 +28,8 @@
                 <p>There seems to be no site that matches your request. If this error persists, please, contact the webmaster at ...</p>
             </div>
         }
-        else {
+        else
+        {
             if (!Site.Pages.Any())
             {
                 <div class="alert-info">
@@ -57,7 +58,14 @@
                                     <a class="btn btn-secondary" href="/userPages/@Site.SiteId/@webPage.WebPageId">Go to page</a>
                                 </div>
                                 <div class="webpages-card-footer text-muted">
-                                    Last Modified: @webPage.LastModifiedDate.ToString("yyyy-MM-dd")
+                                    <div class="container">
+                                        <div>
+                                            Visits: @PageVisitCount(webPage.WebPageId)
+                                        </div>
+                                        <div>
+                                            Last Modified: @webPage.LastModifiedDate.ToString("yyyy-MM-dd")
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -86,7 +94,7 @@
                     <InputText @bind-Value="Input.Name" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" />
                     <label for="name" class="form-label">Site Name</label>
                     <ValidationMessage For="() => Input.Name" class="text-danger" />
-                </div>                
+                </div>
             </EditForm>
         }
         else
@@ -99,7 +107,7 @@
                     <InputText @bind-Value="_pageModel.Title" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" />
                     <label for="name" class="form-label">Site Name</label>
                     <ValidationMessage For="() => _pageModel.Title" class="text-danger" />
-                 </div>
+                </div>
             </EditForm>
         }
     </ConfirmationDialog>
