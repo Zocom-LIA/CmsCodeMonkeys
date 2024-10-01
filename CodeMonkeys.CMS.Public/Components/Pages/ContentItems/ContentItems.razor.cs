@@ -54,7 +54,8 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
             _section1 = await EnsureSectionAsync(SectionNames.Header.ToString());
             _section2 = await EnsureSectionAsync(SectionNames.Body.ToString());
             _section4 = await EnsureSectionAsync(SectionNames.Footer.ToString());
-            _section3 = new Section { SectionId = 0, Name = "Toolbar", Color = "#fefefe", WebPageId = WebPageId };
+            _section3 = await EnsureSectionAsync(SectionNames.Toolbar.ToString());
+            // _section3 = new Section { SectionId = 3, Name = "Toolbar", Color = "#fefefe", WebPageId = WebPageId };
 
             _sections = new()
             {
@@ -107,12 +108,17 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
             }
         }
 
-        private async Task SaveColorAsync()
-        {
-            await SectionService.SaveSectionColorAsync(currentBox, selectedColor);
-            showColorPicker = false;
-            StateHasChanged();
-        }
+    private async Task SaveColorAsync()
+{
+    if (_sections.TryGetValue(currentBox, out var section))
+    {
+        section.Color = selectedColor; // Uppdatera färgen lokalt också
+        await SectionService.SaveSectionColorAsync(currentBox, selectedColor); // Spara i backend
+        showColorPicker = false;
+        await InvokeAsync(StateHasChanged); // Se till att uppdatera komponenten
+    }
+}
+
 
         private async Task AddContentItem()
         {
@@ -188,6 +194,29 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
             await LoadSectionsAsync();
             StateHasChanged();
         }
+
+
+private async Task RemoveAllContentItemsAsync()
+{
+    // Gå igenom alla sektioner och ta bort deras innehåll
+    foreach (var section in _sections.Values)
+    {
+        // Ta bort alla content items i sektionen
+        var contentItems = section.ContentItems.ToList(); // Hämta en lista med innehållsobjekt
+        foreach (var item in contentItems)
+        {
+            await ContentItemService.RemoveContentItemAsync(item);
+        }
+
+        // Sätt färgen på sektionen till vit
+        section.Color = "#FFFFFF"; // Sätt färgen till vit (hex-koden för vit)
+        await SectionService.SaveSectionColorAsync(section.SectionId, section.Color);
+    }
+
+    await LoadSectionsAsync(); // Uppdatera sektionerna efter borttagningen
+    StateHasChanged();
+}
+
 
         private void ChangeFontSize(ContentItem contentItem, int change)
         {
