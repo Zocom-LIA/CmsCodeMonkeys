@@ -165,32 +165,46 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
                 section1.ContentItems.Last().ShowEditButton = false;
             }
         }
+        
+        private ContentItem draggedItem;
 
         private void OnDragStart(ContentItem contentItem)
         {
-            ContentItemService.StartDrag(contentItem);
+            draggedItem = contentItem;
+            // Indicate the drag has started (this is optional, helps to visualize dragging)
+            contentItem.IsDragging = true;
         }
 
-        private void OnDrop(int targetSectionId)
-        {
-            var draggedItem = ContentItemService.DraggedContentItem;
-            if (draggedItem == null)
-            {
-                Logger.LogWarning("ContentItems.OnDrop called when no content item is being dragged.");
-                return;
-            }
+        private void OnDragEnd(ContentItem contentItem)
+{
+    contentItem.IsDragging = false; // Optionally indicate the drag has ended
+    StateHasChanged();
+}
 
-            int sourceSectionId = draggedItem.SectionId;
-            if (_sections.TryGetValue(sourceSectionId, out var sourceSection) && _sections.TryGetValue(targetSectionId, out var targetSection))
-            {
-                sourceSection.ContentItems.Remove(draggedItem);
-                targetSection.ContentItems.Add(draggedItem);
-            }
-            ContentItemService.MoveContentItemAsync(targetSectionId).Wait();
 
-            LoadSectionsAsync().Wait();
-            StateHasChanged();
-        }
+       private void OnDrop(int targetSectionId)
+{
+    if (draggedItem == null)
+    {
+        Logger.LogWarning("No content item is being dragged.");
+        return;
+    }
+
+    var sourceSectionId = draggedItem.SectionId;
+
+    if (_sections.TryGetValue(sourceSectionId, out var sourceSection) &&
+        _sections.TryGetValue(targetSectionId, out var targetSection))
+    {
+        sourceSection.ContentItems.Remove(draggedItem);
+        draggedItem.SectionId = targetSectionId;
+        targetSection.ContentItems.Add(draggedItem);
+
+        // Clear the dragged item
+        draggedItem = null;
+    }
+    StateHasChanged();
+}
+
 
         private void ToggleEdit(ContentItem contentItem)
         {

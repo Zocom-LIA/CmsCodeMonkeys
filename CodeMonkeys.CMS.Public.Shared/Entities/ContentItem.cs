@@ -12,7 +12,7 @@
         public bool IsItalic { get; set; } // New property for italic
         public string FontFamily { get; set; } = "Arial"; // Default font family
         public int BoxNumber { get; set; } = 1; // Default box size
-
+public bool IsDragging { get; set; }
         private bool isLinkEnabled; // Backing field for IsLinkEnabled
         public bool IsLinkEnabled
         {

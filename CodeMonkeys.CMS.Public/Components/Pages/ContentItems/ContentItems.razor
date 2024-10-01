@@ -3,68 +3,78 @@
 @inherits AuthenticationBaseComponent<ContentItems>
 @rendermode InteractiveServer
 
-<!-- NY DESIGN -->
+<!-- Layout -->
 <div class="grid-container">
     <div class="vertical-container">
+        <!-- Section 1 -->
         @if (_section1 == null)
         {
             <h1>Section 1 is null</h1>
         }
-        else {
-        <div class="box box1" @onclick="() => OpenColorPicker(_section1.SectionId)" style="background-color:@_section1.Color">
-            <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_section1.SectionId)">
-                <h4>Header</h4>
-                <ul>
-                    @foreach (var contentItem in _section1?.ContentItems ?? [])
-                    {
-                        @RenderContentItemItem(contentItem)
-                    }
-                </ul>
+        else
+        {
+            <div class="box box1" @onclick="() => OpenColorPicker(_section1.SectionId)" style="background-color:@_section1.Color">
+                <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_section1.SectionId)">
+                    <h4>Header</h4>
+                    <ul>
+                        @foreach (var contentItem in _section1?.ContentItems ?? [])
+                        {
+                            @RenderContentItemItem(contentItem)
+                        }
+                    </ul>
+                </div>
             </div>
-        </div>
         }
+
+        <!-- Section 2 -->
         @if (_section2 == null)
         {
             <h1>Section 2 is null</h1>
         }
-        else {
-        <div class="box box2" @onclick="() => OpenColorPicker(_section2.SectionId)" style="background-color:@_section2.Color">
-            <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_section2.SectionId)">
-                <div>BODY</div>
-                <ul>
-                    @foreach (var contentItem in _section2?.ContentItems ?? [])
-                    {
-                        @RenderContentItemItem(contentItem)
-                    }
-                </ul>
+        else
+        {
+            <div class="box box2" @onclick="() => OpenColorPicker(_section2.SectionId)" style="background-color:@_section2.Color">
+                <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_section2.SectionId)">
+                    <div>BODY</div>
+                    <ul>
+                        @foreach (var contentItem in _section2?.ContentItems ?? [])
+                        {
+                            @RenderContentItemItem(contentItem)
+                        }
+                    </ul>
+                </div>
             </div>
-        </div>
         }
+
+        <!-- Section 4 -->
         @if (_section4 == null)
         {
             <h1>Section 4 is null</h1>
         }
-        else {
-        <div class="box box4" @onclick="() => OpenColorPicker(_section4.SectionId)" style="background-color:@_section4.Color">
-            <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_section4.SectionId)">
-                <div>Footer</div>
-                <ul>
-                    @foreach (var contentItem in _section4?.ContentItems ?? [])
-                    {
-                        @RenderContentItemItem(contentItem)
-                    }
-                </ul>
+        else
+        {
+            <div class="box box4" @onclick="() => OpenColorPicker(_section4.SectionId)" style="background-color:@_section4.Color">
+                <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_section4.SectionId)">
+                    <div>Footer</div>
+                    <ul>
+                        @foreach (var contentItem in _section4?.ContentItems ?? [])
+                        {
+                            @RenderContentItemItem(contentItem)
+                        }
+                    </ul>
+                </div>
             </div>
-        </div>
         }
     </div>
+
+    <!-- Toolbar Section (Section 3) -->
     <div class="box box3">
         <div>
             <input @bind="newContentItemText" placeholder="Skriv en uppgift" />
             <select @bind="selectedList">
                 @foreach(var kvp in _sections)
                 {
-                <option value="@kvp.Key">@kvp.Value.Name</option>
+                    <option value="@kvp.Key">@kvp.Value.Name</option>
                 }
             </select>
             <button @onclick="AddContentItem">Lägg till</button>
@@ -81,6 +91,8 @@
         </div>
     </div>
 </div>
+
+<!-- Color Picker -->
 @if (showColorPicker)
 {
     <div class="color-picker">
@@ -95,91 +107,77 @@
     </div>
 }
 
-
-
-
-@code 
+@code
 {
-    RenderFragment RenderContentItemItem(ContentItem contentItem) => @<li draggable = "true" @ondragstart="() => OnDragStart(contentItem)">
-    @if(contentItem.IsEditing)
-        {
-        <input @bind = "contentItem.Text" />
-        <button @onclick = "() => SaveEdit(contentItem)" > Spara </button>
-        <button @onclick = "() => RemoveContentItemAsync(contentItem)" > Ta bort </button>
-        <br/>
-        <br/>
+    // Render content item for drag-and-drop
+    RenderFragment RenderContentItemItem(ContentItem contentItem) => @<li draggable="true" 
+        @ondragstart="() => OnDragStart(contentItem)" 
+        @ondragend="() => OnDragEnd(contentItem)">
 
-        <div>
-            <label>
-                Font Family:
-                <select @bind = "contentItem.FontFamily" >
-                    <option value = "" > Välj en typsnitt</option>
-                    @foreach(var font in fontFamilyOptions)
-                {
-                    <option value = "@font.Value"> @font.Key </option>
-                }
-                </select >
-            </label >
-            <br />
-            <label >
-                Text Färg:
-                <select @bind = "contentItem.Color" >
-                    @foreach(var color in colorOptions)
-                {
-                    <option value = "@color.Value" > @color.Key </option >
-                }
-                </select >
-            </label >
-        </div >
-
-        <div >
-            <label >
-                <input type = "checkbox" @bind = "contentItem.IsBold" />
-                Bold
-            </label >
-            <br />
-            <label >
-                <input type = "checkbox" @bind = "contentItem.IsItalic" />
-                Italic
-            </label >
-            <br />
-            <label >
-                <input type = "checkbox" @bind = "contentItem.IsLinkEnabled" />
-                Enable Link
-            </label >
-            @if(contentItem.IsLinkEnabled)
+        @if(contentItem.IsEditing)
         {
-            <div >
-                <input type = "text" placeholder = "Enter link description" @bind = "contentItem.LinkDescription" />
-                <input type = "text" placeholder = "Enter link URL (start with https://)" @bind = "contentItem.LinkUrl" />
-            </div >
+            <input @bind="contentItem.Text" />
+            <button @onclick="() => SaveEdit(contentItem)">Spara</button>
+            <button @onclick="() => RemoveContentItemAsync(contentItem)">Ta bort</button>
+
+            <!-- Font and Color Options -->
+            <div>
+                <label>Font Family:
+                    <select @bind="contentItem.FontFamily">
+                        <option value="">Välj en typsnitt</option>
+                        @foreach(var font in fontFamilyOptions)
+                        {
+                            <option value="@font.Value">@font.Key</option>
+                        }
+                    </select>
+                </label>
+                <br />
+                <label>Text Färg:
+                    <select @bind="contentItem.Color">
+                        @foreach(var color in colorOptions)
+                        {
+                            <option value="@color.Value">@color.Key</option>
+                        }
+                    </select>
+                </label>
+            </div>
+
+            <!-- Bold, Italic, and Link options -->
+            <div>
+                <label><input type="checkbox" @bind="contentItem.IsBold" /> Bold</label><br />
+                <label><input type="checkbox" @bind="contentItem.IsItalic" /> Italic</label><br />
+                <label><input type="checkbox" @bind="contentItem.IsLinkEnabled" /> Enable Link</label>
+
+                @if(contentItem.IsLinkEnabled)
+                {
+                    <div>
+                        <input type="text" placeholder="Enter link description" @bind="contentItem.LinkDescription" />
+                        <input type="text" placeholder="Enter link URL (start with https://)" @bind="contentItem.LinkUrl" />
+                    </div>
+                }
+            </div>
         }
-        </div >
-    }
-    else
-    {
-        <span style = "color:@contentItem.Color; font-size:@($"{contentItem.FontSize}px"); font-weight:@(contentItem.IsBold ? "bold" : "normal"); font-style:@(contentItem.IsItalic ? "italic" : "normal"); font-family:@contentItem.FontFamily;"
-              @onclick="() => ToggleEdit(contentItem)">
-            @contentItem.Text
-            @if(contentItem.IsLinkEnabled && !string.IsNullOrEmpty(contentItem.LinkUrl) && !string.IsNullOrEmpty(contentItem.LinkDescription))
+        else
         {
-                <a href = "https://@contentItem.LinkUrl" target = "_blank" style = "color:blue; text-decoration:underline;" @onclick: stopPropagation >
-                    -@contentItem.LinkDescription
-                </a >
-            }
-            else if (!string.IsNullOrEmpty(contentItem.LinkDescription))
-            {
-                <span>- @contentItem.LinkDescription</span> <!-- Display link description if it exists but is not clickable -->
-            }
+            <span style="color:@contentItem.Color; font-size:@($"{contentItem.FontSize}px"); font-weight:@(contentItem.IsBold ? "bold" : "normal"); font-style:@(contentItem.IsItalic ? "italic" : "normal"); font-family:@contentItem.FontFamily;"
+                  @onclick="() => ToggleEdit(contentItem)">
+                @contentItem.Text
+                @if(contentItem.IsLinkEnabled && !string.IsNullOrEmpty(contentItem.LinkUrl) && !string.IsNullOrEmpty(contentItem.LinkDescription))
+                {
+                    <a href="https://@contentItem.LinkUrl" target="_blank" style="color:blue; text-decoration:underline;" @onclick:stopPropagation>-@contentItem.LinkDescription</a>
+                }
+                else if (!string.IsNullOrEmpty(contentItem.LinkDescription))
+                {
+                    <span>- @contentItem.LinkDescription</span>
+                }
             </span>
-        @if(contentItem.ShowEditButton)
-        {
-            <button @onclick = "() => StartEdit(contentItem)" > Ändra </button >
-            <button @onclick = "() => ToggleEdit(contentItem)" > Save </button >
-            <button @onclick = "() => ChangeFontSize(contentItem, 1)" >↑</button >
-            <button @onclick = "() => ChangeFontSize(contentItem, -1)" >↓</button >
+
+            @if(contentItem.ShowEditButton)
+            {
+                <button @onclick="() => StartEdit(contentItem)">Ändra</button>
+                <button @onclick="() => ChangeFontSize(contentItem, 1)">↑</button>
+                <button @onclick="() => ChangeFontSize(contentItem, -1)">↓</button>
+            }
         }
-    }
     </li>;
 }
-}}

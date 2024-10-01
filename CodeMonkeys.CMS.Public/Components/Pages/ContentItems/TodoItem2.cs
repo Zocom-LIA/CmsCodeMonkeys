@@ -13,7 +13,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.DragAndDropFlashy2
         public bool IsBold { get; set; } // New property for bold
         public bool IsItalic { get; set; } // New property for italic
         public string FontFamily { get; set; } = "Arial"; // Default font family
-
+        
         private bool isLinkEnabled; // Backing field for IsLinkEnabled
         public bool IsLinkEnabled
         {
