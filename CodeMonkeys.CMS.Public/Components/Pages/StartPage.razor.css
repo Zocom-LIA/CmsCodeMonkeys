@@ -10,9 +10,28 @@
 
 h1 {
     font-size: 2rem;
-    color: #333;
     margin-bottom: 20px;
+    background: linear-gradient(90deg, yellow, green, blue);
+    background-size: 400% 100%;
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: rainbowWave 20s ease-in-out infinite;
+    font-weight: bold;
 }
+
+@keyframes rainbowWave {
+    0% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+
+
+
 
 p {
     font-size: 1.1rem;
