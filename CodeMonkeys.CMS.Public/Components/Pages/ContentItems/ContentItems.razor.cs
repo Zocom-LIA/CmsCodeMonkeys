@@ -158,7 +158,8 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
 
         private void OnDrop(int targetListNumber)
         {
-            ContentItemService.DropContentItemAsync(WebPageId, targetListNumber).Wait();
+            ContentItemService.MoveContentItemAsync(targetListNumber).Wait();
+            LoadSectionsAsync().Wait();
             StateHasChanged();
         }
 

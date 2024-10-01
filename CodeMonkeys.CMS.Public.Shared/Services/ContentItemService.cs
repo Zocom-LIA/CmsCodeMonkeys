@@ -32,7 +32,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         }
 
         // Drop the dragged ContentItem item into the target list
-        public async Task DropContentItemAsync(int newSectionId)
+        public async Task MoveContentItemAsync(int newSectionId)
         {
             if (_draggedContentItem != null)
             {
@@ -47,7 +47,5 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         {
             await _repository.DeleteContentItemAsync(contentItem);
         }
-
-        public Task DropContentItemAsync(int webPageId, int newSectionId) => throw new NotImplementedException();
     }
 }
