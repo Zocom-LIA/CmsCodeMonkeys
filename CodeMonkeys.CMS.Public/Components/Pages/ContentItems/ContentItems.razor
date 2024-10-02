@@ -132,7 +132,7 @@
                     </select>
                 </label>
                 <br />
-                <label>Text Färg:
+                <label>Text Color:
                     <select @bind="contentItem.Color">
                         @foreach(var color in colorOptions)
                         {
@@ -140,13 +140,20 @@
                         }
                     </select>
                 </label>
+                <br />
+                <label>Text Size: @contentItem.FontSize
+                <button @onclick="() => ChangeFontSize(contentItem, 1)">+</button>
+                <button @onclick="() => ChangeFontSize(contentItem, -1)">-</button>
+                </label>
+                
             </div>
-
+            
             <!-- Bold, Italic, and Link options -->
             <div>
                 <label><input type="checkbox" @bind="contentItem.IsBold" /> Bold</label><br />
                 <label><input type="checkbox" @bind="contentItem.IsItalic" /> Italic</label><br />
                 <label><input type="checkbox" @bind="contentItem.IsLinkEnabled" /> Enable Link</label>
+                
 
                 @if(contentItem.IsLinkEnabled)
                 {
@@ -170,13 +177,12 @@
                 {
                     <span>- @contentItem.LinkDescription</span>
                 }
+                
             </span>
-
             @if(contentItem.ShowEditButton)
             {
                 <button @onclick="() => StartEdit(contentItem)">Ändra</button>
-                <button @onclick="() => ChangeFontSize(contentItem, 1)">↑</button>
-                <button @onclick="() => ChangeFontSize(contentItem, -1)">↓</button>
+                
             }
         }
     </li>;
