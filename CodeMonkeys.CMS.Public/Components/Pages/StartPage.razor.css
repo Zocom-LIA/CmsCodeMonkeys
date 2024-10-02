@@ -148,10 +148,29 @@ p {
 
 .StartPage-div-grid2 {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(5, 1fr); /* 5 kolumner */
     gap: 3vw;
     width: 100%;
-    max-width: 1200px;
+    max-width: 100%; /* Full bredd */
+}
+
+/* Responsiv design */
+@media screen and (max-width: 1200px) {
+    .StartPage-div-grid2 {
+        grid-template-columns: repeat(4, 1fr); /* 4 kolumner på medelstora skärmar */
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .StartPage-div-grid2 {
+        grid-template-columns: repeat(2, 1fr); /* 2 kolumner på mindre skärmar */
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .StartPage-div-grid2 {
+        grid-template-columns: 1fr; /* 1 kolumn på små skärmar */
+    }
 }
 
 .team-member {
@@ -203,6 +222,7 @@ p {
             text-decoration: underline;
         }
 
+
 /* Sektion ZoCom */
 .StartPage-div4 {
     padding: 5vw;
@@ -210,16 +230,17 @@ p {
     text-align: center;
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
 }
 
 .StartPage-div-grid4 {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr; /* Två kolumner */
     gap: 3vw;
-    width: 80vw;
+    width: 100vw; /* Full bredd */
+    max-width: 100%;
 }
 
 .about-us, .why-choose-us {
@@ -227,13 +248,34 @@ p {
     padding: 4vw;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
-    height: 100%;
+    height: auto;
+    width: 100%;
+}
+
+/* Responsiv design för mindre skärmar */
+@media screen and (max-width: 900px) {
+    .StartPage-div-grid4 {
+        grid-template-columns: 1fr; /* En kolumn på mindre skärmar */
+    }
+
+    .about-us, .why-choose-us {
+        padding: 6vw;
+        text-align: left; /* Texten justeras för att vara vänsterställd på små skärmar */
+    }
+}
+
+.StartPage-div-grid4 h2 {
+    width: 100%;
+    text-align: center;
+    font-size: 2vw;
+    margin-bottom: 2vw;
 }
 
 .StartPage-div-grid4 p {
     font-size: 1.5vw;
     margin-bottom: 2vw;
 }
+
 
 /* Kontakt-sektion */
 .StartPage-div5 {
