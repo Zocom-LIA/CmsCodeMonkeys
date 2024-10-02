@@ -294,12 +294,7 @@ private async Task UpdateContentItemSectionAsync(int ContentId, int newSectionId
             StateHasChanged();
         }
 
-        private void ClearAll()
-        {
-            ResetSectionsAsync().Wait();
 
-            StateHasChanged();
-        }
 
         private Dictionary<string, string> colorOptions = new Dictionary<string, string>
             {
