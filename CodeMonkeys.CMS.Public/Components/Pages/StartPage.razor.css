@@ -268,13 +268,14 @@ p {
 
 /* Sektion ZoCom */
 .StartPage-div4 {
-    padding: 7vw;
+    padding: 4.5vw;
     text-align: center; /* Centrera texten */
-    background-color: #343a40;
+    background-color: #ffffff;
 }
 
+
 .StartPage-div-grid4 {
-   /* padding-top: 120px;*/
+    padding-top: 40px;
     display: grid;
     grid-template-columns: 1fr 1fr; /* Två kolumner */
     width: 100%; /* Full bredd */
@@ -283,14 +284,15 @@ p {
 }
 
 .about-us, .why-choose-us {
-    background-color: #ffffff;
-    padding: 4.5vw;
+    background-color: #343a40;
+    padding: 5vw;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center; /* Centrerar texten i artikeln */
     height: auto;
     width: 100%; /* Se till att de fyller hela bredden */
     box-sizing: border-box; /* Inkludera padding i totalbredden */
 }
+
 
 /* Responsiv design för mindre skärmar */
 @media screen and (max-width: 900px) {
@@ -310,11 +312,13 @@ p {
     text-align: center;
     font-size: 2vw;
     margin-bottom: 2vw;
+    color: white;
 }
 
 .StartPage-div-grid4 p {
     font-size: 1.5vw;
     margin-bottom: 1vw;
+    color: white;
 }
 
 
