@@ -144,75 +144,100 @@ p {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .StartPage-div-grid2 {
     display: grid;
-    grid-template-columns: repeat(5, 1fr); /* 5 kolumner */
+    grid-template-columns: repeat(5, 1fr); /* Skapa 5 kolumner */
     gap: 3vw;
     width: 100%;
-    max-width: 100%; /* Full bredd */
+    max-width: 100%;
+    box-sizing: border-box;
 }
+
+
 
 /* Responsiv design */
 @media screen and (max-width: 1200px) {
+    .team-member img {
+        width: 130px; /* Minska storleken på bilderna */
+        height: 130px;
+    }
+
     .StartPage-div-grid2 {
         grid-template-columns: repeat(4, 1fr); /* 4 kolumner på medelstora skärmar */
     }
 }
 
 @media screen and (max-width: 900px) {
+    .team-member img {
+        width: 110px; /* Ännu mindre storlek för små skärmar */
+        height: 110px;
+    }
+
     .StartPage-div-grid2 {
         grid-template-columns: repeat(2, 1fr); /* 2 kolumner på mindre skärmar */
     }
 }
 
 @media screen and (max-width: 600px) {
+    .team-member img {
+        width: 90px; /* Anpassa för mycket små skärmar */
+        height: 90px;
+    }
+
     .StartPage-div-grid2 {
         grid-template-columns: 1fr; /* 1 kolumn på små skärmar */
     }
 }
 
+
 .team-member {
     background-color: #f9f9f9;
-    padding: 3vw;
+    padding: 2vw;
     border-radius: 5px;
     text-align: center;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: auto;
-    max-width: 350px;
-    min-width: 250px;
-    height: auto;
-    margin: 0 auto;
-    word-wrap: break-word;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%; /* Gör att korten fyller hela bredden */
+    max-width: 200px; /* Sätt maxbredd för att förhindra att korten blir för stora */
+    height: auto; /* Justera höjd till auto för att tillåta flexibel text */
 }
 
+    /* Responsiva, runda och lika stora bilder */
     .team-member img {
-        width: 100%;
-        max-width: 150px;
-        height: auto;
-        border-radius: 50%;
+        width: 150px; /* Fast storlek för stora skärmar */
+        height: 150px;
         object-fit: cover;
+        border-radius: 50%;
         margin-bottom: 15px;
+        transition: width 0.3s, height 0.3s; /* Mjuk övergång när storleken ändras */
     }
 
     .team-member p {
-        font-size: 1.8vw;
+        font-size: 1.5vw;
         font-weight: bold;
-        margin-bottom: 10px;
+        margin: 10px 0; /* Justera marginaler för bättre utrymme */
     }
 
     .team-member ul {
         list-style: none;
         padding: 0;
+        margin: 0;
     }
 
     .team-member li {
-        font-size: 1.4vw;
+        font-size: 1.2vw;
         color: #666;
-        margin-bottom: 10px;
+        margin-bottom: 5px; /* Minska marginalen för bättre placering */
     }
 
+    /* Styla länkar */
     .team-member a {
         color: #007bff;
         text-decoration: none;
@@ -332,10 +357,6 @@ p {
         font-size: 2vw;
     }
 
-    .team-member img {
-        width: 30vw;
-        height: 30vw;
-    }
 
     .grid-container, .StartPage-div-grid, .StartPage-div-grid4, .div-grid-section5 {
         grid-template-columns: 1fr;
@@ -356,10 +377,7 @@ p {
         font-size: 1.8vw;
     }
 
-    .team-member img {
-        width: 25vw;
-        height: 25vw;
-    }
+ 
 
     .grid-container, .StartPage-div-grid, .StartPage-div-grid4, .div-grid-section5 {
         grid-template-columns: 1fr;
@@ -380,8 +398,5 @@ p {
         font-size: 1.6vw;
     }
 
-    .team-member img {
-        width: 22vw;
-        height: 22vw;
-    }
+  
 }
