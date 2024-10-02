@@ -47,5 +47,15 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         {
             await _repository.DeleteContentItemAsync(contentItem);
         }
+        
+        public async Task UpdateSectionIdAsync(int contentItemId, int newSectionId)
+        {
+            var contentItem = await _repository.GetContentItemByIdAsync(contentItemId);
+            if (contentItem != null)
+            {
+                contentItem.SectionId = newSectionId;
+                await _repository.UpdateContentItemAsync(contentItem);
+            }
+        }
     }
 }

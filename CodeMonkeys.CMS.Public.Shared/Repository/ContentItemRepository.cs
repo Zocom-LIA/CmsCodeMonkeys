@@ -224,5 +224,25 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                 await context.DisposeAsync();
             }
         }
+
+        public async Task<ContentItem?> GetContentItemByIdAsync(int contentItemId, CancellationToken cancellation = default)
+{
+    var context = GetContext();
+
+    try
+    {
+        return await context.ContentItems.FindAsync(contentItemId, cancellation);
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error getting content item");
+        throw;
+    }
+    finally
+    {
+        await context.DisposeAsync();
+    }
+}
+
     }
 }

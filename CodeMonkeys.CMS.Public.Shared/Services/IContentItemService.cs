@@ -17,5 +17,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         Task RemoveContentItemAsync(ContentItem contentItem);
         void StartDrag(ContentItem contentItem);
         Task UpdateContentItemAsync(ContentItem contentItem);
+        Task UpdateSectionIdAsync(int contentItemId, int newSectionId);
     }
 }

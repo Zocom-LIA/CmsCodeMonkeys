@@ -181,8 +181,19 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
     StateHasChanged();
 }
 
+private async Task UpdateContentItemSectionAsync(int ContentId, int newSectionId)
+{
+    if (ContentId <= 0)
+    {
+        Logger.LogWarning("Invalid ContentItemId: {0}", ContentId);
+        return; // Prevent further execution
+    }
 
-       private void OnDrop(int targetSectionId)
+    // Call your service to update the section ID
+    await ContentItemService.UpdateSectionIdAsync(ContentId, newSectionId);
+}
+
+      private async Task OnDrop(int targetSectionId)
 {
     if (draggedItem == null)
     {
@@ -190,20 +201,37 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
         return;
     }
 
+    if (draggedItem.ContentId <= 0) // Kontrollera ContentId istället
+    {
+        Logger.LogWarning("Invalid ContentId: {0}", draggedItem.ContentId);
+        return; // Avbryt om ID är ogiltigt
+    }
+
     var sourceSectionId = draggedItem.SectionId;
 
     if (_sections.TryGetValue(sourceSectionId, out var sourceSection) &&
         _sections.TryGetValue(targetSectionId, out var targetSection))
     {
+        // Ta bort från källsektionen
         sourceSection.ContentItems.Remove(draggedItem);
+
+        // Uppdatera SectionId för det dragna objektet
         draggedItem.SectionId = targetSectionId;
+
+        // Lägg till i målsektionen
         targetSection.ContentItems.Add(draggedItem);
 
-        // Clear the dragged item
-        draggedItem = null;
+        // Uppdatera databasen via en liknande metod som AddContentItem
+        await UpdateContentItemSectionAsync(draggedItem.ContentId, targetSectionId);
+
+        // Uppdatera UI
+        StateHasChanged();
     }
-    StateHasChanged();
 }
+
+
+
+
 
 
         private void ToggleEdit(ContentItem contentItem)
