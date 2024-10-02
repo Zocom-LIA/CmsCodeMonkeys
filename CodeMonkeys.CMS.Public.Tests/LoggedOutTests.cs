@@ -14,6 +14,7 @@ using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Safari;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
+using System.Security.Permissions;
 using Withywoods.WebTesting;
 
 namespace CodeMonkeys.CMS.Public.Tests
@@ -35,6 +36,39 @@ namespace CodeMonkeys.CMS.Public.Tests
         {
             Client?.Dispose();
             Driver?.Dispose();
+        }
+
+        private Site SetupUserSite(string testText, Action<Site, WebPage>? siteWebPageAction = null)
+        {
+            siteWebPageAction ??= (site, page) => { };
+            string email = FindFreeEmail();
+            string pageTitle = "Title";
+            using (ApplicationDbContext dbContext = new ApplicationDbContext(DbContextOptionsBuilder.Options, new FakeLogger<ApplicationDbContext>()))
+            {
+                User user = new User { Email = email };
+                Site site = new Site()
+                {
+                    Creator = user,
+                    Name = "Name"
+                };
+                WebPage webPage = new WebPage()
+                {
+                    Site = site,
+                    Title = pageTitle,
+                };
+                Content content = new Content()
+                {
+                    WebPage = webPage,
+                    Body = testText,
+                    ContentType = "text",
+                    Title = ""
+
+                };
+                siteWebPageAction(site, webPage);
+                dbContext.Contents.Add(content);
+                dbContext.SaveChanges();
+                return site;
+            }
         }
 
 
@@ -69,73 +103,33 @@ namespace CodeMonkeys.CMS.Public.Tests
         }
 
         [Test]
-        public void ShowUserPageTest()
+        public void ShowUserPageByTitleTest()
         {
-            string email = FindFreeEmail();
-            int siteID;
-            string pageTitle = "Title";
             string testText = "Test Text";
-            using (ApplicationDbContext dbContext = new ApplicationDbContext(DbContextOptionsBuilder.Options, new FakeLogger<ApplicationDbContext>()))
-            {
-                User user = new User { Email = email };
-                Site site = new Site()
-                {
-                    Creator = user,
-                    Name = "Name"
-                };
-                WebPage webPage = new WebPage()
-                {
-                    Site = site,
-                    Title = pageTitle,
-                };
-                Content content = new Content()
-                {
-                    WebPage = webPage,
-                    Body = testText,
-                    ContentType = "text",
-                    Title = ""
-
-                };
-                dbContext.Contents.Add(content);
-                dbContext.SaveChanges();
-                siteID = (int)site.GetIdentifier();
-            }
+            Site site = SetupUserSite(testText);
+            int siteID = (int)site.GetIdentifier();
+            string pageTitle = site.Pages.FirstOrDefault().Title;
             Driver.Navigate().GoToUrl($"{HomeUrl}/userPages/{siteID}/{pageTitle}");
             Driver.FindElement(By.XPath($"//*[contains(text(), '{testText}')]"));
         }
+        public void ShowUserPageByNumberTest()
+        {
+            string testText = "Test Text";
+            Site site = SetupUserSite(testText);
+            int siteID = (int)site.GetIdentifier();
+            int pageNumber = site.Pages.FirstOrDefault().WebPageId;
+            Driver.Navigate().GoToUrl($"{HomeUrl}/userPages/{siteID}/{pageNumber}");
+            Driver.FindElement(By.XPath($"//*[contains(text(), '{testText}')]"));
+        }
+
+
         [Test]
         public void ShowLandingPageTest()
         {
-            string email = FindFreeEmail();
-            int siteID;
-            string pageTitle = "Title";
-            string testText = "Test Text";
-            using (ApplicationDbContext dbContext = new ApplicationDbContext(DbContextOptionsBuilder.Options, new FakeLogger<ApplicationDbContext>()))
-            {
-                User user = new User { Email = email };
-                Site site = new Site()
-                {
-                    Creator = user,
-                    Name = "Name"
-                };
-                WebPage webPage = new WebPage()
-                {
-                    Site = site,
-                    Title = pageTitle,
-                };
-                Content content = new Content()
-                {
-                    WebPage = webPage,
-                    Body = testText,
-                    ContentType = "text",
-                    Title = ""
 
-                };
-                site.LandingPage = webPage;
-                dbContext.Contents.Add(content);
-                dbContext.SaveChanges();
-                siteID = (int)site.GetIdentifier();
-            }
+            string testText = "Test Text";
+            Site site = SetupUserSite(testText, (site, webPage) => { site.LandingPage = webPage; });
+            int siteID = (int)site.GetIdentifier();
             Driver.Navigate().GoToUrl($"{HomeUrl}/userPages/{siteID}");
             Driver.FindElement(By.XPath($"//*[contains(text(), '{testText}')]"));
         }
