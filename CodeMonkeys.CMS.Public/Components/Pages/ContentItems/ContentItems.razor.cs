@@ -43,6 +43,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
             {
                 _sections = await SectionService.GetSectionsAsync(WebPageId);
                 await LoadSectionsAsync();
+                selectedList = _section1.SectionId;
             }
             catch (Exception ex)
             {
