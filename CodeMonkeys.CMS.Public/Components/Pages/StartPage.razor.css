@@ -329,7 +329,7 @@ p {
 
 /* Kontakt-sektion */
 .StartPage-div5 {
-    padding: 2vw; /* Minskar paddingen för att ge mer plats åt kartan */
+    padding: 2.5vw; /* Minskar paddingen för att ge mer plats åt kartan */
     background-image: radial-gradient(at 45% 30%, hsla(241,77%,65%,1) 0px, transparent 50%), radial-gradient(at 17% 10%, hsla(271,87%,70%,1) 0px, transparent 50%), radial-gradient(at 59% 50%, hsla(318,69%,68%,1) 0px, transparent 50%), radial-gradient(at 49% 78%, hsla(224,65%,69%,1) 0px, transparent 50%), radial-gradient(at 23% 68%, hsla(266,84%,73%,1) 0px, transparent 50%), radial-gradient(at 13% 15%, hsla(267,96%,62%,1) 0px, transparent 50%), radial-gradient(at 69% 56%, hsla(263,65%,70%,1) 0px, transparent 50%), radial-gradient(at 2% 0%, hsla(320,61%,60%,1) 0px, transparent 50%), radial-gradient(at 17% 58%, hsla(296,84%,77%,1) 0px, transparent 50%), radial-gradient(at 95% 67%, hsla(181,83%,66%,1) 0px, transparent 50%);
     background-size: 200% 200%;
     font-family: 'Arial', sans-serif;
@@ -344,9 +344,30 @@ p {
     box-sizing: border-box;
 }
 
+.StartPage-div5-Contact{
+    align-content:center;
+}
+
+.StartPage-div5-Contact h1 {
+    font-size: 3vw;
+    background: linear-gradient(90deg, yellow, green, blue);
+    background-size: 400% 100%;
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: rainbowWave 20s ease-in-out infinite;
+    font-weight: bold;
+}
+
+.StartPage-div5-Contact h2 {
+    text-align: center;
+    font-size: 2vw;
+    margin-bottom: 1vw;
+    color: black;
+}
+
 .imgdator2 {
-    padding-top: 2vw; /* Minskar top-padding för att få mer utrymme */
-    max-width: 40vw;
+    padding-top: 1vw; /* Minskar top-padding för att få mer utrymme */
+    max-width: 15vw;
     height: auto;
     object-fit: contain;
     border-radius: 5px;
