@@ -52,31 +52,46 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
 
         private async Task LoadSectionsAsync()
         {
-            _section1 = await EnsureSectionAsync(SectionNames.Header.ToString());
-            _section2 = await EnsureSectionAsync(SectionNames.Body.ToString());
-            _section4 = await EnsureSectionAsync(SectionNames.Footer.ToString());
-            _section3 = await EnsureSectionAsync(SectionNames.Toolbar.ToString());
-            // _section3 = new Section { SectionId = 3, Name = "Toolbar", Color = "#fefefe", WebPageId = WebPageId };
+            try
+            {
+                _section1 = await EnsureSectionAsync(SectionNames.Header.ToString());
+                _section2 = await EnsureSectionAsync(SectionNames.Body.ToString());
+                _section4 = await EnsureSectionAsync(SectionNames.Footer.ToString());
+                _section3 = await EnsureSectionAsync(SectionNames.Toolbar.ToString());
+                // _section3 = new Section { SectionId = 3, Name = "Toolbar", Color = "#fefefe", WebPageId = WebPageId };
 
-            _sections = new()
+                _sections = new()
             {
                 { _section1.SectionId, _section1 },
                 { _section2.SectionId, _section2 },
                 { _section3.SectionId, _section3 },
                 { _section4.SectionId, _section4 }
             };
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error loading sections for web page {0}", WebPageId);
+            }
         }
 
         private async Task<Section> EnsureSectionAsync(string name)
         {
-            var section = await SectionService.GetSectionByNameAsync(WebPageId, name);
-            if (section == null)
+            try
             {
-                section = new Section { Name = name, Color = "#fefefe", WebPageId = WebPageId };
-                section = await SectionService.CreateSectionAsync(section)
-                    ?? throw new InvalidOperationException($"Error creating section: {name}");
+                var section = await SectionService.GetSectionByNameAsync(WebPageId, name);
+                if (section == null)
+                {
+                    section = new Section { Name = name, Color = "#fefefe", WebPageId = WebPageId };
+                    section = await SectionService.CreateSectionAsync(section)
+                        ?? throw new InvalidOperationException($"Error creating section: {name}");
+                }
+                return section;
             }
-            return section;
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error ensuring section {0} for web page {1}", name, WebPageId);
+                throw;
+            }
         }
 
         private async Task ResetSectionsAsync()
@@ -165,7 +180,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
                 section1.ContentItems.Last().ShowEditButton = false;
             }
         }
-        
+
         private ContentItem draggedItem;
 
         private void OnDragStart(ContentItem contentItem)
@@ -176,58 +191,58 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
         }
 
         private void OnDragEnd(ContentItem contentItem)
-{
-    contentItem.IsDragging = false; // Optionally indicate the drag has ended
-    StateHasChanged();
-}
+        {
+            contentItem.IsDragging = false; // Optionally indicate the drag has ended
+            StateHasChanged();
+        }
 
-private async Task UpdateContentItemSectionAsync(int ContentId, int newSectionId)
-{
-    if (ContentId <= 0)
-    {
-        Logger.LogWarning("Invalid ContentItemId: {0}", ContentId);
-        return; // Prevent further execution
-    }
+        private async Task UpdateContentItemSectionAsync(int ContentId, int newSectionId)
+        {
+            if (ContentId <= 0)
+            {
+                Logger.LogWarning("Invalid ContentItemId: {0}", ContentId);
+                return; // Prevent further execution
+            }
 
-    // Call your service to update the section ID
-    await ContentItemService.UpdateSectionIdAsync(ContentId, newSectionId);
-}
+            // Call your service to update the section ID
+            await ContentItemService.UpdateSectionIdAsync(ContentId, newSectionId);
+        }
 
-      private async Task OnDrop(int targetSectionId)
-{
-    if (draggedItem == null)
-    {
-        Logger.LogWarning("No content item is being dragged.");
-        return;
-    }
+        private async Task OnDrop(int targetSectionId)
+        {
+            if (draggedItem == null)
+            {
+                Logger.LogWarning("No content item is being dragged.");
+                return;
+            }
 
-    if (draggedItem.ContentId <= 0) // Kontrollera ContentId istället
-    {
-        Logger.LogWarning("Invalid ContentId: {0}", draggedItem.ContentId);
-        return; // Avbryt om ID är ogiltigt
-    }
+            if (draggedItem.ContentId <= 0) // Kontrollera ContentId istället
+            {
+                Logger.LogWarning("Invalid ContentId: {0}", draggedItem.ContentId);
+                return; // Avbryt om ID är ogiltigt
+            }
 
-    var sourceSectionId = draggedItem.SectionId;
+            var sourceSectionId = draggedItem.SectionId;
 
-    if (_sections.TryGetValue(sourceSectionId, out var sourceSection) &&
-        _sections.TryGetValue(targetSectionId, out var targetSection))
-    {
-        // Ta bort från källsektionen
-        sourceSection.ContentItems.Remove(draggedItem);
+            if (_sections.TryGetValue(sourceSectionId, out var sourceSection) &&
+                _sections.TryGetValue(targetSectionId, out var targetSection))
+            {
+                // Ta bort från källsektionen
+                sourceSection.ContentItems.Remove(draggedItem);
 
-        // Uppdatera SectionId för det dragna objektet
-        draggedItem.SectionId = targetSectionId;
+                // Uppdatera SectionId för det dragna objektet
+                draggedItem.SectionId = targetSectionId;
 
-        // Lägg till i målsektionen
-        targetSection.ContentItems.Add(draggedItem);
+                // Lägg till i målsektionen
+                targetSection.ContentItems.Add(draggedItem);
 
-        // Uppdatera databasen via en liknande metod som AddContentItem
-        await UpdateContentItemSectionAsync(draggedItem.ContentId, targetSectionId);
+                // Uppdatera databasen via en liknande metod som AddContentItem
+                await UpdateContentItemSectionAsync(draggedItem.ContentId, targetSectionId);
 
-        // Uppdatera UI
-        StateHasChanged();
-    }
-}
+                // Uppdatera UI
+                StateHasChanged();
+            }
+        }
 
 
 
@@ -247,10 +262,10 @@ private async Task UpdateContentItemSectionAsync(int ContentId, int newSectionId
             StateHasChanged();
         }
 
-        private  async Task SaveEdit(ContentItem contentItem)
+        private async Task SaveEdit(ContentItem contentItem)
         {
             contentItem.IsEditing = false; // Save the edit and close the input field
-           await ContentItemService.UpdateContentItemAsync(contentItem);
+            await ContentItemService.UpdateContentItemAsync(contentItem);
             StateHasChanged();
         }
 

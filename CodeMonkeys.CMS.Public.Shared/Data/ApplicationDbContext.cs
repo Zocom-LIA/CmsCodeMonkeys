@@ -47,10 +47,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Data
             modelBuilder.Entity<IdentityUserLogin<Guid>>().HasKey(x => new { x.LoginProvider, x.ProviderKey });
             modelBuilder.Entity<IdentityUserRole<Guid>>().HasKey(x => new { x.UserId, x.RoleId });
             modelBuilder.Entity<IdentityUserToken<Guid>>().HasKey(x => new { x.UserId, x.LoginProvider, x.Name });
-
-            modelBuilder.Entity<Section>()
-                .HasIndex(s => s.Name)
-                .IsUnique();
         }
 
         public override void Dispose()

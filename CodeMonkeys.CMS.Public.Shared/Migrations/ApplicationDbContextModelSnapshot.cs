@@ -192,9 +192,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasKey("SectionId");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
                     b.HasIndex("WebPageId");
 
                     b.ToTable("Sections");
