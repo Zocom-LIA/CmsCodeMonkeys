@@ -247,10 +247,10 @@ private async Task UpdateContentItemSectionAsync(int ContentId, int newSectionId
             StateHasChanged();
         }
 
-        private void SaveEdit(ContentItem contentItem)
+        private  async Task SaveEdit(ContentItem contentItem)
         {
             contentItem.IsEditing = false; // Save the edit and close the input field
-            ContentItemService.UpdateContentItemAsync(contentItem).Wait();
+           await ContentItemService.UpdateContentItemAsync(contentItem);
             StateHasChanged();
         }
 
