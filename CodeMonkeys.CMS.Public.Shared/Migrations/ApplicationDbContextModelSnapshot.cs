@@ -434,6 +434,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.Property<bool>("IsBold")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsDragging")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsEditing")
                         .HasColumnType("bit");
 
