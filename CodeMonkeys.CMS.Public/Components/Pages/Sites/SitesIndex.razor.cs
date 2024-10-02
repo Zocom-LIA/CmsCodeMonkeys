@@ -1,7 +1,7 @@
 ﻿using CodeMonkeys.CMS.Public.Components.Shared;
 using CodeMonkeys.CMS.Public.Components.Shared.UI;
 using CodeMonkeys.CMS.Public.Shared.Entities;
-
+using CodeMonkeys.CMS.Public.Shared.Services;
 using Microsoft.AspNetCore.Components;
 
 namespace CodeMonkeys.CMS.Public.Components.Pages.Sites
@@ -10,6 +10,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites
     {
         [SupplyParameterFromForm]
         private SiteModel Site { get; set; } = new SiteModel();
+        [Inject] private IPageStatsService PageStatsService { get; set; }
 
         private List<Site> Sites = [];
 
@@ -21,6 +22,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites
         private EventCallback OnConfirm;
         private EventCallback OnCancel;
         private Dictionary<int, string> PageOptions = new();
+        private Dictionary<int, int> VisitCounts = new();
 
         private const int NoLandingPage = -1; //Apparently, you cannot key a dictionary on a nullable type. Hopefully, we will never have to deal with a database that assigns this number to anything.
 
@@ -33,6 +35,10 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites
             if (Confirmation == null)
             {
                 Confirmation = new ConfirmationDialog();
+            }
+            foreach (var site in Sites)
+            {
+                VisitCounts.Add(site.SiteId, (await PageStatsService.GetPageStatsAsync(site.SiteId)).Select(s => s.PageVisits).Sum());
             }
         }
 

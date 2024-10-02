@@ -101,7 +101,14 @@
                                         <button type="button" class="btn btn-danger sites-btn sites-btn-delete" @onclick="async () => await DeleteSite(site.SiteId)">Delete</button>
                                     </div>
                                     <div class="sites-card-footer text-muted">
-                                        Last Modified: @site.LastModifiedDate.ToString("yyyy-MM-dd")
+                                        <div class="container">
+                                            <div>
+                                                Visits: @VisitCounts[site.SiteId]
+                                            </div>
+                                            <div>
+                                                Last Modified: @site.LastModifiedDate.ToString("yyyy-MM-dd")
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
