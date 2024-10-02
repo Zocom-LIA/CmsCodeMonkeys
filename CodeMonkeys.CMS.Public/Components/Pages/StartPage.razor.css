@@ -24,6 +24,12 @@
     }
 }
 
+.main-section {
+    min-height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
+}
+
 /* Dynamisk storlek för text och rubriker */
 h1 {
     font-size: 5vw;
@@ -115,6 +121,7 @@ p {
     color: white;
     text-align: center;
     min-height: 100vh;
+    box-sizing:border-box;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -140,6 +147,7 @@ p {
     background-color: #ffffff;
     text-align: center;
     min-height: 100vh;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -250,32 +258,35 @@ p {
 
 /* Sektion ZoCom */
 .StartPage-div4 {
+    background-color: #ffffff; /* Vit bakgrund */
     padding: 5vw;
-    background-color: #f4f4f4;
-    text-align: center;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    text-align: center; /* Centrera texten */
 }
 
+
+
 .StartPage-div-grid4 {
+    padding-top: 150px;
     display: grid;
     grid-template-columns: 1fr 1fr; /* Två kolumner */
-    gap: 3vw;
-    width: 100vw; /* Full bredd */
-    max-width: 100%;
+    /*gap: 3vw;*/ /* Utrymme mellan kolumnerna */
+    width: 100%; /* Full bredd */
+    max-width: none; /* Ta bort max-bredd */
+    box-sizing: border-box; /* Inkludera padding i totalbredden */
 }
+
+
 
 .about-us, .why-choose-us {
     background-color: #ffffff;
     padding: 4vw;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    text-align: center; /* Centrerar texten i artikeln */
     height: auto;
-    width: 100%;
+    width: 100%; /* Se till att de fyller hela bredden */
+    box-sizing: border-box; /* Inkludera padding i totalbredden */
 }
+
 
 /* Responsiv design för mindre skärmar */
 @media screen and (max-width: 900px) {
@@ -284,10 +295,11 @@ p {
     }
 
     .about-us, .why-choose-us {
-        padding: 6vw;
-        text-align: left; /* Texten justeras för att vara vänsterställd på små skärmar */
+        padding: 6vw; /* Justera padding på mindre skärmar */
+        text-align: center; /* Centrerar texten */
     }
 }
+
 
 .StartPage-div-grid4 h2 {
     width: 100%;
@@ -310,11 +322,10 @@ p {
     font-family: 'Arial', sans-serif;
     animation: moveBackground 30s ease-in-out infinite;
     text-align: center;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+    min-height: 100vh; /* Gör att sektionen sträcker sig över hela höjden */
+    display: flex; /* Använd flexbox för centrering */
+    justify-content: center; /* Centrera innehållet vertikalt */
+    align-items: center; /* Centrera innehållet horisontellt */
 }
 
 .imgdator2 {
