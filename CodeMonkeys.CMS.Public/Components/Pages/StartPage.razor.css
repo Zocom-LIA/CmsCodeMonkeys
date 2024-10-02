@@ -152,6 +152,7 @@ p {
 
 /* Sektion 3 (Möt Teamet) */
 .StartPage-div3 {
+    padding-top: 10px;
     padding: 6vw;
     background-color: #ffffff;
     text-align: center;
@@ -164,16 +165,20 @@ p {
     width: 100%;
 }
 
+.StartPage-div3 h2 {
+    padding-bottom: 20px;
+}
+
 .StartPage-div-grid2 {
     display: grid;
     grid-template-columns: repeat(5, 1fr); /* Skapa 5 kolumner */
-    gap: 0.5vw;
-    width: 100%;
-    max-width: 100%;
+    gap: 1vw;
+    /*width: 200%;*/
+    /*max-width: 100%;*/
     box-sizing: border-box;
-    padding-left: 50px;
-    padding-bottom: 50px;
 }
+
+
 
 
 
@@ -213,9 +218,9 @@ p {
 
 
 .team-member {
-    background-color: #f9f9f9;
-    padding: 2.5vw;
-    border-radius: 10px;
+    background-color: #D9D9D9;
+    padding: 3vw;
+    border-radius: 5px;
     text-align: center;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -223,7 +228,7 @@ p {
     justify-content: flex-start;
     align-items: center;
     width: 100%; /* Gör att korten fyller hela bredden */
-    max-width: 200px; /* Sätt maxbredd för att förhindra att korten blir för stora */
+    max-width: 300px; /* Sätt maxbredd för att förhindra att korten blir för stora */
     height: auto; /* Justera höjd till auto för att tillåta flexibel text */
 }
 
