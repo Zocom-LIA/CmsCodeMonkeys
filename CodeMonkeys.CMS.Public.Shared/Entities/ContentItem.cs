@@ -1,4 +1,6 @@
-﻿namespace CodeMonkeys.CMS.Public.Shared.Entities
+﻿using Microsoft.AspNetCore.Components;
+
+namespace CodeMonkeys.CMS.Public.Shared.Entities
 {
     public class ContentItem : Content, IEntity
     {
@@ -12,7 +14,7 @@
         public bool IsItalic { get; set; } // New property for italic
         public string FontFamily { get; set; } = "Arial"; // Default font family
         public int BoxNumber { get; set; } = 1; // Default box size
-public bool IsDragging { get; set; }
+        public bool IsDragging { get; set; }
         private bool isLinkEnabled; // Backing field for IsLinkEnabled
         public bool IsLinkEnabled
         {
@@ -34,5 +36,31 @@ public bool IsDragging { get; set; }
 
         required public int SectionId { get; set; } // Section ID
         public Section Section { get; set; }
+
+        public override RenderFragment RenderContent()
+        {
+            return builder =>
+            {
+                if (IsLinkEnabled)
+                {
+                    // If the link is enabled, render the link
+                    builder.OpenElement(0, "a");
+                    builder.AddAttribute(1, "class", "content-link");
+                    builder.AddAttribute(2, "href", LinkUrl ?? string.Empty);
+                    builder.AddAttribute(3, "style", $"color: {Color}; font-size: {FontSize}px; font-family: {FontFamily}; font-weight: {(IsBold ? "bold" : "normal")}; font-style: {(IsItalic ? "italic" : "normal")}");
+                    builder.AddContent(4, LinkDescription ?? string.Empty);
+                    builder.CloseElement();
+                }
+                else
+                {
+                    builder.OpenElement(0, "span");
+                    builder.AddAttribute(1, "class", "content-text");
+                    builder.AddAttribute(2, "style", $"color: {Color}; font-size: {FontSize}px; font-family: {FontFamily}; font-weight: {(IsBold ? "bold" : "normal")}; font-style: {(IsItalic ? "italic" : "normal")}");
+                    builder.AddContent(3, Text ?? string.Empty);
+                    builder.CloseElement();
+                }
+
+            };
+        }
     }
 }
