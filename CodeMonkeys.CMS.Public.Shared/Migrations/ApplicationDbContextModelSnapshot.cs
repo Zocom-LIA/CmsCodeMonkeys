@@ -126,6 +126,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PageStatsId"));
 
+                    b.Property<int>("PageId")
+                        .HasColumnType("int");
+
                     b.Property<string>("PageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

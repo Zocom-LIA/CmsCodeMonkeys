@@ -19,7 +19,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task UpdatePageCountAsync(int siteId, string pageUrl)
+        public async Task UpdatePageCountAsync(int siteId, int pageId, string pageUrl)
         {
             using (var context = _contextFactory.CreateDbContext())
             {
@@ -28,7 +28,11 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                     try
                     {
                         var pageStats = context.PageStats;
-                        var visits = await pageStats.AsNoTracking().Where(s => s.PageUrl.Equals(pageUrl)).FirstOrDefaultAsync();
+                        var visits = await pageStats.AsNoTracking()
+                                                    .Where(s => s.PageUrl.Equals(pageUrl))
+                                                    // A URL that has been reassigned from one page to another should get a new counter.
+                                                    .Where(s => s.PageId.Equals(pageId))
+                                                    .FirstOrDefaultAsync();
 
                         if (visits == null)
                         {
@@ -36,6 +40,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                             {
                                 PageUrl = pageUrl,
                                 SiteId = siteId,
+                                PageId = pageId,
                                 PageVisits = 1
                             };
                             await pageStats.AddAsync(visits);
@@ -73,7 +78,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
         {
             using (var context = _contextFactory.CreateDbContext())
             {
-                return await context.PageStats.AsNoTracking().ToListAsync();
+                return await context.PageStats.AsNoTracking().Where(s => s.SiteId == siteId).ToListAsync();
             }
         }
     }
