@@ -13,7 +13,7 @@
     <UserViewHeader>@WebPage?.Title</UserViewHeader>
     <ChildContent>
         <StatusMessage />
-        @foreach (Content content in (WebPage?.Contents ?? []).OrderBy(c => c.OrdinalNumber))
+        @foreach (ContentItem content in (WebPage?.Contents ?? []).OrderBy(c => c.OrdinalNumber))
         {
             <span style="@RenderContent(content)">@content.Body</span>
         }
