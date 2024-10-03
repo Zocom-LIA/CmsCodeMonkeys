@@ -1,13 +1,28 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Components;
+
+using System.ComponentModel.DataAnnotations;
 
 namespace CodeMonkeys.CMS.Public.Shared.Entities
 {
-    public class Content : IEntity
+    public class Content : IEntity, IRenderable, IConfigurable
     {
+        private string _contentType;
+
         [Key]
         public int ContentId { get; set; }
         public string Title { get; set; }
-        public string ContentType { get; set; }
+        public string ContentType
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_contentType))
+                {
+                    return GetType().Name;
+                }
+                return _contentType;
+            }
+            set => _contentType = value;
+        }
         public string Body { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime LastModifiedDate { get; set; }
@@ -22,6 +37,17 @@ namespace CodeMonkeys.CMS.Public.Shared.Entities
         public string Color { get; set; } = "#1e1e1e";
 
         public object GetIdentifier() => ContentId;
+        public virtual RenderFragment RenderContent()
+        {
+            return builder =>
+            {
+                builder.OpenElement(0, "span");
+                builder.AddAttribute(1, "class", "content");
+                builder.AddAttribute(2, "style", $"color: {Color}");
+                builder.AddContent(3, Body);
+                builder.CloseElement();
+            };
+        }
     }
     public class TextContent : Content
     {
