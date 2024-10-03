@@ -87,7 +87,7 @@
                                     <div class="sites-card-footer text-muted">
                                         <div class="container">
                                             <div>
-                                                Visits: @VisitCounts[site.SiteId]
+                                                Visits: @(VisitCounts.ContainsKey(site.SiteId) ? VisitCounts[site.SiteId] : 0)
                                             </div>
                                             <div>
                                                 Last Modified: @site.LastModifiedDate.ToString("yyyy-MM-dd")
