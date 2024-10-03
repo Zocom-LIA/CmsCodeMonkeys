@@ -292,7 +292,7 @@ p {
         margin-top: 5px;
         margin-right: 10px;
         margin-bottom: 5px;
-        text-align: center;
+/*        text-align: center;*/
         width: 100%;
         /* Begränsar till 3 rader */
         display: -webkit-box;
@@ -465,57 +465,69 @@ footer {
 /* Responsiv design med media queries */
 @media (max-width: 480px) {
     h1 {
-        font-size: 6vw;
+        font-size: 8vw; /* Större rubrikstorlek för mycket små skärmar */
     }
 
     h4 {
-        font-size: 3vw;
+        font-size: 5vw; /* Större H4-storlek för mycket små skärmar */
     }
 
     p {
-        font-size: 2vw;
+        font-size: 9vw; /* Ökad styckestextstorlek för att göra texten mer läsbar */
+        line-height: 1.6; /* Radavstånd för att förbättra läsbarheten */
+        margin-bottom: 1.5em; /* Ökat avstånd mellan stycken */
+        padding: 0 5%; /* Lägger till padding för att ge mer utrymme på sidorna */
+        color: #333; /* Mörk färg för bättre kontrast och läsbarhet */
     }
 
-
     .grid-container, .StartPage-div-grid, .StartPage-div-grid4, .div-grid-section5 {
-        grid-template-columns: 1fr;
-        width: 90vw;
+        grid-template-columns: 1fr; /* En kolumn för alla skärmar mindre än 480px */
+        width: 90vw; /* Justera bredden */
     }
 }
 
 @media (min-width: 481px) and (max-width: 768px) {
     h1 {
-        font-size: 5vw;
+        font-size: 7vw; /* Större rubrikstorlek för små skärmar */
     }
 
     h4 {
-        font-size: 2.5vw;
+        font-size: 4.5vw; /* Större H4-storlek för små skärmar */
     }
 
     p {
-        font-size: 1.8vw;
+        font-size: 7vw; /* Styckestextstorlek för bättre läsbarhet */
+        line-height: 1.6; /* Radavstånd för att förbättra läsbarheten */
+        margin-bottom: 1.5em; /* Ökat avstånd mellan stycken */
+        padding: 0 5%; /* Lägger till padding för att ge mer utrymme på sidorna */
+        color: #333; /* Mörk färg för bättre kontrast och läsbarhet */
     }
 
- 
-
     .grid-container, .StartPage-div-grid, .StartPage-div-grid4, .div-grid-section5 {
-        grid-template-columns: 1fr;
-        width: 90vw;
+        grid-template-columns: 1fr; /* En kolumn för små skärmar */
+        width: 90vw; /* Justera bredden */
     }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
     h1 {
-        font-size: 4vw;
+        font-size: 5.5vw; /* Rubrikstorlek för medelstora skärmar */
     }
 
     h4 {
-        font-size: 2vw;
+        font-size: 4vw; /* H4-storlek för medelstora skärmar */
     }
 
     p {
-        font-size: 1.6vw;
+        font-size: 5.5vw; /* Styckestextstorlek för bättre läsbarhet */
+        line-height: 1.5; /* Radavstånd för att förbättra läsbarheten */
+        margin-bottom: 1em; /* Lägger till lite avstånd mellan stycken */
+        padding: 0 2%; /* Lägger till padding för att ge mer utrymme på sidorna */
+        color: #333; /* Mörk färg för bättre kontrast och läsbarhet */
     }
-
-  
 }
+
+
+
+
+
