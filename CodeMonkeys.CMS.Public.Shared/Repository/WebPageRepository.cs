@@ -21,7 +21,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
         { }
 
 
-        public async Task<WebPage> CreateWebPageAsync(WebPage webPage)
+        public async Task<WebPage> CreateWebPageAsync(WebPage webPage, CancellationToken cancellationToken = default)
         {
             if (webPage == null) throw new ArgumentNullException(nameof(webPage), "WebPage must not be null.");
 
@@ -45,15 +45,49 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             }
         }
 
-        public async Task<WebPageIncludeDto?> GetWebPageAsync(
-            int webPageId,
-            bool includeContents = true,
-            bool includeAuthor = true,
-            CancellationToken cancellationToken = default)
+        public async Task<WebPage?> GetVisitorWebPageAsync(int webPageId, bool includeSite, bool includeAuthor, bool includeSections, bool includeContents, CancellationToken cancellation = default)
+        {
+            var context = GetContext();
+
+            try
+            {
+                var query = context.Pages
+                    .Where(page => page.WebPageId == webPageId);
+
+                if (includeSite)
+                {
+                    query = query.Include(page => page.Site);
+                }
+
+                if (includeAuthor)
+                {
+                    query = query.Include(page => page.Author);
+                }
+
+                if (includeSections)
+                {
+                    query = query.Include(page => page.Sections)
+                        .ThenInclude(section => section.ContentItems);
+                }
+
+                if (includeContents)
+                {
+                    query = query.Include(page => page.Contents);
+                }
+
+                return await query.FirstOrDefaultAsync();
+            }
+            finally
+            {
+                await context.DisposeAsync();
+            }
+        }
+
+        public async Task<WebPageIncludeDto?> GetWebPageAsync(int webPageId, bool includeSite, bool includeAuthor, bool includeSections, bool includeContents, CancellationToken cancellation = default)
         {
             try
             {
-                cancellationToken.ThrowIfCancellationRequested();
+                cancellation.ThrowIfCancellationRequested();
                 var context = GetContext();
 
                 // Step 1: Select necessary data instead of loading entire entities with Include
@@ -79,7 +113,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                             c.AuthorId
                         }) : null,
                     })
-                    .FirstOrDefaultAsync(cancellationToken);
+                    .FirstOrDefaultAsync(cancellation);
 
                 if (webPages == null) return null;
 
@@ -96,7 +130,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                     .AsNoTrackingWithIdentityResolution()
                     .Where(u => authorIds!.Contains(u.Id))
                     .Select(u => new { u.Id, User = _mapper.Map<AuthorDto>(u) })  // Project to UserDto for efficiency
-                    .ToDictionaryAsync(u => u.Id, u => u.User, cancellationToken)
+                    .ToDictionaryAsync(u => u.Id, u => u.User, cancellation)
                     : new Dictionary<Guid, AuthorDto>();
 
                 // Step 4: Assign the correct author to each web page and its content
@@ -130,7 +164,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             }
         }
 
-        public async Task<WebPage?> GetSiteWebPageAsync(int siteId, int pageId, bool includeContents = false, bool includeAuthor = false, bool includeSite = false)
+        public async Task<WebPage?> GetSiteWebPageAsync(int siteId, int pageId, bool includeContents = false, bool includeAuthor = false, bool includeSite = false, CancellationToken cancellationToken = default)
         {
             if (siteId <= 0) throw new ArgumentOutOfRangeException("SiteId must be greater than zero.");
             if (pageId <= 0) throw new ArgumentOutOfRangeException("PageId must be greater than zero.");
@@ -199,7 +233,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             }
         }
 
-        public async Task<IEnumerable<ContentDto>> GetWebPageContentsAsync(int pageId, bool sortContent = false)
+        public async Task<IEnumerable<ContentDto>> GetWebPageContentsAsync(int pageId, bool sortContent = false, CancellationToken cancellationToken = default)
         {
             if (pageId <= 0) throw new ArgumentOutOfRangeException("PageId must be greater than zero.");
 
@@ -236,7 +270,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             }
         }
 
-        public async Task<IEnumerable<WebPage>> GetSiteWebPagesAsync(int siteId, int pageIndex = 0, int pageSize = 10)
+        public async Task<IEnumerable<WebPage>> GetSiteWebPagesAsync(int siteId, int pageIndex = 0, int pageSize = 10, CancellationToken cancellationToken = default)
         {
             if (pageIndex < 0) throw new ArgumentOutOfRangeException("PageIndex must be a positive number.");
             if (pageSize <= 0) throw new ArgumentOutOfRangeException("PageSize must be greater than zero.");
@@ -265,7 +299,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             return pages;
         }
 
-        public async Task UpdateWebPageAsync(WebPage webPage)
+        public async Task UpdateWebPageAsync(WebPage webPage, CancellationToken cancellationToken = default)
         {
             if (webPage == null) throw new ArgumentNullException(nameof(webPage), "WebPage must not be null.");
 
@@ -287,7 +321,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             }
         }
 
-        public async Task<IEnumerable<WebPageDto>> GetVisitorWebPageAsync(int? pageId)
+        public async Task<IEnumerable<WebPageDto>> GetVisitorWebPageAsync(int? pageId, CancellationToken cancellationToken = default)
         {
             var context = GetContext();
             IEnumerable<WebPageDto> pages = Enumerable.Empty<WebPageDto>();
@@ -318,7 +352,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             return pages;
         }
 
-        public async Task<IEnumerable<Content>> UpdateWebPageContentsAsync(WebPage webPage, IEnumerable<Content> contents)
+        public async Task<IEnumerable<Content>> UpdateWebPageContentsAsync(WebPage webPage, IEnumerable<Content> contents, CancellationToken cancellationToken = default)
         {
             if (webPage == null) throw new ArgumentNullException(nameof(webPage), "WebPage must not be null.");
             if (contents == null) throw new ArgumentNullException(nameof(contents), "Contents must not be null.");
@@ -348,31 +382,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             }
         }
 
-        // Used for testing purposes only
-        public async Task<WebPage?> GetWebPageAsync(int webPageId)
-        {
-            var context = GetContext();
-            WebPage? page = null;
-
-            try
-            {
-                page = await context.Pages
-                    .Where(page => page.WebPageId == webPageId)
-                    .AsNoTrackingWithIdentityResolution()
-                    .Include(page => page.Contents)
-                    .Include(page => page.Site)
-                    .Include(page => page.Author)
-                    .FirstOrDefaultAsync();
-            }
-            finally
-            {
-                await context.DisposeAsync();
-            }
-
-            return page;
-        }
-
-        public async Task DeleteWebPageAsync(WebPage page)
+        public async Task DeleteWebPageAsync(WebPage page, CancellationToken cancellationToken = default)
         {
             if (page == null) throw new ArgumentNullException(nameof(page), "WebPage must not be null.");
 
@@ -394,7 +404,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             }
         }
 
-        public async Task<IEnumerable<Content>> CreateWebPageContentsAsync(WebPage webPage, Content content)
+        public async Task<IEnumerable<Content>> CreateWebPageContentsAsync(WebPage webPage, Content content, CancellationToken cancellationToken = default)
         {
             if (webPage == null) throw new ArgumentNullException(nameof(webPage), "WebPage must not be null.");
             if (content == null) throw new ArgumentNullException(nameof(content), "Content must not be null.");
@@ -443,7 +453,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                 await context.DisposeAsync();
             }
         }
-        public async Task<IEnumerable<Content>> CreateWebPageContentsAsync2(WebPage webPage, Content content)
+        public async Task<IEnumerable<Content>> CreateWebPageContentsAsync2(WebPage webPage, Content content, CancellationToken cancellationToken = default)
         {
             if (webPage == null) throw new ArgumentNullException(nameof(webPage), "WebPage must not be null.");
             if (content == null) throw new ArgumentNullException(nameof(content), "Content must not be null.");
