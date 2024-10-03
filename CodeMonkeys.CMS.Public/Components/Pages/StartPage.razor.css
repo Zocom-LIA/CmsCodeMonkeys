@@ -230,6 +230,8 @@ p {
     width: 100%; /* Gör att korten fyller hela bredden */
     max-width: 300px; /* Sätt maxbredd för att förhindra att korten blir för stora */
     height: auto; /* Justera höjd till auto för att tillåta flexibel text */
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
     /* Responsiva, runda och lika stora bilder */
@@ -242,22 +244,62 @@ p {
         transition: width 0.3s, height 0.3s; /* Mjuk övergång när storleken ändras */
     }
 
+    /* Gör att namn och listan ligger på samma rad */
+    .team-member-content {
+        display: flex;
+        justify-content: center; /* Ger utrymme mellan textblocken */
+        align-items: center; /* Justerar vertikalt i mitten */
+        flex-direction: column;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+
     .team-member p {
-        font-size: 1.5vw;
+        font-size: 1.2vw;
         font-weight: bold;
         margin: 10px 0; /* Justera marginaler för bättre utrymme */
+        width: 100%;
+        text-align: center;
+
+        /* Begränsar till 3 rader */
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis; /* Lägger till "..." vid överflödig text */
     }
 
     .team-member ul {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
         list-style: none;
         padding: 0;
-        margin: 0;
+        margin: 10px 0;
+
+        /* Begränsar till 3 rader */
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .team-member li {
-        font-size: 1.2vw;
+        font-size: 1vw;
         color: #666;
-        margin-bottom: 5px; /* Minska marginalen för bättre placering */
+        margin-top: 5px;
+        margin-right: 10px;
+        margin-bottom: 5px;
+        text-align: center;
+        width: 100%;
+        /* Begränsar till 3 rader */
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     /* Styla länkar */
