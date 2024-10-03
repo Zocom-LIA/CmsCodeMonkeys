@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 
+using System.Security.Claims;
+
 namespace CodeMonkeys.CMS.Public.Components.Shared
 {
     public partial class VisitorViewer : BaseComponent<VisitorViewer>
@@ -8,7 +10,7 @@ namespace CodeMonkeys.CMS.Public.Components.Shared
         public RenderFragment ChildContent { get; set; }
 
         [Parameter]
-        public RenderFragment? PageTitle { get; set; }
+        public string? Title { get; set; }
 
         protected override async Task OnInitializedAsync()
         {

@@ -1,4 +1,4 @@
-﻿@page "/content/{WebPageId:int?}"
+﻿@page "/render-content/{WebPageId:int?}"
 @inherits ContentBaseComponent<ShowUserPage>
 @using CodeMonkeys.CMS.Public.Components.Shared
 @using CodeMonkeys.CMS.Public.Components.Account.Shared
@@ -6,17 +6,14 @@
 @using CodeMonkeys.CMS.Public.Shared.Entities
 @using CodeMonkeys.CMS.Public.Shared.Repository
 
-<VisitorViewer>
-    <PageTitle>@WebPage?.Title</PageTitle>
-    <ChildContent>
-        <StatusMessage/>
-        @foreach(ContentDto content in (WebPage?.Contents??[]).OrderBy(c=>c.OrdinalNumber))
-        {
-            <div class="content-container">
-                @RenderContent(content)
-            </div>
-        }
-    </ChildContent>
+<VisitorViewer Title="@WebPage?.Title">
+    <StatusMessage/>
+    @foreach(ContentDto content in (WebPage?.Contents??[]).OrderBy(c=>c.OrdinalNumber))
+    {
+        <div class="content-container">
+            @RenderContent(content)
+        </div>
+    }
 </VisitorViewer>
 
 @code {
