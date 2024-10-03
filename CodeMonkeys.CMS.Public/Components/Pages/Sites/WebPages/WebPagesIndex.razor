@@ -54,7 +54,7 @@
                                     <button class="btn btn-primary" @onclick="async () => await AddOrUpdatePageAsync(webPage.WebPageId)">Edit page title</button>
                                     <button class="btn btn-secondary" @onclick="async () => await EditContentsAsync(webPage.WebPageId)">Edit contents</button>
                                     <button class="btn btn-danger" @onclick="async () => await DeletePageAsync(webPage.WebPageId)">Delete</button>
-                                    <a class="btn btn-secondary" href="/userPages/@Site.SiteId/@webPage.WebPageId">Go to page</a>
+                                    <a class="btn btn-secondary" href="/content/@(webPage.WebPageId)">Go to page</a>
                                 </div>
                                 <div class="webpages-card-footer text-muted">
                                     Last Modified: @webPage.LastModifiedDate.ToString("yyyy-MM-dd")

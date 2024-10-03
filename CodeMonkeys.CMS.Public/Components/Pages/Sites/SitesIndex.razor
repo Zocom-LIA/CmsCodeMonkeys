@@ -76,7 +76,8 @@
                                         <a class="btn btn-secondary sites-btn sites-btn-overview" href="/sites/@site.SiteId/webpages">Manage Pages</a>
                                         @if (site.LandingPage != null)
                                         {
-                                            <a class="btn btn-secondary sites-btn" href="/userPages/@site.SiteId">Go To Landing Page</a>
+                                            @* <a class="btn btn-secondary sites-btn" href="/userPages/@site.SiteId">Go To Landing Page</a> *@
+                                            <a class="btn btn-secondary sites-btn" href="/content/@site.LandingPage.WebPageId">Go To Landing Page</a>
                                         }
                                         else
                                         {
