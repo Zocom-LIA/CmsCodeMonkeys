@@ -74,13 +74,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             }
         }
 
-        public async Task<IEnumerable<PageStats>> GetPageStatsAsync()
-        {
-            using (var context = _contextFactory.CreateDbContext())
-            {
-                return await context.PageStats.AsNoTracking().ToListAsync();
-            }
-        }
         public async Task<IEnumerable<PageStats>> GetPageStatsAsync(int siteId)
         {
             using (var context = _contextFactory.CreateDbContext())
