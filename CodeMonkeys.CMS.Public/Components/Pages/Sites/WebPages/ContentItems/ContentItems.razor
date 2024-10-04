@@ -22,6 +22,51 @@
                             @RenderContentItemItem(contentItem)
                         }
                     </ul>
+                    <h4>Bildgalleri</h4>
+                <ul >
+               @foreach (var image in imageItems)
+                {
+                    <li style="text-align:@($"{image.ImageAlign} !important")">
+                        <img src="@image.Url" 
+                            style="border-radius:@($"{image.BorderRadius}px");
+                            
+                            height:@($"{image.Height}px");
+                            width:@($"{image.Width}px");
+                            cursor: pointer;" 
+                            @onclick="() => ToggleImageEdit(image)">
+                        @if (image.IsEditing)
+                        {
+                             <button @onclick="() => SaveEditImage(image)">
+                             @(image.ShowMessage ? "Spara" : "Ändra")
+                            </button>
+                            <button @onclick="() => RemoveImage(image)">
+                                Ta bort
+                            </button>
+                            @if (image.ShowMessage)
+                            {   
+                                <div class="imageinpage">
+                                <label>Bildens URL  </label>
+                                <input type="text" placeholder="Bildens URL" @bind="image.Url" />
+                                 <label>Bredd</label>
+                                <input type="number" placeholder="Bredd" @bind="image.Width" />
+                                 <label>Höjd </label>
+                                <input type="number" placeholder="Höjd" @bind="image.Height" />
+                                 <label>BorderRadius </label>
+                                <input type="number" placeholder="BorderRadius" @bind="image.BorderRadius" />
+                                <label>Text Align:
+                                    <select placeholder="image.ImageAlign" @bind="image.ImageAlign">
+                                        <option value="left">Vänster</option>
+                                        <option value="center">Centrerad</option>
+                                        <option value="right">Höger</option>
+                                    </select>
+                                </label>
+                                </div>
+                                
+                            }
+                        }
+                    </li>
+                }
+                </ul>
                 </div>
             </div>
         }
@@ -62,48 +107,7 @@
                             @RenderContentItemItem(contentItem)
                         }
                     </ul>
-                    <h4>Bildgalleri</h4>
-                <ul >
-               @foreach (var image in imageItems)
-                {
-                    <li style="text-align:@($"{image.ImageAlign} !important")">
-                        <img src="@image.Url" 
-                            style="border-radius:@($"{image.BorderRadius}px");
-                            
-                            height:@($"{image.Height}px");
-                            width:@($"{image.Width}px");
-                            cursor: pointer;" 
-                            @onclick="() => ToggleImageEdit(image)">
-                        @if (image.IsEditing)
-                        {
-                             <button @onclick="() => SaveEditImage(image)">
-                             @(image.ShowMessage ? "Spara" : "Ändra")
-                            </button>
-                            @if (image.ShowMessage)
-                            {   
-                                <div class="imageinpage">
-                                <label>Bildens URL  </label>
-                                <input type="text" placeholder="Bildens URL" @bind="image.Url" />
-                                 <label>Bredd</label>
-                                <input type="number" placeholder="Bredd" @bind="image.Width" />
-                                 <label>Höjd </label>
-                                <input type="number" placeholder="Höjd" @bind="image.Height" />
-                                 <label>BorderRadius </label>
-                                <input type="number" placeholder="BorderRadius" @bind="image.BorderRadius" />
-                                <label>Text Align:
-                                    <select placeholder="image.ImageAlign" @bind="image.ImageAlign">
-                                        <option value="left">Vänster</option>
-                                        <option value="center">Centrerad</option>
-                                        <option value="right">Höger</option>
-                                    </select>
-                                </label>
-                                </div>
-                                
-                            }
-                        }
-                    </li>
-                }
-                </ul>
+                    
                 </div>
             </div>
         }
@@ -196,6 +200,11 @@
     {
         // Implement your save logic here (if needed)
         image.ShowMessage = !image.ShowMessage; // Toggle message visibility
+    }
+
+    private void RemoveImage(ImageItem image)
+    {
+        imageItems.Remove(image);
     }
 
 
