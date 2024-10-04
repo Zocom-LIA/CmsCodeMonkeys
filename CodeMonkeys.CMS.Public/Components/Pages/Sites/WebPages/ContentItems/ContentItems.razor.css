@@ -1,79 +1,75 @@
 
 
 .grid-container {
-  padding-top: 40px;
-  display: grid;
-  grid-template-columns: 1fr 400px;
-  /* Box 3 är nu 400px bred */
-  gap: 0px;
-  /* Avstånd mellan rutorna */
+    padding-top: 40px;
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    /* Box 3 är nu 400px bred */
+    gap: 0px;
+    /* Avstånd mellan rutorna */
 }
 
 .vertical-container {
-  display: flex;
-  flex-direction: column;
-  /* Ställ in riktningen till kolumn för att stapla boxarna */
-  flex-grow: 1;
-  /* Tillåt att denna container växer i bredd */
+    display: flex;
+    flex-direction: column;
+    /* Ställ in riktningen till kolumn för att stapla boxarna */
+    flex-grow: 1;
+    /* Tillåt att denna container växer i bredd */
 }
 
 .box {
-  padding: 20px;
-  text-align: center;
-  flex-grow: 1;
-  /* Låt boxarna växa för att fylla den återstående bredden */
+    padding: 20px;
+    text-align: center;
+    flex-grow: 1;
+    /* Låt boxarna växa för att fylla den återstående bredden */
 }
 
-.box1 {
-  background-color: lightblue;
-  /* För box1 */
-  min-height: 300px;
+.edit-content-header {
+    background-color: lightblue;
+    min-height: 300px;
 }
 
-.box2 {
-  background-color: lightgreen;
-  /* För box2 */
-  min-height: 300px;
+.edit-content-body {
+    background-color: lightgreen;
+    min-height: 300px;
 }
 
-.box4 {
-  background-color: rgb(144, 175, 238);
-  /* För box4 */
-  min-height: 250px;
+.edit-content-footer {
+    background-color: rgb(144, 175, 238);
+    min-height: 250px;
 }
 
-.box3 {
-  background-color: lightcoral;
-  /* För box3 */
-  width: 400px;
-  /* Fasta bredden för box3 */
-  overflow: auto;
-  /* Tillåt scrollning om innehållet överskrider boxens höjd */
+.toolbar {
+    background-color: lightcoral;
+    width: 400px;
+    /* Fasta bredden för box3 */
+    overflow: auto;
+    /* Tillåt scrollning om innehållet överskrider boxens höjd */
 }
 
 .list-container input {
-  /* Se till att inga regler åsidosätter inline-styling */
-  font-size: inherit;
+    /* Se till att inga regler åsidosätter inline-styling */
+    font-size: inherit;
 }
 
 .list-container ul {
-  list-style-type: none;
-  /* Remove bullet points */
-  padding: 0;
-  /* Optional: Remove padding */
-  margin: 0;
-  /* Optional: Remove margin */
+    list-style-type: none;
+    /* Remove bullet points */
+    padding: 0;
+    /* Optional: Remove padding */
+    margin: 0;
+    /* Optional: Remove margin */
 }
 
 .color-picker {
-  position: fixed;
-  top: 15%;
-  left: 70%;
-  transform: translate(-50%, -50%);
-  padding: 20px;
-  background-color: rgba(255, 255, 255, 0.9);
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  z-index: 1000;
-  /* Ensure it is above other content */
+    position: fixed;
+    top: 15%;
+    left: 70%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    z-index: 1000;
+    /* Ensure it is above other content */
 }

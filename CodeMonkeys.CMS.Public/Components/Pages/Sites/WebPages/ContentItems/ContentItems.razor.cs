@@ -17,56 +17,48 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
         [Inject] IContentItemService ContentItemService { get; set; }
         [Inject] ISectionService SectionService { get; set; }
 
-        private Dictionary<int, Section> _sections = new();
-        private Section _section1;
-        private Section _section2;
-        private Section _section3;
-        private Section _section4;
-        private int _sectionId1;
-        private int _sectionId2;
-        private int _sectionId3;
-        private int _sectionId4;
+        private IEnumerable<Section> _sections = [];
+        private Section _contentHeader;
+        private Section _contentBody;
+        private Section _contentFooter;
+        private Section _toolbar;
 
-        // private ContentItemStorage ContentItemStorage { get; set; }
         private string newContentItemText = string.Empty;
-        private int selectedList = 1;
+        private int selectedList;
 
         private bool showColorPicker = false;
         private string selectedColor = "White";
-        private int currentBox = 1;
+        private int currentBox;
         private string selectedBox = "Box 1";
 
         protected override async Task OnInitializedAsync()
         {
-            await base.OnInitializedAsync();
-            try
+            await ExecuteWithLoadingAsync(async () =>
             {
-                _sections = await SectionService.GetSectionsAsync(WebPageId);
-                await LoadSectionsAsync();
-                selectedList = _section1.SectionId;
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, "Error loading content items for web page {0}", WebPageId);
-            }
+                await base.OnInitializedAsync();
+                try
+                {
+                    _sections = (await SectionService.GetSectionsAsync(WebPageId)).Select(kvp => kvp.Value);
+                    await LoadSectionsAsync();
+                    selectedList = _contentHeader.SectionId;
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError(ex, "[Init Site: {0} Page: {0}] Error loading content items for web page.", SiteId, WebPageId);
+                }
+            });
         }
 
         private async Task LoadSectionsAsync()
         {
             try
             {
-                _section1 = await EnsureSectionAsync(SectionNames.Header.ToString());
-                _section2 = await EnsureSectionAsync(SectionNames.Body.ToString());
-                _section4 = await EnsureSectionAsync(SectionNames.Footer.ToString());
-                _section3 = new Section { SectionId = 0, Name = "Toolbar", Color = "#fefefe", WebPageId = WebPageId };
+                _contentHeader = await EnsureSectionAsync(SectionNames.Header.ToString());
+                _contentBody = await EnsureSectionAsync(SectionNames.Body.ToString());
+                _contentFooter = await EnsureSectionAsync(SectionNames.Footer.ToString());
+                _toolbar = new Section { SectionId = 0, Name = "Toolbar", Color = "#fefefe", WebPageId = WebPageId };
 
-                _sections = new()
-            {
-                { _section1.SectionId, _section1 },
-                { _section2.SectionId, _section2 },
-                { _section3.SectionId, _section3 },
-                { _section4.SectionId, _section4 }
-            };
+                _sections = [_contentHeader, _contentBody, _contentFooter];
             }
             catch (Exception ex)
             {
@@ -109,18 +101,18 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
             else
             {
                 currentBox = boxNumber;
-                if (_sections.TryGetValue(boxNumber, out var section))
+                var section = _sections.FirstOrDefault(section => section.SectionId == boxNumber);
+                if (section != null)
                 {
                     selectedBox = section.Name;
                     selectedColor = section.Color;
+                    showColorPicker = true;
                 }
                 else
                 {
-                    selectedBox = "Box 1";
-                    selectedColor = "#fefefe";
+                    Logger.LogWarning("[OpenColorPicker Site: {0} Page: {0}] Section with ID {0} does not exist.", SiteId, WebPageId, boxNumber);
+                    ErrorMessage = "Error loading color picker.";
                 }
-
-                showColorPicker = true;
             }
         }
 
@@ -160,10 +152,10 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
                     newContentItemText = string.Empty;
 
                     // Kontrollera och ställ in ShowEditButton endast om listan inte är tom
-                    ResetShowEditButton(_section1);
-                    ResetShowEditButton(_section2);
-                    ResetShowEditButton(_section3);
-                    ResetShowEditButton(_section4);
+                    ResetShowEditButton(_contentHeader);
+                    ResetShowEditButton(_contentBody);
+                    ResetShowEditButton(_toolbar);
+                    ResetShowEditButton(_contentFooter);
                     StateHasChanged();
                 }
                 else
@@ -218,7 +210,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
 
             if (draggedItem.ContentId <= 0) // Kontrollera ContentId istället
             {
-                Logger.LogWarning("Invalid ContentId: {0}", draggedItem.ContentId);
+                Logger.LogWarning("[Edit Site:{0}, Page:{1}]: Attempting to drop an invalid content {2}.", SiteId, WebPageId, draggedItem.ContentId);
                 return; // Avbryt om ID är ogiltigt
             }
 
@@ -309,7 +301,21 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
             StateHasChanged();
         }
 
+        private bool TryGetSection(int currentSection, out Section section)
+        {
+            var actualSection = _sections.FirstOrDefault(section => section.SectionId == currentSection);
+            if (actualSection != null)
+            {
+                section = actualSection;
+                return true;
+            }
 
+            Logger.LogWarning("[TryGetSection Site: {0} Page: {1}] Section with ID {2} does not exist.", SiteId, WebPageId, currentSection);
+            ErrorMessage = "Error loading color picker.";
+
+            section = null!;
+            return false;
+        }
 
         private Dictionary<string, string> colorOptions = new Dictionary<string, string>
             {
@@ -365,7 +371,6 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
     {
         Header,
         Body,
-        Footer,
-        Toolbar
+        Footer
     }
 }

@@ -6,60 +6,48 @@
 <!-- Layout -->
 <div class="grid-container">
     <div class="vertical-container">
-        <!-- Section 1 -->
-        @if (_section1 == null)
+        <!-- Section Header -->
+        @if (_contentHeader != null)
         {
-            <h1>Section 1 is null</h1>
-        }
-        else
-        {
-            <div class="box box1" @onclick="() => OpenColorPicker(_section1.SectionId)" style="background-color:@_section1.Color">
-                <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_section1.SectionId)">
+            <div class="box edit-content-header" @onclick="() => OpenColorPicker(_contentHeader.SectionId)" style="background-color:@_contentHeader.Color">
+                <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_contentHeader.SectionId)">
                     <h4>Header</h4>
                     <ul>
-                        @foreach (var contentItem in _section1?.ContentItems ?? [])
+                        @foreach (var contentItem in _contentHeader?.ContentItems ?? [])
                         {
-                            @RenderContentItemItem(contentItem)
+                            @RenderContentItem(contentItem)
                         }
                     </ul>
                 </div>
             </div>
         }
 
-        <!-- Section 2 -->
-        @if (_section2 == null)
+        <!-- Section Body -->
+        @if (_contentBody != null)
         {
-            <h1>Section 2 is null</h1>
-        }
-        else
-        {
-            <div class="box box2" @onclick="() => OpenColorPicker(_section2.SectionId)" style="background-color:@_section2.Color">
-                <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_section2.SectionId)">
+            <div class="box edit-content-body" @onclick="() => OpenColorPicker(_contentBody.SectionId)" style="background-color:@_contentBody.Color">
+                <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_contentBody.SectionId)">
                     <div>BODY</div>
                     <ul>
-                        @foreach (var contentItem in _section2?.ContentItems ?? [])
+                        @foreach (var contentItem in _contentBody?.ContentItems ?? [])
                         {
-                            @RenderContentItemItem(contentItem)
+                            @RenderContentItem(contentItem)
                         }
                     </ul>
                 </div>
             </div>
         }
 
-        <!-- Section 4 -->
-        @if (_section4 == null)
+        <!-- Section Footer -->
+        @if (_contentFooter != null)
         {
-            <h1>Section 4 is null</h1>
-        }
-        else
-        {
-            <div class="box box4" @onclick="() => OpenColorPicker(_section4.SectionId)" style="background-color:@_section4.Color">
-                <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_section4.SectionId)">
+            <div class="box edit-content-footer" @onclick="() => OpenColorPicker(_contentFooter.SectionId)" style="background-color:@_contentFooter.Color">
+                <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_contentFooter.SectionId)">
                     <div>Footer</div>
                     <ul>
-                        @foreach (var contentItem in _section4?.ContentItems ?? [])
+                        @foreach (var contentItem in _contentFooter?.ContentItems ?? [])
                         {
-                            @RenderContentItemItem(contentItem)
+                            @RenderContentItem(contentItem)
                         }
                     </ul>
                 </div>
@@ -68,26 +56,17 @@
     </div>
 
     <!-- Toolbar Section (Section 3) -->
-    <div class="box box3">
+    <div class="box toolbar">
         <div>
             <input @bind="newContentItemText" placeholder="Skriv en uppgift" />
             <select @bind="selectedList">
-                @foreach(var kvp in _sections)
+                @foreach(var section in _sections)
                 {
-                    <option value="@kvp.Key">@kvp.Value.Name</option>
+                    <option value="@(section)">@(section.Name)</option>
                 }
             </select>
             <button @onclick="AddContentItem">Lägg till</button>
             <button @onclick="RemoveAllContentItemsAsync">Rensa Allt</button>
-        </div>
-        <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_section3.SectionId)">
-            <h4>Toolbar</h4>
-            <ul>
-                @foreach (var contentItem in _section3?.ContentItems ?? [])
-                {
-                    @RenderContentItemItem(contentItem)
-                }
-            </ul>
         </div>
     </div>
 </div>
@@ -96,6 +75,7 @@
 @if (showColorPicker)
 {
     <div class="color-picker">
+        <StatusMessage Message="@ErrorMessage" />
         <h4>Välj Bakgrundsfärg för @selectedBox</h4>
         <select @bind="selectedColor">
             @foreach (var color in colorOptions)
@@ -110,7 +90,7 @@
 @code
 {
     // Render content item for drag-and-drop
-    RenderFragment RenderContentItemItem(ContentItem contentItem) => @<li draggable="true" 
+    RenderFragment RenderContentItem(ContentItem contentItem) => @<li draggable="true" 
         @ondragstart="() => OnDragStart(contentItem)" 
         @ondragend="() => OnDragEnd(contentItem)">
 
