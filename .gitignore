@@ -396,3 +396,5 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+CodeMonkeys.CMS.Public.Shared/Migrations
+CodeMonkeys.CMS.Public.Shared/Migrations/ApplicationDbContextModelSnapshot.cs

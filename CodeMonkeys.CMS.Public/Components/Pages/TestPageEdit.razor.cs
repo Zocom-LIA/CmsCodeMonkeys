@@ -54,23 +54,6 @@ namespace CodeMonkeys.CMS.Public.Components.Pages
 
             Input.Title = WebPage.Title;
             WebPage.Contents = WebPage.Contents.OrderBy(content => content.OrdinalNumber).ToList();
-
-            Site = await SiteService.GetSiteAsync(siteId);
-
-            if (Site == null)
-            {
-                Logger.LogDebug($"Site with ID '{siteId}' for User with ID '{User.Id}' not found.");
-                ErrorMessage = "There is no such site available to edit";
-                return;
-            }
-
-            WebPage = await WebPageService.GetWebPageAsync(webPageId);
-            if (WebPage == null)
-            {
-                Logger.LogDebug($"WebPage with ID '{webPageId}' for site with ID '{siteId}' not found.");
-                ErrorMessage = "There is no such webpage available to edit";
-                return;
-            }
         }
 
         private async Task HandleValidSubmit()
@@ -178,7 +161,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages
                     OrdinalNumber = Content.OrdinalNumber,
                     CreatedDate = DateTime.Now,
                     LastModifiedDate = DateTime.Now,
-                    Author = User
+                    AuthorId = User?.Id
                 };
 
                 WebPage!.Contents.Add(content);
@@ -199,7 +182,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages
                 content.ContentType = Content.ContentType;
                 content.Body = Content.Body;
                 content.LastModifiedDate = DateTime.Now;
-                content.Author = User;
+                content.AuthorId = User?.Id;
                 content.OrdinalNumber = Content.OrdinalNumber;
             }
 

@@ -1,6 +1,5 @@
 ﻿using CodeMonkeys.CMS.Public.Components.Shared.UI;
 using CodeMonkeys.CMS.Public.Shared.Entities;
-using CodeMonkeys.CMS.Public.Shared.Migrations;
 using CodeMonkeys.CMS.Public.Shared.Services;
 
 using Microsoft.AspNetCore.Components;
@@ -62,23 +61,6 @@ namespace CodeMonkeys.CMS.Public.Components.Shared
 
             Input.Title = WebPage.Title;
             WebPage.Contents = WebPage.Contents.OrderBy(content => content.OrdinalNumber).ToList();
-
-            Site = await SiteService.GetSiteAsync(siteId);
-
-            if (Site == null)
-            {
-                Logger.LogDebug($"Site with ID '{siteId}' for User with ID '{User.Id}' not found.");
-                ErrorMessage = "There is no such site available to edit";
-                return;
-            }
-
-            WebPage = await WebPageService.GetWebPageAsync(webPageId);
-            if (WebPage == null)
-            {
-                Logger.LogDebug($"WebPage with ID '{webPageId}' for site with ID '{siteId}' not found.");
-                ErrorMessage = "There is no such webpage available to edit";
-                return;
-            }
         }
 
         public sealed class InputModel

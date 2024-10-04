@@ -1,4 +1,4 @@
-﻿@page  "/pagevisits"
+﻿@page  "/pagevisits/{siteId:int}"
 
 @using CodeMonkeys.CMS.Public.Components.Shared
 @using CodeMonkeys.CMS.Public.Shared.Entities
@@ -34,11 +34,13 @@
 
 @code 
 {
+    [Parameter]
+    public int SiteId { get; set; }
     private IEnumerable<PageStats>? Pages { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        Pages = await PageStatsService.GetPageStatsAsync();
+        Pages = await PageStatsService.GetPageStatsAsync(SiteId);
     }
 }

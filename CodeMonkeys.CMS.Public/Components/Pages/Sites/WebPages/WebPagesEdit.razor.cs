@@ -43,7 +43,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
                 return;
             }
 
-            WebPage = await WebPageService.GetSiteWebPageAsync(siteId, webPageId);
+            WebPage = await WebPageService.GetSiteWebPageAsync(siteId, webPageId, true, true, true);
 
             if (WebPage == null)
             {
@@ -53,24 +53,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
             }
 
             Input.Title = WebPage.Title;
-            WebPage.Contents = WebPage.Contents.OrderBy(content => content.OrdinalNumber).ToList();
-
-            Site = await SiteService.GetSiteAsync(siteId);
-
-            if (Site == null)
-            {
-                Logger.LogDebug($"Site with ID '{siteId}' for User with ID '{User.Id}' not found.");
-                ErrorMessage = "There is no such site available to edit";
-                return;
-            }
-
-            WebPage = await WebPageService.GetWebPageAsync(webPageId);
-            if (WebPage == null)
-            {
-                Logger.LogDebug($"WebPage with ID '{webPageId}' for site with ID '{siteId}' not found.");
-                ErrorMessage = "There is no such webpage available to edit";
-                return;
-            }
+            //WebPage.Contents = WebPage.Contents.OrderBy(content => content.OrdinalNumber).ToList();
         }
 
         private async Task HandleValidSubmit()
@@ -176,14 +159,10 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
                     ContentType = Content.ContentType,
                     Body = Content.Body,
                     OrdinalNumber = Content.OrdinalNumber,
-                    CreatedDate = DateTime.Now,
-                    LastModifiedDate = DateTime.Now,
-                    Author = User
+                    AuthorId = User!.Id
                 };
 
-                WebPage!.Contents.Add(content);
-
-                WebPage!.Contents = (await WebPageService.UpdateWebPageContentsAsync(WebPage!, WebPage!.Contents)).ToList();
+                WebPage!.Contents = (await WebPageService.CreateWebPageContentAsync(WebPage!, content)).ToList();
             }
             else
             {
@@ -199,7 +178,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
                 content.ContentType = Content.ContentType;
                 content.Body = Content.Body;
                 content.LastModifiedDate = DateTime.Now;
-                content.Author = User;
+                content.AuthorId = User!.Id;
                 content.OrdinalNumber = Content.OrdinalNumber;
             }
 
