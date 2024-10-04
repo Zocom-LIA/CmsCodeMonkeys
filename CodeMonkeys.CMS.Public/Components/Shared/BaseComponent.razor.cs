@@ -97,5 +97,115 @@ namespace CodeMonkeys.CMS.Public.Components.Shared
         {
             Logger?.LogError(ex.Message);
         }
+
+        // Utility methods for structured logging with scopes
+        protected IDisposable BeginScope<TState>(TState state)
+        {
+            return Logger?.BeginScope(state);
+        }
+
+        protected void LogInformation<TState>(TState state, string message, params object[] args)
+        {
+            using (var scope = BeginScope(state))
+            {
+                Logger?.LogInformation(message, args);
+            }
+        }
+
+        protected void LogWarning<TState>(TState state, string message, params object[] args)
+        {
+            using (var scope = BeginScope(state))
+            {
+                Logger?.LogWarning(message, args);
+            }
+        }
+
+        protected void LogError<TState>(TState state, string message, params object[] args)
+        {
+            using (var scope = BeginScope(state))
+            {
+                Logger?.LogError(message, args);
+            }
+        }
+
+        protected void LogCritical<TState>(TState state, string message, params object[] args)
+        {
+            using (var scope = BeginScope(state))
+            {
+                Logger?.LogCritical(message, args);
+            }
+        }
+
+        protected void LogDebug<TState>(TState state, string message, params object[] args)
+        {
+            using (var scope = BeginScope(state))
+            {
+                Logger?.LogDebug(message, args);
+            }
+        }
+
+        protected void LogTrace<TState>(TState state, string message, params object[] args)
+        {
+            using (var scope = BeginScope(state))
+            {
+                Logger?.LogTrace(message, args);
+            }
+        }
+
+        protected void Log<TState>(LogLevel logLevel, TState state, Exception exception, string message, params object[] args)
+        {
+            using (var scope = BeginScope(state))
+            {
+                Logger?.Log(logLevel, exception, message, args);
+            }
+        }
+
+        protected void Log<TState>(LogLevel logLevel, TState state, string message, params object[] args)
+        {
+            using (var scope = BeginScope(state))
+            {
+                Logger?.Log(logLevel, message, args);
+            }
+        }
+
+        protected void Log<TState>(LogLevel logLevel, TState state, EventId eventId, Exception exception, string message, params object[] args)
+        {
+            using (var scope = BeginScope(state))
+            {
+                Logger?.Log(logLevel, eventId, exception, message, args);
+            }
+        }
+
+        protected void Log<TState>(LogLevel logLevel, TState state, EventId eventId, string message, params object[] args)
+        {
+            using (var scope = BeginScope(state))
+            {
+                Logger?.Log(logLevel, eventId, message, args);
+            }
+        }
+
+        protected void Log<TState>(LogLevel logLevel, TState state, string message, Exception exception)
+        {
+            using (var scope = BeginScope(state))
+            {
+                Logger?.Log(logLevel, exception, message);
+            }
+        }
+
+        protected void Log<TState>(LogLevel logLevel, TState state, string message)
+        {
+            using (var scope = BeginScope(state))
+            {
+                Logger?.Log(logLevel, message);
+            }
+        }
+
+        protected void Log<TState>(LogLevel logLevel, TState state, EventId eventId, string message)
+        {
+            using (var scope = BeginScope(state))
+            {
+                Logger?.Log(logLevel, eventId, message);
+            }
+        }
     }
 }
