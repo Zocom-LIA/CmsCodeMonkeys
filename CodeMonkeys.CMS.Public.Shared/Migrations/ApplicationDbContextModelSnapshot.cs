@@ -72,7 +72,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasIndex("WebPageId");
 
-                    b.ToTable("Contents");
+                    b.ToTable("Contents", (string)null);
 
                     b.HasDiscriminator().HasValue("Content");
 
@@ -98,7 +98,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasIndex("SiteId");
 
-                    b.ToTable("Menus");
+                    b.ToTable("Menus", (string)null);
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.MenuItem", b =>
@@ -124,7 +124,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasIndex("WebPageId");
 
-                    b.ToTable("MenuItem");
+                    b.ToTable("MenuItem", (string)null);
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.PageStats", b =>
@@ -150,7 +150,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasKey("PageStatsId");
 
-                    b.ToTable("PageStats");
+                    b.ToTable("PageStats", (string)null);
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Role", b =>
@@ -170,7 +170,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Section", b =>
@@ -197,7 +197,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasIndex("WebPageId");
 
-                    b.ToTable("Sections");
+                    b.ToTable("Sections", (string)null);
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Site", b =>
@@ -230,7 +230,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasIndex("LandingPageId");
 
-                    b.ToTable("Sites");
+                    b.ToTable("Sites", (string)null);
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.User", b =>
@@ -283,7 +283,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", b =>
@@ -316,7 +316,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasIndex("SiteId");
 
-                    b.ToTable("Pages");
+                    b.ToTable("Pages", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -338,7 +338,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RoleClaims");
+                    b.ToTable("RoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
@@ -360,7 +360,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserClaims");
+                    b.ToTable("UserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
@@ -379,7 +379,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
-                    b.ToTable("UserLogins");
+                    b.ToTable("UserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
@@ -392,7 +392,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasKey("UserId", "RoleId");
 
-                    b.ToTable("UserRoles");
+                    b.ToTable("UserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
@@ -411,7 +411,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("UserTokens");
+                    b.ToTable("UserTokens", (string)null);
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.ContentItem", b =>

@@ -71,7 +71,7 @@
 
                                     <div class="sites-card-body">
                                         <div class="sites-empty-box bg-light">
-                                            @if (site.LandingPage != null && site.LandingPage.WebPageId != null)
+                                            @if (site.LandingPage?.WebPageId != null)
                                             {
                                                 <div class="content">
                                                     <SiteContentViewer WebPageId="site.LandingPage.WebPageId"/>
