@@ -6,15 +6,16 @@
 @using CodeMonkeys.CMS.Public.Components.Account.Shared
 @using CodeMonkeys.CMS.Public.Shared.Entities
 @using CodeMonkeys.CMS.Public.Shared.Repository
+@using System.Text
 
 <PageTitle>@WebPage?.Title</PageTitle>
 <UserViewer>
     <UserViewHeader>@WebPage?.Title</UserViewHeader>
     <ChildContent>
         <StatusMessage />
-        @foreach (Content content in (WebPage?.Contents ?? []).OrderBy(c => c.OrdinalNumber))
+        @foreach (ContentItem content in (WebPage?.Contents ?? []).OrderBy(c => c.OrdinalNumber))
         {
-            <span style="color:@content.Color">@content.Body</span>
+            <span style="@RenderContent(content)">@content.Body</span>
         }
     </ChildContent>
 </UserViewer>
@@ -70,7 +71,7 @@
 
     /* A user that assigns the number of one page as the title of another page will not be able to access the latter by title. This is their problem.
      * A user that assigns the same name to multiple pages will have one displayed at random when a page with that title is requested. This is also their problem.
-     */
+    */
     private WebPage? FindPage(Site site, string pageName) => FindPageByNumber(site, pageName) ?? FindPageByTitle(site, pageName);
 
     private WebPage? FindPageByTitle(Site site, string pageName) => site.Pages.FirstOrDefault(p => p.Title == pageName);
@@ -95,5 +96,33 @@
     private WebPage NoSuchPagePage(string PageName)
     {
         return new WebPage() { Title = "No such page", Contents = [new Content() { Body = $"No such page: {PageName}" }] };
+    }
+
+    private RenderFragment RenderContent(ContentItem content)
+    {
+        return builder =>
+        {
+            builder.OpenElement(0, "span");
+            builder.AddAttribute(1, "style", GetStyle(content));
+
+            // Render the content body
+            builder.AddContent(2, content.Body);
+
+            builder.CloseElement();
+        };
+    }
+
+    public string GetStyle(ContentItem content)
+    {
+        var styleBuilder = new StringBuilder();
+
+        // Add styles based on ContentItem properties
+        styleBuilder.Append($"font-size:{content.FontSize}px; ");
+        styleBuilder.Append($"color:{content.TextColor}; ");
+        styleBuilder.Append($"font-weight:{(content.IsBold ? "bold" : "normal")}; ");
+        styleBuilder.Append($"font-style:{(content.IsItalic ? "italic" : "normal")}; ");
+        styleBuilder.Append($"font-family: {content.FontFamily}; ");
+
+        return styleBuilder.ToString();
     }
 }

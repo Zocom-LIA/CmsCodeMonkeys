@@ -8,12 +8,13 @@ using CodeMonkeys.CMS.Public.Shared.Entities;
 using CodeMonkeys.CMS.Public.Shared.Profiles;
 using CodeMonkeys.CMS.Public.Shared.Repository;
 using CodeMonkeys.CMS.Public.Shared.Services;
-using CodeMonkeys.CMS.Public.Components.Pages.DragAndDropFlashy2;
 
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+
+using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("CodeMonkeys.CMS.Public.Tests")]
@@ -31,10 +32,11 @@ builder.Services.AddRazorComponents()
 builder.Services.AddAutoMapper(typeof(EntityProfiles).Assembly);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddScoped<TodoService2>();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+builder.Services.AddScoped<ContentItemRepository>();
+builder.Services.AddScoped<IContentItemService, ContentItemService>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -76,6 +78,10 @@ builder.Services.AddScoped<IContentRepository, ContentRepository>();
 builder.Services.AddScoped<ISiteService, SiteService>();
 builder.Services.AddScoped<IWebPageService, WebPageService>();
 builder.Services.AddScoped<IContentService, ContentService>();
+builder.Services.AddScoped<IContentItemService, ContentItemService>();
+builder.Services.AddScoped<CodeMonkeys.CMS.Public.Shared.Repository.IContentItemRepository, CodeMonkeys.CMS.Public.Shared.Repository.ContentItemRepository>();
+builder.Services.AddScoped<ISectionService, SectionService>();
+builder.Services.AddScoped<ISectionRepository, SectionRepository>();
 
 var app = builder.Build();
 

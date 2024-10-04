@@ -147,7 +147,8 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
 
         public Task EditContentsAsync(int webPageId)
         {
-            Navigation.NavigateTo($"/sites/{siteId}/webpages/{webPageId}/edit");
+            Navigation.NavigateTo($"/sites/{siteId}/webpages/{webPageId}");
+            //Navigation.NavigateTo($"/sites/{siteId}/webpages/{webPageId}/edit");
             return Task.CompletedTask;
         }
 
