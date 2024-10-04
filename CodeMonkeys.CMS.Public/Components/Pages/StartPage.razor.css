@@ -463,69 +463,69 @@ footer {
 
 
 /* Responsiv design med media queries */
+/* Justeringar för mycket små skärmar (480px eller mindre) */
 @media (max-width: 480px) {
     h1 {
-        font-size: 8vw; /* Större rubrikstorlek för mycket små skärmar */
+        font-size: 8vw; /* Anpassa rubrikstorlek */
     }
 
     h4 {
-        font-size: 5vw; /* Större H4-storlek för mycket små skärmar */
+        font-size: 6vw; /* Anpassa underrubrikstorlek */
     }
 
-    p {
-        font-size: 9vw; /* Ökad styckestextstorlek för att göra texten mer läsbar */
-        line-height: 1.6; /* Radavstånd för att förbättra läsbarheten */
-        margin-bottom: 1.5em; /* Ökat avstånd mellan stycken */
-        padding: 0 5%; /* Lägger till padding för att ge mer utrymme på sidorna */
-        color: #333; /* Mörk färg för bättre kontrast och läsbarhet */
+    p, ul, li {
+        font-size: 5vw; /* Större textstorlek för stycken och listor */
+        line-height: 1.8; /* Ökad radavstånd för bättre läsbarhet */
+        margin-bottom: 1.5em; /* Avstånd mellan textblock */
+        padding: 0 5%; /* Extra padding på sidorna för bättre luft */
+        color: #333; /* Kontrast för läsbarhet */
     }
 
-    .grid-container, .StartPage-div-grid, .StartPage-div-grid4, .div-grid-section5 {
-        grid-template-columns: 1fr; /* En kolumn för alla skärmar mindre än 480px */
-        width: 90vw; /* Justera bredden */
+    .grid-container, .StartPage-div-grid, .StartPage-div-grid4 {
+        grid-template-columns: 1fr; /* En kolumn för mindre skärmar */
+        width: 100%;
     }
 }
 
+/* Små skärmar (481px till 768px) */
 @media (min-width: 481px) and (max-width: 768px) {
     h1 {
-        font-size: 7vw; /* Större rubrikstorlek för små skärmar */
+        font-size: 7vw;
     }
 
     h4 {
-        font-size: 4.5vw; /* Större H4-storlek för små skärmar */
+        font-size: 5vw;
     }
 
-    p {
-        font-size: 7vw; /* Styckestextstorlek för bättre läsbarhet */
-        line-height: 1.6; /* Radavstånd för att förbättra läsbarheten */
-        margin-bottom: 1.5em; /* Ökat avstånd mellan stycken */
-        padding: 0 5%; /* Lägger till padding för att ge mer utrymme på sidorna */
-        color: #333; /* Mörk färg för bättre kontrast och läsbarhet */
-    }
-
-    .grid-container, .StartPage-div-grid, .StartPage-div-grid4, .div-grid-section5 {
-        grid-template-columns: 1fr; /* En kolumn för små skärmar */
-        width: 90vw; /* Justera bredden */
+    p, ul, li {
+        font-size: 4vw;
+        line-height: 1.7;
+        margin-bottom: 1.5em;
+        padding: 0 5%;
+        color: #333;
     }
 }
 
+/* Mellanstora skärmar (769px till 1024px) */
 @media (min-width: 769px) and (max-width: 1024px) {
     h1 {
-        font-size: 5.5vw; /* Rubrikstorlek för medelstora skärmar */
+        font-size: 6vw;
     }
 
     h4 {
-        font-size: 4vw; /* H4-storlek för medelstora skärmar */
+        font-size: 4.5vw;
     }
 
-    p {
-        font-size: 5.5vw; /* Styckestextstorlek för bättre läsbarhet */
-        line-height: 1.5; /* Radavstånd för att förbättra läsbarheten */
-        margin-bottom: 1em; /* Lägger till lite avstånd mellan stycken */
-        padding: 0 2%; /* Lägger till padding för att ge mer utrymme på sidorna */
-        color: #333; /* Mörk färg för bättre kontrast och läsbarhet */
+    p, ul, li {
+        font-size: 3vw;
+        line-height: 1.6;
+        margin-bottom: 1.2em;
+        padding: 0 3%;
+        color: #333;
     }
 }
+
+
 
 
 
