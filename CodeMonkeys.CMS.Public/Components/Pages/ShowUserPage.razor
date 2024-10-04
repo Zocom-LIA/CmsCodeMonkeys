@@ -39,11 +39,32 @@
             SetError($"No such site: {SiteId}");
             WebPage = NoSuchSitePage(SiteId);
         }
-        if (PageName == null)
+        else
         {
-            WebPage = Site.LandingPage ?? NoLandingPageConfiguredPage(SiteId);
-            SetLoading(false);//TODO handle exceptions
-            return;
+            if (PageName == null)
+            {
+                if (Site.LandingPage == null)
+                {
+                    WebPage = NoLandingPageConfiguredPage(SiteId);
+                }
+                else
+                {
+                    WebPage = Site.LandingPage;
+                        await StatsRepository.UpdatePageCountAsync(SiteId, WebPage.WebPageId, NavigationManager.ToBaseRelativePath(NavigationManager.Uri));
+                }
+            }
+            else
+            {
+                WebPage = FindPage(Site, PageName);
+                if (WebPage == null)
+                {
+                    WebPage = NoSuchPagePage(PageName);
+                }
+                else
+                {
+                        await StatsRepository.UpdatePageCountAsync(SiteId, WebPage.WebPageId, NavigationManager.ToBaseRelativePath(NavigationManager.Uri));
+                }
+            }
         }
         SetLoading(false);
     }
