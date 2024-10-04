@@ -17,8 +17,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Configuration
             builder.Property(s => s.Name).IsRequired().HasMaxLength(50);
             builder.HasOne(s => s.WebPage).WithMany(wp => wp.Sections).HasForeignKey(s => s.WebPageId);
             builder.HasMany(s => s.ContentItems).WithOne(ci => ci.Section).HasForeignKey(ci => ci.SectionId);
-
-            // Add any custom configurations or constraints here
         }
     }
 }

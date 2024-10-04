@@ -197,5 +197,10 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites
             public string Name { get; set; }
             public int LandingPageId { get; set; } = NoLandingPage;
         }
+
+        private int GetSiteVisits(int siteId)
+        {
+            return VisitCounts.ContainsKey(siteId) ? VisitCounts[siteId] : 0;
+        }
     }
 }

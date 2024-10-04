@@ -58,8 +58,8 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.ContentItems
                 _section1 = await EnsureSectionAsync(SectionNames.Header.ToString());
                 _section2 = await EnsureSectionAsync(SectionNames.Body.ToString());
                 _section4 = await EnsureSectionAsync(SectionNames.Footer.ToString());
-                _section3 = await EnsureSectionAsync(SectionNames.Toolbar.ToString());
-                // _section3 = new Section { SectionId = 3, Name = "Toolbar", Color = "#fefefe", WebPageId = WebPageId };
+                //_section3 = await EnsureSectionAsync(SectionNames.Toolbar.ToString());
+                _section3 = new Section { SectionId = 3, Name = "Toolbar", Color = "#fefefe", WebPageId = WebPageId };
 
                 _sections = new()
             {
