@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeMonkeys.CMS.Public.Shared.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240920141508_Init")]
-    partial class Init
+    [Migration("20241004095212_NewToolbar")]
+    partial class NewToolbar
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -134,9 +134,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PageVisits")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SiteId")
                         .HasColumnType("int");
 
                     b.HasKey("PageStatsId");
@@ -413,13 +410,11 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .WithMany()
                         .HasForeignKey("AuthorId");
 
-                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", "WebPage")
+                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", null)
                         .WithMany("Contents")
                         .HasForeignKey("WebPageId");
 
                     b.Navigation("Author");
-
-                    b.Navigation("WebPage");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Menu", b =>
