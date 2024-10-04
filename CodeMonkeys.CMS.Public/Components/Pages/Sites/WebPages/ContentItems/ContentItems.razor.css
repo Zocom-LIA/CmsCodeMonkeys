@@ -19,9 +19,12 @@
 
 .box {
   padding: 20px;
-  text-align: center;
   flex-grow: 1;
   /* Låt boxarna växa för att fylla den återstående bredden */
+}
+
+.box h4 {
+  text-align: center;
 }
 
 .box1 {
@@ -54,6 +57,7 @@
 .list-container input {
   /* Se till att inga regler åsidosätter inline-styling */
   font-size: inherit;
+  text-align: inherit;
 }
 
 .list-container ul {
@@ -62,13 +66,26 @@
   padding: 0;
   /* Optional: Remove padding */
   margin: 0;
+
   /* Optional: Remove margin */
 }
+.Toolbaren{
+  position: fixed;
+    top: 18%;
+    left: 90%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    z-index: 1000;
+}
+
 
 .color-picker {
   position: fixed;
-  top: 15%;
-  left: 70%;
+  top: 33%;
+  left: 90%;
   transform: translate(-50%, -50%);
   padding: 20px;
   background-color: rgba(255, 255, 255, 0.9);
@@ -76,4 +93,16 @@
   border-radius: 5px;
   z-index: 1000;
   /* Ensure it is above other content */
+}
+
+.TextEditor {
+  position: fixed;
+  top: 58%;
+  left: 90%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  z-index: 1000;
 }

@@ -298,6 +298,14 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
             StateHasChanged();
         }
 
+        private async Task SaveTextAlignAsync(ContentItem contentItem, string newTextAlign)
+        {
+            contentItem.TextAlign = newTextAlign;
+            await ContentItemService.UpdateContentItemAsync(contentItem);
+            StateHasChanged(); // Uppdatera sidan så att den reflekterar ändringen
+        }
+
+
 
         private void ChangeFontSize(ContentItem contentItem, int change)
         {
