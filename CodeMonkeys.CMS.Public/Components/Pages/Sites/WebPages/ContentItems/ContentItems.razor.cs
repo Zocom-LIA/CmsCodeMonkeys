@@ -4,6 +4,8 @@ using CodeMonkeys.CMS.Public.Shared.Services;
 
 using Microsoft.AspNetCore.Components;
 
+using System.Runtime.CompilerServices;
+
 namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
 {
     public partial class ContentItems : AuthenticationBaseComponent<ContentItems>
@@ -44,7 +46,8 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogError(ex, "[Init Site: {0} Page: {0}] Error loading content items for web page.", SiteId, WebPageId);
+                    LogError(new { Method = nameof(this.OnInitializedAsync), SiteId = SiteId, WebPageId = WebPageId },
+                        "Error loading content items for web page.", ex);
                 }
             });
         }
@@ -62,7 +65,8 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Error loading sections for web page {0}", WebPageId);
+                LogError(new { Method = nameof(this.LoadSectionsAsync), SiteId = SiteId, WebPageId = WebPageId },
+                    "Error loading sections for web page.", ex);
             }
         }
 
@@ -81,7 +85,8 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Error ensuring section {0} for web page {1}", name, WebPageId);
+                LogError(new { Method = nameof(this.EnsureSectionAsync), SiteId = SiteId, WebPageId = WebPageId, SectionName = name },
+                    "Error ensuring section for web page.", ex);
                 throw;
             }
         }
@@ -110,7 +115,8 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
                 }
                 else
                 {
-                    Logger.LogWarning("[OpenColorPicker Site: {0} Page: {0}] Section with ID {0} does not exist.", SiteId, WebPageId, boxNumber);
+                    LogWarning(new { Method = nameof(this.OpenColorPicker), SiteId = SiteId, WebPageId = WebPageId },
+                        "Section with ID {0} does not exist.", boxNumber);
                     ErrorMessage = "Error loading color picker.";
                 }
             }
@@ -118,7 +124,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
 
         private async Task SaveColorAsync()
         {
-            if (_sections.TryGetValue(currentBox, out var section))
+            if (TryGetSection(currentBox, out var section))
             {
                 section.Color = selectedColor; // Uppdatera färgen lokalt också
                 await SectionService.SaveSectionColorAsync(currentBox, selectedColor); // Spara i backend
@@ -131,7 +137,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
         {
             if (!string.IsNullOrWhiteSpace(newContentItemText))
             {
-                if (_sections.TryGetValue(selectedList, out var section))
+                if (TryGetSection(selectedList, out var section))
                 {
                     section.ContentItems ??= new List<ContentItem>();
                     var contentItems = section.ContentItems;
@@ -160,7 +166,8 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
                 }
                 else
                 {
-                    Logger.LogWarning("Section with ID {0} does not exist.", selectedList);
+                    LogWarning(new { Method = nameof(this.AddContentItem), SiteId = SiteId, WebPageId = WebPageId, SectionId = selectedList },
+                        "Error adding content item to section.");
                 }
             }
         }
@@ -192,7 +199,8 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
         {
             if (ContentId <= 0)
             {
-                Logger.LogWarning("Invalid ContentItemId: {0}", ContentId);
+                LogWarning(new { Method = nameof(this.UpdateContentItemSectionAsync), SiteId = SiteId, WebPageId = WebPageId },
+                    "Invalid ContentItemId: {0}", ContentId);
                 return; // Prevent further execution
             }
 
@@ -210,14 +218,15 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
 
             if (draggedItem.ContentId <= 0) // Kontrollera ContentId istället
             {
-                Logger.LogWarning("[Edit Site:{0}, Page:{1}]: Attempting to drop an invalid content {2}.", SiteId, WebPageId, draggedItem.ContentId);
+                LogWarning(new { Method = nameof(this.OnDrop), SiteId = SiteId, WebPageId = WebPageId },
+                    "Attempting to drop an invalid content {0}.", draggedItem.ContentId);
                 return; // Avbryt om ID är ogiltigt
             }
 
             var sourceSectionId = draggedItem.SectionId;
 
-            if (_sections.TryGetValue(sourceSectionId, out var sourceSection) &&
-                _sections.TryGetValue(targetSectionId, out var targetSection))
+            if (TryGetSection(sourceSectionId, out var sourceSection) &&
+                TryGetSection(targetSectionId, out var targetSection))
             {
                 // Ta bort från källsektionen
                 sourceSection.ContentItems.Remove(draggedItem);
@@ -272,7 +281,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
         private async Task RemoveAllContentItemsAsync()
         {
             // Gå igenom alla sektioner och ta bort deras innehåll
-            foreach (var section in _sections.Values)
+            foreach (var section in _sections)
             {
                 // Ta bort alla content items i sektionen
                 var contentItems = section.ContentItems.ToList(); // Hämta en lista med innehållsobjekt
@@ -310,7 +319,8 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
                 return true;
             }
 
-            Logger.LogWarning("[TryGetSection Site: {0} Page: {1}] Section with ID {2} does not exist.", SiteId, WebPageId, currentSection);
+            LogWarning(new { Method = nameof(this.TryGetSection), SiteId = SiteId, WebPageId = WebPageId },
+                "Section with ID {0} does not exist.", currentSection);
             ErrorMessage = "Error loading color picker.";
 
             section = null!;
