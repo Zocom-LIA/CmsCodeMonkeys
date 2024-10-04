@@ -1,7 +1,7 @@
 ﻿using CodeMonkeys.CMS.Public.Components.Shared;
 using CodeMonkeys.CMS.Public.Components.Shared.UI;
 using CodeMonkeys.CMS.Public.Shared.Entities;
-
+using CodeMonkeys.CMS.Public.Shared.Services;
 using Microsoft.AspNetCore.Components;
 
 namespace CodeMonkeys.CMS.Public.Components.Pages.Sites
@@ -10,6 +10,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites
     {
         [SupplyParameterFromForm]
         private SiteModel Site { get; set; } = new SiteModel();
+        [Inject] private IPageStatsService PageStatsService { get; set; }
 
         private List<Site> Sites = [];
 
@@ -21,6 +22,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites
         private EventCallback OnConfirm;
         private EventCallback OnCancel;
         private Dictionary<int, string> PageOptions = new();
+        private Dictionary<int, int> VisitCounts = new();
 
         private const int NoLandingPage = -1; //Apparently, you cannot key a dictionary on a nullable type. Hopefully, we will never have to deal with a database that assigns this number to anything.
 
@@ -33,6 +35,10 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites
             if (Confirmation == null)
             {
                 Confirmation = new ConfirmationDialog();
+            }
+            foreach (var site in Sites)
+            {
+                VisitCounts.Add(site.SiteId, (await PageStatsService.GetPageStatsAsync(site.SiteId)).Select(s => s.PageVisits).Sum());
             }
         }
 
@@ -102,14 +108,13 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites
                 var site = new Site
                 {
                     Name = Site.Name,
-                    CreatedDate = DateTime.Now,
-                    LastModifiedDate = DateTime.Now,
-                    Creator = User
+                    LandingPageId = Site.LandingPageId != NoLandingPage ? Site.LandingPageId : null,
+                    CreatorId = User?.Id
                 };
 
-                Sites.Add(site);
+                site = await SiteService.CreateSiteAsync(site);
 
-                await SiteService.CreateSiteAsync(site);
+                Sites.Add(site);
             }
             else
             {
@@ -123,7 +128,15 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites
                 site.SiteId = Site.SiteId > 0 ? Site.SiteId : Sites.Aggregate((cur, max) => cur.SiteId > max.SiteId ? cur : max).SiteId + 1;
                 site.Name = Site.Name;
                 site.LastModifiedDate = DateTime.Now;
-                site.LandingPageId = (Site.LandingPageId == NoLandingPage) ? null : Site.LandingPageId;
+                if (Site.LandingPageId == NoLandingPage)
+                {
+                    site.LandingPageId = null;
+                    site.LandingPage = null;
+                }
+                else
+                {
+                    site.LandingPageId = Site.LandingPageId;
+                }
 
                 await SiteService.UpdateSiteAsync(site);
             }
@@ -183,6 +196,11 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites
             public int SiteId { get; set; }
             public string Name { get; set; }
             public int LandingPageId { get; set; } = NoLandingPage;
+        }
+
+        private int GetSiteVisits(int siteId)
+        {
+            return VisitCounts.ContainsKey(siteId) ? VisitCounts[siteId] : 0;
         }
     }
 }

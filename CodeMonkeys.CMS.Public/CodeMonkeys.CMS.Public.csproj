@@ -9,9 +9,17 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Components\Pages\Contents\**" />
+	  <Content Remove="Components\Pages\Contents\**" />
+	  <EmbeddedResource Remove="Components\Pages\Contents\**" />
+	  <None Remove="Components\Pages\Contents\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.8" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.8" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8" />
 	</ItemGroup>
@@ -28,10 +36,6 @@
 
 	<ItemGroup>
 	  <Folder Include="wwwroot\Image\" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Components\Pages\Contents\" />
 	</ItemGroup>
 
 </Project>

@@ -1,5 +1,9 @@
 @inherits BaseComponent<VisitorViewer>
-@rendermode InteractiveServer
+
+    @if (!string.IsNullOrEmpty(Title))
+    {
+        <PageTitle>@Title</PageTitle>
+    }
 
 @if (IsLoading)
 {
@@ -10,12 +14,6 @@
 else
 {
     <div class="visitor-view">
-    @if(PageTitle!=null){
-        <header>
-            <h1>@PageTitle</h1>
-        </header>
-    }
-       
         <div class="visitor-body">
             @ChildContent
         </div>

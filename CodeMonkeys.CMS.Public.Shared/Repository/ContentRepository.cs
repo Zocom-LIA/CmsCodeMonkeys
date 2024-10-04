@@ -1,42 +1,70 @@
-﻿using CodeMonkeys.CMS.Public.Shared.Data;
+﻿using AutoMapper;
+
+using CodeMonkeys.CMS.Public.Shared.Data;
 using CodeMonkeys.CMS.Public.Shared.Entities;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Extensions.Logging;
 
 namespace CodeMonkeys.CMS.Public.Shared.Repository
 {
-    public class ContentRepository : IContentRepository
+    public class ContentRepository : RepositoryBase, IContentRepository
     {
-        public ContentRepository(IDbContextFactory<ApplicationDbContext> contextFactory)
-        {
-            if (contextFactory == null) throw new ArgumentNullException(nameof(contextFactory), "The context factory must not be null.");
-            Context = contextFactory?.CreateDbContext() ?? throw new ArgumentNullException(nameof(contextFactory), "The context factory must not return a null context.");
-        }
-
-        public ApplicationDbContext Context { get; }
+        public ContentRepository(IDbContextFactory<ApplicationDbContext> contextFactory, IMapper mapper, ILogger<ContentRepository> logger) : base(contextFactory, mapper, logger) { }
 
         public async Task<Content> CreateContentAsync(Content content)
         {
-            EntityEntry<Content> entry = await Context.Contents.AddAsync(content);
-            await Context.SaveChangesAsync();
+            if (content == null) throw new ArgumentNullException(nameof(content), "Content must not be null.");
 
-            return entry.Entity;
+            var context = GetContext();
+
+            try
+            {
+                EntityEntry<Content> entry = await context.Contents.AddAsync(content);
+                await context.SaveChangesAsync();
+                content = entry.Entity;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("An error occurred while creating the content.", ex);
+            }
+            finally
+            {
+                await context.DisposeAsync();
+            }
+
+            return content;
         }
 
         // Consider adding web page ID to the method signature
-        public async Task<Content> DeleteContentAsync(int contentId)
+        public async Task<Content?> DeleteContentAsync(int contentId)
         {
             if (contentId <= 0) throw new ArgumentOutOfRangeException("ContentId must be greater than zero.");
 
-            var content = await Context.Contents.FindAsync(new object[] { contentId });
+            var context = GetContext();
+            Content? content;
 
-            if (content == null) throw new InvalidOperationException($"Content with ID '{contentId}' not found.");
+            try
+            {
+                content = await context.Contents.FindAsync(contentId);
+                if (content == null) throw new ElementNotFoundException($"Content with ID '{contentId}' not found.");
 
-            var entry = Context.Contents.Remove(content);
-            await Context.SaveChangesAsync();
+                EntityEntry<Content> entry = context.Contents.Remove(content);
+                await context.SaveChangesAsync();
 
-            return entry.Entity;
+                content = entry.Entity;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("An error occurred while deleting the content.", ex);
+            }
+            finally
+            {
+                await context.DisposeAsync();
+            }
+
+            return content;
         }
 
         public async Task<IEnumerable<Content>> GetWebPageContentsAsync(int pageId, int pageIndex = 0, int pageSize = 10)
@@ -44,20 +72,60 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             if (pageIndex < 0) throw new ArgumentOutOfRangeException("PageIndex must be a positive number.");
             if (pageSize <= 0) throw new ArgumentOutOfRangeException("PageSize must be greater than zero.");
 
-            return await Context.Pages
-                .Where(page => page.WebPageId == pageId)
-                .Include(page => page.Contents)
-                .SelectMany(page => page.Contents)
-                .Include(content => content.Author)
-                .ToListAsync();
+            var context = GetContext();
+            IEnumerable<Content> contents = Enumerable.Empty<Content>();
+
+            try
+            {
+                contents = await context.Pages
+                    .Where(page => page.WebPageId == pageId)
+                    .Include(page => page.Contents)
+                    .SelectMany(page => page.Contents)
+                    .Include(content => content.Author)
+                    .AsNoTracking()
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("An error occurred while retrieving the contents.", ex);
+            }
+            finally
+            {
+                await context.DisposeAsync();
+            }
+
+            return contents;
         }
 
         public async Task<IEnumerable<Content>> UpdateContentsAsync(WebPage webPage, IEnumerable<Content> contents)
         {
-            Context.Contents.UpdateRange(contents);
-            await Context.SaveChangesAsync();
+            if (webPage == null) throw new ArgumentNullException(nameof(webPage));
+            if (contents == null) throw new ArgumentNullException(nameof(contents));
 
-            return webPage.Contents.OrderBy(content => content.OrdinalNumber);
+            var context = GetContext();
+            var transaction = await context.Database.BeginTransactionAsync();
+
+            try
+            {
+                context.Set<Content>().UpdateRange(contents);
+
+                await context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                contents = await context.Contents.Where(content => content.ContentId == webPage.WebPageId).AsNoTracking().ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw new InvalidOperationException("An error occurred while updating the contents.", ex);
+            }
+            finally
+            {
+                await context.DisposeAsync();
+                await transaction.DisposeAsync();
+            }
+
+            return contents;
         }
 
         public async Task<IEnumerable<Content>> UpdateOrdinalNumbersAsync(ICollection<Content> contents, bool persist)
@@ -66,11 +134,36 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 
             if (persist)
             {
-                Context.Contents.UpdateRange(contents);
-                await Context.SaveChangesAsync();
+                var context = GetContext();
+                var transaction = await context.Database.BeginTransactionAsync();
+                try
+                {
+                    context.Set<Content>().UpdateRange(contents);
+
+                    await context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    var page = context.Pages
+                        .Where(page => page.WebPageId == contents.First().WebPageId)
+                        .Include(page => page.Contents);
+                    contents = await page
+                        .SelectMany(page => page.Contents)
+                        .OrderBy(content => content.OrdinalNumber)
+                        .ToListAsync();
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    throw new InvalidOperationException("An error occurred while updating the ordinal numbers.", ex);
+                }
+                finally
+                {
+                    await context.DisposeAsync();
+                    await transaction.DisposeAsync();
+                }
             }
 
-            return contents.OrderBy(content => content.OrdinalNumber);
+            return contents;
         }
     }
 }

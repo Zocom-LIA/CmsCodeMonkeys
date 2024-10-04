@@ -4,17 +4,41 @@
 
 <CascadingAuthenticationState>
     <div class="page">
-        <NavMenu />
+        @if (showNavigation)
+        {
+            <NavMenu />
+        }
         <main class="mt-5">
-            <article class="content px-4">
+            <article class="content">
                 @Body
             </article>
         </main>
     </div>
-    <footer class="footer">
-        <!-- Here we added the class="footer" -->
-        <div class="info">
-            <p>&copy; 2024 Code Monkeys</p>
-        </div>
-    </footer>
+    @if (showNavigation)
+    {
+        <footer class="footer">
+            <!-- Here we added the class="footer" -->
+            <div class="info">
+                <p>&copy; 2024 Code Monkeys</p>
+            </div>
+        </footer>
+    }
 </CascadingAuthenticationState>
+
+@inject NavigationManager Navigation
+
+@code {
+    private bool showNavigation = true;
+
+    protected override void OnInitialized()
+    {
+        // Determine the current page and set showNavMenu accordingly
+        var uri = Navigation.ToBaseRelativePath(Navigation.Uri).ToLower();
+
+        // Example: Hide NavMenu on specific page
+        if (uri.ToLower().StartsWith("content"))
+        {
+            showNavigation = false;
+        }
+    }
+}

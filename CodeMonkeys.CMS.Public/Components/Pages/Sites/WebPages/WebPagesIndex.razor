@@ -21,39 +21,61 @@
             <h3>Page Overview for @Site?.Name</h3>
             <button type="button" class="btn btn-primary" @onclick="async() => await AddOrUpdatePageAsync()">Create new page</button>
         </div>
-
-        @if (Site != null && Site.Pages.Any())
+        @if (Site == null)
         {
-            <div class="webpages-row mt-4">
-                @foreach (var webPage in Site.Pages)
-                {
-                    <div class="webpages-col-md-4 webpages-mb-4">
-                        <div class="webpages-card h-100">
-                            <div class="webpages-card-header text-center font-weight-bold">
-                                @webPage.Title
-                            </div>
-                            <div class="webpages-card-body">
-                                <div class="webpages-empty-box bg-light" style="height: 150px;">
-                                    <!-- Additional content can go here -->
-                                </div>
-                            </div>
-                            <div class="webpages-card-actions">
-                                <button class="btn btn-primary" @onclick="async () => await AddOrUpdatePageAsync(webPage.WebPageId)">Edit page title</button>
-                                <button class="btn btn-secondary" @onclick="async () => await EditContentsAsync(webPage.WebPageId)">Edit contents</button>
-                                <button class="btn btn-danger" @onclick="async () => await DeletePageAsync(webPage.WebPageId)">Delete</button>
-                                <a class="btn btn-secondary" href="/userPages/@Site.SiteId/@webPage.WebPageId">Go to page</a>
-                            </div>
-                            <div class="webpages-card-footer text-muted">
-                                Last Modified: @webPage.LastModifiedDate.ToString("yyyy-MM-dd")
-                            </div>
-                        </div>
-                    </div>
-                }
+            <div class="alert-danger">
+                @* TODO: Add a link to contact the webmaster *@
+                <p>There seems to be no site that matches your request. If this error persists, please, contact the webmaster at ...</p>
             </div>
         }
-        <div>
-            <button type="button" class="w-100 btn btn btn-primary" @onclick="async () => await AddOrUpdatePageAsync()">Create new Page!</button>
-        </div>
+        else
+        {
+            if (!Site.Pages.Any())
+            {
+                <div class="alert-info">
+                    <p>There are no pages for this site yet. Click the button above to create a new page.</p>
+                </div>
+            }
+            else
+            {
+                <div class="webpages-row mt-4">
+                    @foreach (var webPage in Site.Pages)
+                    {
+                        <div class="webpages-col-md-4 webpages-mb-4">
+                            <div class="webpages-card h-100">
+                                <div class="webpages-card-header text-center font-weight-bold">
+                                    @webPage.Title
+                                </div>
+                                <div class="webpages-card-body">
+                                    <div class="webpages-empty-box bg-light" style="height: 150px;">
+                                        <!-- Additional content can go here -->
+                                    </div>
+                                </div>
+                                <div class="webpages-card-actions">
+                                    <button class="btn btn-primary" @onclick="async () => await AddOrUpdatePageAsync(webPage.WebPageId)">Edit page title</button>
+                                    <button class="btn btn-secondary" @onclick="async () => await EditContentsAsync(webPage.WebPageId)">Edit contents</button>
+                                    <button class="btn btn-danger" @onclick="async () => await DeletePageAsync(webPage.WebPageId)">Delete</button>
+                                    <a class="btn btn-secondary" href="/content/@(webPage.WebPageId)">Go to page</a>
+                                </div>
+                                <div class="webpages-card-footer text-muted">
+                                    <div class="container">
+                                        <div>
+                                            Visits: @PageVisitCount(webPage.WebPageId)
+                                        </div>
+                                        <div>
+                                            Last Modified: @webPage.LastModifiedDate.ToString("yyyy-MM-dd")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            <div>
+                <button type="button" class="w-100 btn btn btn-primary" @onclick="async () => await AddOrUpdatePageAsync()">Create new Page!</button>
+            </div>
+        }
     </div>
 
     <ConfirmationDialog @ref="Confirmation" Title="@ConfirmationTitle"
@@ -72,7 +94,7 @@
                     <InputText @bind-Value="Input.Name" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" />
                     <label for="name" class="form-label">Site Name</label>
                     <ValidationMessage For="() => Input.Name" class="text-danger" />
-                </div>                
+                </div>
             </EditForm>
         }
         else
@@ -85,7 +107,7 @@
                     <InputText @bind-Value="_pageModel.Title" class="form-control" autocomplete="name" aria-required="true" placeholder="Unique site name" />
                     <label for="name" class="form-label">Site Name</label>
                     <ValidationMessage For="() => _pageModel.Title" class="text-danger" />
-                 </div>
+                </div>
             </EditForm>
         }
     </ConfirmationDialog>
