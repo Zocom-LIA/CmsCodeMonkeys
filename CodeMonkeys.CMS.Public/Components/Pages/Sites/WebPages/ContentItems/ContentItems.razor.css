@@ -41,6 +41,7 @@
 
 .toolbar {
     background-color: lightcoral;
+    text-align: center;
     width: 400px;
     /* Fasta bredden för box3 */
     overflow: auto;
@@ -51,15 +52,31 @@
     /* Se till att inga regler åsidosätter inline-styling */
     font-size: inherit;
 }
-
+/* Se till att inga regler åsidosätter inline-styling */
+font-size: inherit;
 .list-container ul {
+    list-style-type: none;
+    /* Remove bullet points */
     list-style-type: none;
     /* Remove bullet points */
     padding: 0;
     /* Optional: Remove padding */
     margin: 0;
     /* Optional: Remove margin */
+    .Toolbaren
+
+{
+    position: fixed;
+    top: 18%;
+    left: 90%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    z-index: 1000;
 }
+
 
 .color-picker {
     position: fixed;

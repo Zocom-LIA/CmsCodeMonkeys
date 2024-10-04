@@ -65,6 +65,8 @@
                     <option value="@(section)">@(section.Name)</option>
                 }
             </select>
+            <br />
+              <br />
             <button @onclick="AddContentItem">Lägg till</button>
             <button @onclick="RemoveAllContentItemsAsync">Rensa Allt</button>
         </div>
@@ -95,13 +97,41 @@
         @ondragend="() => OnDragEnd(contentItem)">
 
         @if(contentItem.IsEditing)
-        {
+        
+        {    <div style="text-align:@($"{contentItem.TextAlign} !important")">
+            <span style="color:@contentItem.Color; font-size:@($"{contentItem.FontSize}px"); font-weight:@(contentItem.IsBold ? "bold" : "normal"); font-style:@(contentItem.IsItalic ? "italic" : "normal"); font-family:@contentItem.FontFamily;"
+                @onclick="() => ToggleEdit(contentItem)">
+                @contentItem.Text
+                @if(contentItem.IsLinkEnabled && !string.IsNullOrEmpty(contentItem.LinkUrl) && !string.IsNullOrEmpty(contentItem.LinkDescription))
+                {
+                    <a href="https://@contentItem.LinkUrl" target="_blank" style="color:blue; text-decoration:underline;" @onclick:stopPropagation>-@contentItem.LinkDescription</a>
+                }
+                else if (!string.IsNullOrEmpty(contentItem.LinkDescription))
+                {
+                    <span>- @contentItem.LinkDescription</span>
+                }
+            </span>
+        </div>
+            <div class="TextEditor">
+            <h4>Text Editor</h4>
+            
+            <label>Text:</label>
             <input @bind="contentItem.Text" />
-            <button @onclick="() => SaveEdit(contentItem)">Spara</button>
+            <br /> <br />
+            <button style="mr-4" @onclick="() => SaveEdit(contentItem)">Spara</button>
             <button @onclick="() => RemoveContentItemAsync(contentItem)">Ta bort</button>
-
-            <!-- Font and Color Options -->
+ <br />
+  <br />
+            <!-- Font, Color och Text Align Options -->
             <div>
+                <label>Text Align:
+                    <select @bind="contentItem.TextAlign">
+                        <option value="left">Vänster</option>
+                        <option value="center">Centrerad</option>
+                        <option value="right">Höger</option>
+                    </select>
+                </label>
+                <br />
                 <label>Font Family:
                     <select @bind="contentItem.FontFamily">
                         <option value="">Välj en typsnitt</option>
@@ -125,16 +155,14 @@
                 <button @onclick="() => ChangeFontSize(contentItem, 1)">+</button>
                 <button @onclick="() => ChangeFontSize(contentItem, -1)">-</button>
                 </label>
-                
             </div>
-            
-            <!-- Bold, Italic, and Link options -->
+
+            <!-- Bold, Italic, och Link options -->
             <div>
                 <label><input type="checkbox" @bind="contentItem.IsBold" /> Bold</label><br />
                 <label><input type="checkbox" @bind="contentItem.IsItalic" /> Italic</label><br />
                 <label><input type="checkbox" @bind="contentItem.IsLinkEnabled" /> Enable Link</label>
                 
-
                 @if(contentItem.IsLinkEnabled)
                 {
                     <div>
@@ -143,11 +171,13 @@
                     </div>
                 }
             </div>
+            </div>
         }
         else
         {
+        <div style="text-align:@($"{contentItem.TextAlign} !important")">
             <span style="color:@contentItem.Color; font-size:@($"{contentItem.FontSize}px"); font-weight:@(contentItem.IsBold ? "bold" : "normal"); font-style:@(contentItem.IsItalic ? "italic" : "normal"); font-family:@contentItem.FontFamily;"
-                  @onclick="() => ToggleEdit(contentItem)">
+                @onclick="() => ToggleEdit(contentItem)">
                 @contentItem.Text
                 @if(contentItem.IsLinkEnabled && !string.IsNullOrEmpty(contentItem.LinkUrl) && !string.IsNullOrEmpty(contentItem.LinkDescription))
                 {
@@ -157,13 +187,15 @@
                 {
                     <span>- @contentItem.LinkDescription</span>
                 }
-                
             </span>
-            @if(contentItem.ShowEditButton)
-            {
+             @if(contentItem.ShowEditButton)
+            {   
                 <button @onclick="() => StartEdit(contentItem)">Ändra</button>
-                
             }
+        </div>
+
+
+           
         }
     </li>;
 }

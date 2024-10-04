@@ -67,8 +67,6 @@
                                     <div class="sites-card-header text-center font-weight-bold">
                                         @site.Name
                                     </div>
-
-
                                     <div class="sites-card-body">
                                         <div class="sites-empty-box bg-light">
                                             @if (site.LandingPage?.WebPageId != null)
@@ -85,7 +83,6 @@
                                             }
                                         </div>
                                     </div>
-
                                     <div class="sites-card-actions">
                                         <button type="button" class="btn btn-primary sites-btn sites-btn-edit" @onclick="async () => await  AddOrUpdateSite(site.SiteId)">Edit Site Properties</button>
                                         <a class="btn btn-secondary sites-btn sites-btn-overview" href="/sites/@site.SiteId/webpages">Manage Pages</a>
