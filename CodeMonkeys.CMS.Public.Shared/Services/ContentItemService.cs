@@ -47,7 +47,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         {
             await _repository.DeleteContentItemAsync(contentItem);
         }
-        
+
         public async Task UpdateSectionIdAsync(int contentItemId, int newSectionId)
         {
             var contentItem = await _repository.GetContentItemByIdAsync(contentItemId);
@@ -58,25 +58,13 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
             }
         }
 
-       public async Task UpdateSortOrderAsync(int contentId, int sortOrder)
-{
-    // Logga anropet
-    Console.WriteLine($"Updating sort order for ContentId: {contentId} to SortOrder: {sortOrder}");
-    
-    var contentItem = await _repository.ContentItems.FindAsync(contentId);
-    if (contentItem != null)
-    {
-        contentItem.SortOrder = sortOrder;
-        await _repository.SaveChangesAsync();
-    }
-    else
-    {
-        Console.WriteLine($"ContentItem with ContentId: {contentId} not found.");
-    }
-}
+        public async Task UpdateSortOrderAsync(int contentId, int sortOrder)
+        {
+            await _repository.UpdateSortOrderAsync(contentId, sortOrder);
+        }
 
 
-       
+
 
     }
 }

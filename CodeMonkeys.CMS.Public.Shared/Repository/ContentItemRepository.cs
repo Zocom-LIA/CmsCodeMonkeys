@@ -226,23 +226,46 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
         }
 
         public async Task<ContentItem?> GetContentItemByIdAsync(int contentItemId, CancellationToken cancellation = default)
-{
-    var context = GetContext();
+        {
+            var context = GetContext();
 
-    try
-    {
-        return await context.ContentItems.FindAsync(contentItemId, cancellation);
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "Error getting content item");
-        throw;
-    }
-    finally
-    {
-        await context.DisposeAsync();
-    }
-}
+            try
+            {
+                return await context.ContentItems.FindAsync(contentItemId, cancellation);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting content item");
+                throw;
+            }
+            finally
+            {
+                await context.DisposeAsync();
+            }
+        }
 
+        public async Task UpdateSortOrderAsync(int contentId, int sortOrder)
+        {
+            var context = GetContext();
+
+            try
+            {
+                var contentItem = await context.ContentItems.FindAsync(contentId);
+                if (contentItem != null)
+                {
+                    contentItem.SortOrder = sortOrder;
+                    await context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating sort order");
+                throw;
+            }
+            finally
+            {
+                await context.DisposeAsync();
+            }
+        }
     }
 }
