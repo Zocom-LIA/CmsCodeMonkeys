@@ -19,5 +19,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         Task UpdateContentItemAsync(ContentItem contentItem);
         Task UpdateSectionIdAsync(int contentItemId, int newSectionId);
         Task UpdateSortOrderAsync(int contentId, int sortOrder);
+        Task UpdateSortOrderAsync(int contentId, int sortOrder, CancellationToken cancellation = default);
+        Task UpdateSectionIdAsync(int contentItemId, int newSectionId, CancellationToken cancellation = default);
     }
 }

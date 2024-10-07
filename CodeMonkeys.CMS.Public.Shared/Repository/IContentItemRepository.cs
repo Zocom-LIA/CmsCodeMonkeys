@@ -13,5 +13,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
         Task<IEnumerable<ContentItem>> GetContentItemsAsync(int sectionId, CancellationToken cancellation = default);
         Task<Dictionary<int, Section>> GetSectionContentItemsAsync(int webPageId, CancellationToken cancellation = default);
         Task UpdateContentItemAsync(ContentItem contentItem, CancellationToken cancellation = default);
+        Task UpdateSortOrderAsync(int contentId, int sortOrder, CancellationToken cancellation = default);
     }
 }

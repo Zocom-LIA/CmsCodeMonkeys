@@ -20,9 +20,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
 
 
         // Get sections and their ContentItem items if they exist; otherwise, create a new section
-        public async Task<Dictionary<int, Section>> GetSectionContentItemsAsync(int webPageId)
+        public async Task<Dictionary<int, Section>> GetSectionContentItemsAsync(int webPageId, CancellationToken cancellation = default)
         {
-            return await _repository.GetSectionContentItemsAsync(webPageId);
+            return await _repository.GetSectionContentItemsAsync(webPageId, cancellation);
         }
 
         // Start dragging a ContentItem item
@@ -32,25 +32,25 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         }
 
         // Drop the dragged ContentItem item into the target list
-        public async Task MoveContentItemAsync(int newSectionId)
+        public async Task MoveContentItemAsync(int newSectionId, CancellationToken cancellation = default)
         {
             if (DraggedContentItem != null)
             {
                 DraggedContentItem.SectionId = newSectionId;
 
-                await _repository.UpdateContentItemAsync(DraggedContentItem);
+                await _repository.UpdateContentItemAsync(DraggedContentItem, cancellation);
                 DraggedContentItem = null;
             }
         }
 
-        public async Task RemoveContentItemAsync(ContentItem contentItem)
+        public async Task RemoveContentItemAsync(ContentItem contentItem, CancellationToken cancellation = default)
         {
-            await _repository.DeleteContentItemAsync(contentItem);
+            await _repository.DeleteContentItemAsync(contentItem, cancellation);
         }
 
-        public async Task UpdateSectionIdAsync(int contentItemId, int newSectionId)
+        public async Task UpdateSectionIdAsync(int contentItemId, int newSectionId, CancellationToken cancellation = default)
         {
-            var contentItem = await _repository.GetContentItemByIdAsync(contentItemId);
+            var contentItem = await _repository.GetContentItemByIdAsync(contentItemId, cancellation);
             if (contentItem != null)
             {
                 contentItem.SectionId = newSectionId;
@@ -58,13 +58,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
             }
         }
 
-        public async Task UpdateSortOrderAsync(int contentId, int sortOrder)
+        public async Task UpdateSortOrderAsync(int contentId, int sortOrder, CancellationToken cancellation = default)
         {
-            await _repository.UpdateSortOrderAsync(contentId, sortOrder);
+            await _repository.UpdateSortOrderAsync(contentId, sortOrder, cancellation);
         }
-
-
-
-
     }
 }

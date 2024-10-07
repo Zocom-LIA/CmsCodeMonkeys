@@ -143,13 +143,13 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             }
         }
 
-        public async Task<ContentItem?> GetContentItemAsync(int contentItemId, CancellationToken cancellation = default)
+        public async Task<ContentItem?> GetContentItemAsync(int contentId, CancellationToken cancellation = default)
         {
             var context = GetContext();
 
             try
             {
-                return await context.ContentItems.FindAsync(contentItemId, cancellation);
+                return await context.ContentItems.FindAsync(contentId, cancellation);
             }
             catch (Exception ex)
             {
@@ -169,7 +169,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             try
             {
                 return await context.ContentItems
-                    .Where(ci => contentItemIds.Contains(ci.ContentItemId))
+                    .Where(ci => contentItemIds.Contains(ci.ContentId))
                     .ToListAsync(cancellation);
             }
             catch (Exception ex)
@@ -225,13 +225,13 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             }
         }
 
-        public async Task<ContentItem?> GetContentItemByIdAsync(int contentItemId, CancellationToken cancellation = default)
+        public async Task<ContentItem?> GetContentItemByIdAsync(int contentId, CancellationToken cancellation = default)
         {
             var context = GetContext();
 
             try
             {
-                return await context.ContentItems.FindAsync(contentItemId, cancellation);
+                return await context.ContentItems.FindAsync(contentId, cancellation);
             }
             catch (Exception ex)
             {
@@ -244,17 +244,22 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             }
         }
 
-        public async Task UpdateSortOrderAsync(int contentId, int sortOrder)
+        public async Task UpdateSortOrderAsync(int contentId, int sortOrder, CancellationToken cancellation = default)
         {
             var context = GetContext();
 
             try
             {
-                var contentItem = await context.ContentItems.FindAsync(contentId);
+                // Two options to solve the update problem:
+                var contentItem = await context.ContentItems.Where(ci => ci.ContentId == contentId)
+                    .AsTracking() // 1. Specify that the entity is being tracked by the context, and thus changes will be persisted by save changes
+                    .FirstOrDefaultAsync(cancellation);
                 if (contentItem != null)
                 {
                     contentItem.SortOrder = sortOrder;
-                    await context.SaveChangesAsync();
+                    // 2. Use the EntityState.Modified method to specify that the entity has been modified, and thus changes will be persisted by save changes
+                    context.Entry(contentItem).State = EntityState.Modified;
+                    await context.SaveChangesAsync(cancellation);
                 }
             }
             catch (Exception ex)

@@ -4,7 +4,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Entities
 {
     public class ContentItem : Content, IEntity
     {
-        public int ContentItemId { get; set; }
         public int SortOrder { get; set; } // Nytt fält för sortering
         required public string Text { get; set; } = string.Empty;
         public bool IsEditing { get; set; } = false;
