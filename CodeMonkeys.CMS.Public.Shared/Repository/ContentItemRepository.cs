@@ -162,14 +162,14 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             }
         }
 
-        public async Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<int> contentItemIds, CancellationToken cancellation = default)
+        public async Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<int> contentIds, CancellationToken cancellation = default)
         {
             var context = GetContext();
 
             try
             {
                 return await context.ContentItems
-                    .Where(ci => contentItemIds.Contains(ci.ContentId))
+                    .Where(ci => contentIds.Contains(ci.ContentId))
                     .ToListAsync(cancellation);
             }
             catch (Exception ex)

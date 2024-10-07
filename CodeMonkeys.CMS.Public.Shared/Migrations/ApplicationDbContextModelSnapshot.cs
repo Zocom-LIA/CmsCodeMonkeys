@@ -421,7 +421,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.Property<int>("BoxNumber")
                         .HasColumnType("int");
 
-                    b.Property<int>("ContentItemId")
+                    b.Property<int>("ContentId")
                         .HasColumnType("int");
 
                     b.Property<string>("FontFamily")

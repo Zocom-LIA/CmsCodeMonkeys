@@ -202,7 +202,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
         {
             if (ContentId <= 0)
             {
-                Logger.LogWarning("Invalid ContentItemId: {0}", ContentId);
+                Logger.LogWarning("Invalid ContentId: {0}", ContentId);
                 return; // Prevent further execution
             }
 
@@ -210,60 +210,60 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
             await ContentItemService.UpdateSectionIdAsync(ContentId, newSectionId);
         }
 
-private async Task OnDrop(int targetSectionId)
-{
-    if (draggedItem == null)
-    {
-        Logger.LogWarning("No content item is being dragged.");
-        return;
-    }
-
-    if (draggedItem.ContentId <= 0)
-    {
-        Logger.LogWarning("Invalid ContentId: {0}", draggedItem.ContentId);
-        return;
-    }
-
-    var sourceSectionId = draggedItem.SectionId;
-
-    if (_sections.TryGetValue(sourceSectionId, out var sourceSection) &&
-        _sections.TryGetValue(targetSectionId, out var targetSection))
-    {
-        if (sourceSection.ContentItems.Contains(draggedItem))
+        private async Task OnDrop(int targetSectionId)
         {
-            sourceSection.ContentItems.Remove(draggedItem);
-            draggedItem.SectionId = targetSectionId;
-            targetSection.ContentItems.Add(draggedItem);
-
-            // Sort and update order
-            var contentItemsList = targetSection.ContentItems.ToList();
-            for (int i = 0; i < contentItemsList.Count; i++)
+            if (draggedItem == null)
             {
-                contentItemsList[i].SortOrder = i + 1;
-                await UpdateContentItemSortOrderAsync(contentItemsList[i].ContentId, contentItemsList[i].SortOrder);
+                Logger.LogWarning("No content item is being dragged.");
+                return;
             }
 
-            await UpdateContentItemSectionAsync(draggedItem.ContentId, targetSectionId);
-            StateHasChanged();
+            if (draggedItem.ContentId <= 0)
+            {
+                Logger.LogWarning("Invalid ContentId: {0}", draggedItem.ContentId);
+                return;
+            }
+
+            var sourceSectionId = draggedItem.SectionId;
+
+            if (_sections.TryGetValue(sourceSectionId, out var sourceSection) &&
+                _sections.TryGetValue(targetSectionId, out var targetSection))
+            {
+                if (sourceSection.ContentItems.Contains(draggedItem))
+                {
+                    sourceSection.ContentItems.Remove(draggedItem);
+                    draggedItem.SectionId = targetSectionId;
+                    targetSection.ContentItems.Add(draggedItem);
+
+                    // Sort and update order
+                    var contentItemsList = targetSection.ContentItems.ToList();
+                    for (int i = 0; i < contentItemsList.Count; i++)
+                    {
+                        contentItemsList[i].SortOrder = i + 1;
+                        await UpdateContentItemSortOrderAsync(contentItemsList[i].ContentId, contentItemsList[i].SortOrder);
+                    }
+
+                    await UpdateContentItemSectionAsync(draggedItem.ContentId, targetSectionId);
+                    StateHasChanged();
+                }
+                else
+                {
+                    Logger.LogWarning("Dragged item not found in source section.");
+                }
+            }
+            else
+            {
+                Logger.LogWarning("Source or target section not found.");
+            }
         }
-        else
+
+
+
+        private async Task UpdateContentItemSortOrderAsync(int contentId, int sortOrder)
         {
-            Logger.LogWarning("Dragged item not found in source section.");
+            // Uppdatera sorteringsordningen i databasen via ditt ContentItemService
+            await ContentItemService.UpdateSortOrderAsync(contentId, sortOrder);
         }
-    }
-    else
-    {
-        Logger.LogWarning("Source or target section not found.");
-    }
-}
-
-
-
-private async Task UpdateContentItemSortOrderAsync(int contentId, int sortOrder)
-{
-    // Uppdatera sorteringsordningen i databasen via ditt ContentItemService
-    await ContentItemService.UpdateSortOrderAsync(contentId, sortOrder);
-}
 
 
 

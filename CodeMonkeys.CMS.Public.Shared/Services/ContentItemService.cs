@@ -14,7 +14,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         public async Task DeleteContentItemAsync(ContentItem contentItem) => await _repository.DeleteContentItemAsync(contentItem);
         public async Task UpdateContentItemAsync(ContentItem contentItem) => await _repository.UpdateContentItemAsync(contentItem);
         public async Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<ContentItem> contentItems) => await _repository.GetContentItemsAsync(contentItems);
-        public async Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<int> contentItemIds) => await _repository.GetContentItemsAsync(contentItemIds);
+        public async Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<int> contentIds) => await _repository.GetContentItemsAsync(contentIds);
         public async Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<Section> sections) => await _repository.GetContentItemsAsync(sections);
         public async Task<IEnumerable<ContentItem>> GetContentItemsAsync(int sectionId) => await _repository.GetContentItemsAsync(sectionId);
 
@@ -48,9 +48,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
             await _repository.DeleteContentItemAsync(contentItem, cancellation);
         }
 
-        public async Task UpdateSectionIdAsync(int contentItemId, int newSectionId, CancellationToken cancellation = default)
+        public async Task UpdateSectionIdAsync(int ContentId, int newSectionId, CancellationToken cancellation = default)
         {
-            var contentItem = await _repository.GetContentItemByIdAsync(contentItemId, cancellation);
+            var contentItem = await _repository.GetContentItemByIdAsync(ContentId, cancellation);
             if (contentItem != null)
             {
                 contentItem.SectionId = newSectionId;
@@ -66,7 +66,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         public Task MoveContentItemAsync(int newSectionId) => throw new NotImplementedException();
         public Task<Dictionary<int, Section>> GetSectionContentItemsAsync(int webPageId) => throw new NotImplementedException();
         public Task RemoveContentItemAsync(ContentItem contentItem) => throw new NotImplementedException();
-        public Task UpdateSectionIdAsync(int contentItemId, int newSectionId) => throw new NotImplementedException();
+        public Task UpdateSectionIdAsync(int ContentId, int newSectionId) => throw new NotImplementedException();
         public Task UpdateSortOrderAsync(int contentId, int sortOrder) => throw new NotImplementedException();
     }
 }
