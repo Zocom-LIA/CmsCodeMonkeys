@@ -210,41 +210,61 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
             await ContentItemService.UpdateSectionIdAsync(ContentId, newSectionId);
         }
 
-        private async Task OnDrop(int targetSectionId)
+private async Task OnDrop(int targetSectionId)
+{
+    if (draggedItem == null)
+    {
+        Logger.LogWarning("No content item is being dragged.");
+        return;
+    }
+
+    if (draggedItem.ContentId <= 0)
+    {
+        Logger.LogWarning("Invalid ContentId: {0}", draggedItem.ContentId);
+        return;
+    }
+
+    var sourceSectionId = draggedItem.SectionId;
+
+    if (_sections.TryGetValue(sourceSectionId, out var sourceSection) &&
+        _sections.TryGetValue(targetSectionId, out var targetSection))
+    {
+        if (sourceSection.ContentItems.Contains(draggedItem))
         {
-            if (draggedItem == null)
+            sourceSection.ContentItems.Remove(draggedItem);
+            draggedItem.SectionId = targetSectionId;
+            targetSection.ContentItems.Add(draggedItem);
+
+            // Sort and update order
+            var contentItemsList = targetSection.ContentItems.ToList();
+            for (int i = 0; i < contentItemsList.Count; i++)
             {
-                Logger.LogWarning("No content item is being dragged.");
-                return;
+                contentItemsList[i].SortOrder = i + 1;
+                await UpdateContentItemSortOrderAsync(contentItemsList[i].ContentId, contentItemsList[i].SortOrder);
             }
 
-            if (draggedItem.ContentId <= 0) // Kontrollera ContentId istället
-            {
-                Logger.LogWarning("Invalid ContentId: {0}", draggedItem.ContentId);
-                return; // Avbryt om ID är ogiltigt
-            }
-
-            var sourceSectionId = draggedItem.SectionId;
-
-            if (_sections.TryGetValue(sourceSectionId, out var sourceSection) &&
-                _sections.TryGetValue(targetSectionId, out var targetSection))
-            {
-                // Ta bort från källsektionen
-                sourceSection.ContentItems.Remove(draggedItem);
-
-                // Uppdatera SectionId för det dragna objektet
-                draggedItem.SectionId = targetSectionId;
-
-                // Lägg till i målsektionen
-                targetSection.ContentItems.Add(draggedItem);
-
-                // Uppdatera databasen via en liknande metod som AddContentItem
-                await UpdateContentItemSectionAsync(draggedItem.ContentId, targetSectionId);
-
-                // Uppdatera UI
-                StateHasChanged();
-            }
+            await UpdateContentItemSectionAsync(draggedItem.ContentId, targetSectionId);
+            StateHasChanged();
         }
+        else
+        {
+            Logger.LogWarning("Dragged item not found in source section.");
+        }
+    }
+    else
+    {
+        Logger.LogWarning("Source or target section not found.");
+    }
+}
+
+
+
+private async Task UpdateContentItemSortOrderAsync(int contentId, int sortOrder)
+{
+    // Uppdatera sorteringsordningen i databasen via ditt ContentItemService
+    await ContentItemService.UpdateSortOrderAsync(contentId, sortOrder);
+}
+
 
 
 

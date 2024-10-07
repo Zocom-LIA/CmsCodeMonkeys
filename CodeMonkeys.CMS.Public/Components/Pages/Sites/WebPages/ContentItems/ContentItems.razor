@@ -17,7 +17,7 @@
                 <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_section1.SectionId)">
                     <h4>Header</h4>
                     <ul>
-                        @foreach (var contentItem in _section1?.ContentItems ?? [])
+                        @foreach (var contentItem in _section1?.ContentItems.OrderBy(ci => ci.SortOrder))
                         {
                             @RenderContentItemItem(contentItem)
                         }
@@ -82,7 +82,7 @@
                 <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_section2.SectionId)">
                     <h4>Body</h4>
                     <ul>
-                        @foreach (var contentItem in _section2?.ContentItems ?? [])
+                        @foreach (var contentItem in _section2?.ContentItems.OrderBy(ci => ci.SortOrder))
                         {
                             @RenderContentItemItem(contentItem)
                         }
@@ -102,7 +102,7 @@
                 <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_section4.SectionId)">
                    <h4>Footer</h4>
                     <ul>
-                        @foreach (var contentItem in _section4?.ContentItems ?? [])
+                        @foreach (var contentItem in _section4?.ContentItems.OrderBy(ci => ci.SortOrder))
                         {
                             @RenderContentItemItem(contentItem)
                         }
@@ -140,10 +140,18 @@
         <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_section3.SectionId)">
             
             <ul>
-                @foreach (var contentItem in _section3?.ContentItems ?? [])
-                {
-                    @RenderContentItemItem(contentItem)
-                }
+               @if (_section3?.ContentItems?.Any() == true)
+{
+    @foreach (var contentItem in _section3.ContentItems.OrderBy(ci => ci.SortOrder))
+    {
+        @RenderContentItemItem(contentItem)
+    }
+}
+else
+{
+    <p>Inga innehållsobjekt tillgängliga i sektion 3.</p>
+}
+
             </ul>
             
         </div>

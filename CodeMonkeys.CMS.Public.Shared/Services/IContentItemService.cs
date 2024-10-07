@@ -18,5 +18,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         void StartDrag(ContentItem contentItem);
         Task UpdateContentItemAsync(ContentItem contentItem);
         Task UpdateSectionIdAsync(int contentItemId, int newSectionId);
+        Task UpdateSortOrderAsync(int contentId, int sortOrder);
     }
 }

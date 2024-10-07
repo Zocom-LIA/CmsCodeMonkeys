@@ -458,6 +458,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.Property<bool>("ShowEditButton")
                         .HasColumnType("bit");
 
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
