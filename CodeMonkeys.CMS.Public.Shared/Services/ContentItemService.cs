@@ -18,7 +18,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         public async Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<Section> sections) => await _repository.GetContentItemsAsync(sections);
         public async Task<IEnumerable<ContentItem>> GetContentItemsAsync(int sectionId) => await _repository.GetContentItemsAsync(sectionId);
 
-
         // Get sections and their ContentItem items if they exist; otherwise, create a new section
         public async Task<Dictionary<int, Section>> GetSectionContentItemsAsync(int webPageId, CancellationToken cancellation = default)
         {
