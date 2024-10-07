@@ -17,6 +17,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         Task RemoveContentItemAsync(ContentItem contentItem, CancellationToken cancellation = default);
         void StartDrag(ContentItem contentItem, CancellationToken cancellation = default);
         Task UpdateContentItemAsync(ContentItem contentItem);
+        Task UpdateSectionContentItemsAsync(ICollection<ContentItem> contentItems);
         Task UpdateSectionIdAsync(int ContentId, int newSectionId, CancellationToken cancellation = default);
         Task UpdateSortOrderAsync(int contentId, int sortOrder, CancellationToken cancellation = default);
     }

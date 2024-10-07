@@ -272,5 +272,29 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                 await context.DisposeAsync();
             }
         }
+
+        public async Task UpdateSectionContentItemsAsync(ICollection<ContentItem> contentItems, CancellationToken cancellation = default)
+        {
+            var context = GetContext();
+
+            try
+            {
+                foreach (var contentItem in contentItems)
+                {
+                    context.Entry(contentItem).State = EntityState.Modified;
+                }
+
+                await context.SaveChangesAsync(cancellation);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating section content items.");
+                throw;
+            }
+            finally
+            {
+                await context.DisposeAsync();
+            }
+        }
     }
 }

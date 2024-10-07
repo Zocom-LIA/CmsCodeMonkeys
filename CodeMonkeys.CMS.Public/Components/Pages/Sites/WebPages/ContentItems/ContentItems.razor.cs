@@ -184,10 +184,12 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
         }
 
         private ContentItem draggedItem;
+        private int _startPosition;
 
-        private void OnDragStart(ContentItem contentItem)
+        private void OnDragStart(ContentItem contentItem, int startPosition = -1)
         {
             draggedItem = contentItem;
+            _startPosition = startPosition;
             // Indicate the drag has started (this is optional, helps to visualize dragging)
             contentItem.IsDragging = true;
         }
@@ -210,7 +212,60 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
             await ContentItemService.UpdateSectionIdAsync(ContentId, newSectionId);
         }
 
-        private async Task OnDrop(int targetSectionId)
+        private async Task OnDrop(ContentItem targetContentItem)
+        {
+            if (draggedItem == null)
+            {
+                Logger.LogWarning("No content item is being dragged.");
+                return;
+            }
+
+            if (draggedItem.ContentId <= 0)
+            {
+                Logger.LogWarning("Invalid ContentId: {0}", draggedItem.ContentId);
+                return;
+            }
+
+            int targetPositionInSection = targetContentItem.SortOrder;
+            Section sourceSection = draggedItem.Section;
+
+            if (sourceSection == null)
+            {
+                Logger.LogWarning("lsödjf öalksjdf ölakjdf ölakjsdfö laksd");
+                return;
+            }
+
+            // TODO: Fix the "#¤"!#¤%"#¤%"#¤% logic, goddammit!!!
+            sourceSection.ContentItems.Remove(draggedItem);
+            var contentItems = targetContentItem.Section.ContentItems;
+
+            if (targetPositionInSection == 1)
+            {
+                foreach (var content in contentItems)
+                {
+                    content.SortOrder++;
+                }
+
+                draggedItem.SortOrder = targetPositionInSection;
+
+                targetContentItem.Section.ContentItems.Add(draggedItem);
+                targetContentItem.Section.ContentItems = targetContentItem.Section.ContentItems.OrderBy(ci => ci.SortOrder).ToList();
+
+                await ContentItemService.UpdateSectionContentItemsAsync(targetContentItem.Section.ContentItems);
+            }
+            else if (targetPositionInSection == contentItems.Count())
+            {
+                draggedItem.SortOrder = targetPositionInSection;
+
+                targetContentItem.Section.ContentItems.Add(draggedItem);
+
+                await ContentItemService.UpdateSectionContentItemsAsync(targetContentItem.Section.ContentItems);
+            }
+
+            StateHasChanged();
+        }
+
+        private async Task OnDrop(int targetSectionId, int targetOrder = -1)
         {
             if (draggedItem == null)
             {
@@ -298,7 +353,6 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
             StateHasChanged();
         }
 
-
         private async Task RemoveAllContentItemsAsync()
         {
             // Gå igenom alla sektioner och ta bort deras innehåll
@@ -339,7 +393,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
             StateHasChanged();
         }
 
-
+        private ContentItem[] GetSection(Section section) => section.ContentItems?.ToArray() ?? Array.Empty<ContentItem>();
 
         private Dictionary<string, string> colorOptions = new Dictionary<string, string>
             {

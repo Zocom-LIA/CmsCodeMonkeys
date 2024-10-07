@@ -61,5 +61,8 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         {
             await _repository.UpdateSortOrderAsync(contentId, sortOrder, cancellation);
         }
+
+        public async Task UpdateSectionContentItemsAsync(ICollection<ContentItem> contentItems, CancellationToken cancellation = default)
+            => await ContentItemRepository.UpdateSectionContentItemsAsync(contentItems, cancellation);
     }
 }
