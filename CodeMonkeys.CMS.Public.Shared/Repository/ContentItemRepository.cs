@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CodeMonkeys.CMS.Public.Shared.Repository
 {
-    public class ContentItemRepository : CodeMonkeys.CMS.Public.Shared.Repository.RepositoryBase, CodeMonkeys.CMS.Public.Shared.Repository.IContentItemRepository
+    public class ContentItemRepository : RepositoryBase, IContentItemRepository
     {
         public ContentItemRepository(IDbContextFactory<ApplicationDbContext> contextFactory, IMapper mapper, ILogger<ContentItemRepository> logger)
             : base(contextFactory, mapper, logger)

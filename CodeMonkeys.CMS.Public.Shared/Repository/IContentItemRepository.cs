@@ -6,7 +6,8 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
     {
         Task AddContentItemAsync(ContentItem contentItem, CancellationToken cancellation = default);
         Task DeleteContentItemAsync(ContentItem contentItem, CancellationToken cancellation = default);
-        Task<ContentItem?> GetContentItemAsync(int contentItemId, CancellationToken cancellation = default);
+        Task<ContentItem?> GetContentItemAsync(int contentId, CancellationToken cancellation = default);
+        Task<ContentItem?> GetContentItemByIdAsync(int contentId, CancellationToken cancellation = default);
         Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<ContentItem> contentItems, CancellationToken cancellation = default);
         Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<int> contentItemIds, CancellationToken cancellation = default);
         Task<IEnumerable<ContentItem>> GetContentItemsAsync(IEnumerable<Section> sections, CancellationToken cancellation = default);

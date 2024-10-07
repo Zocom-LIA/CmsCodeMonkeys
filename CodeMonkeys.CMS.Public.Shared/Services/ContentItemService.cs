@@ -62,5 +62,11 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         {
             await _repository.UpdateSortOrderAsync(contentId, sortOrder, cancellation);
         }
+
+        public Task MoveContentItemAsync(int newSectionId) => throw new NotImplementedException();
+        public Task<Dictionary<int, Section>> GetSectionContentItemsAsync(int webPageId) => throw new NotImplementedException();
+        public Task RemoveContentItemAsync(ContentItem contentItem) => throw new NotImplementedException();
+        public Task UpdateSectionIdAsync(int contentItemId, int newSectionId) => throw new NotImplementedException();
+        public Task UpdateSortOrderAsync(int contentId, int sortOrder) => throw new NotImplementedException();
     }
 }
