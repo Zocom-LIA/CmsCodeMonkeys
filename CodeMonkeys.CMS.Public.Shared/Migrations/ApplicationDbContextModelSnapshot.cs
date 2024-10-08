@@ -418,12 +418,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                 {
                     b.HasBaseType("CodeMonkeys.CMS.Public.Shared.Entities.Content");
 
-                    b.Property<int>("BoxNumber")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ContentId")
-                        .HasColumnType("int");
-
                     b.Property<string>("FontFamily")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -432,12 +426,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsBold")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDragging")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsEditing")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsItalic")
@@ -454,9 +442,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.Property<int>("SectionId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("ShowEditButton")
-                        .HasColumnType("bit");
 
                     b.Property<int>("SortOrder")
                         .HasColumnType("int");
