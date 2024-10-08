@@ -216,7 +216,7 @@ private void ResetEditButtonVisibility()
 
 private bool sortOrderChanged = false;
 
-
+//SORTERING 
 
 private async Task OnDrop(int targetSectionId, int? targetIndex)
 {
@@ -229,6 +229,7 @@ private async Task OnDrop(int targetSectionId, int? targetIndex)
     }
 
     var sourceSectionId = draggedItem.SectionId;
+
     Console.WriteLine($"Dragging item from section ID: {sourceSectionId}");
 
     if (_sections.TryGetValue(sourceSectionId, out var sourceSection) &&
@@ -237,29 +238,21 @@ private async Task OnDrop(int targetSectionId, int? targetIndex)
         Console.WriteLine($"Source section found: {sourceSection.Name}, Target section found: {targetSection.Name}");
         var originalIndex = GetOriginalIndex(sourceSection, draggedItem);
 
-        var sourceContentItems = sourceSection.ContentItems.ToList();
-        var targetContentItems = targetSection.ContentItems.ToList();
-
         if (sourceSectionId == targetSectionId)
         {
-            await HandleDropWithinSameSection(sourceContentItems, targetContentItems, targetIndex, originalIndex);
+            await HandleDropWithinSameSection(sourceSection.ContentItems, targetSection.ContentItems, targetIndex, originalIndex);
         }
         else
         {
-            await HandleDropBetweenSections(sourceContentItems, targetContentItems, targetSectionId, targetIndex);
+            await HandleDropBetweenSections(sourceSection.ContentItems, targetSection.ContentItems, targetSectionId, targetIndex);
         }
-        if (sortOrderChanged) // Add a flag to track changes
-        {
-            await UpdateSortOrder(sourceContentItems);
-        }
-        
 
         // Uppdatera sektionen för det flyttade objektet
         await UpdateContentItemSectionAsync(draggedItem.ContentId, targetSectionId);
         Console.WriteLine($"Updated section for dragged item ID: {draggedItem.ContentId}");
 
+        // Anropa StateHasChanged en gång efter alla operationer
         StateHasChanged();
-        Console.WriteLine("StateHasChanged called after drop operation.");
     }
     else
     {
@@ -267,6 +260,7 @@ private async Task OnDrop(int targetSectionId, int? targetIndex)
         Logger.LogWarning("Source or target section not found.");
     }
 }
+
 
 
 private void HandleInvalidDragItem()
@@ -290,36 +284,6 @@ private int GetOriginalIndex(Section sourceSection, ContentItem draggedItem)
         .FirstOrDefault(x => x.item.OrdinalNumber == draggedItem.OrdinalNumber)?.index ?? -1;
 }
 
-// private async Task HandleDropWithinSameSection(List<ContentItem> sourceContentItems, List<ContentItem> targetContentItems, int? targetIndex, int originalIndex)
-// {
-//     if (targetIndex.HasValue && targetIndex.Value == originalIndex)
-//     {
-//         Console.WriteLine("No position change detected.");
-//         return;
-//     }
-//    sortOrderChanged = true;
-
-//     // Ta bort objektet från sin nuvarande plats
-//     if (originalIndex >= 0 && originalIndex < sourceContentItems.Count)
-//     {
-//         var itemToMove = sourceContentItems[originalIndex];
-//         sourceContentItems.RemoveAt(originalIndex);
-
-//         // Lägg till objektet på den nya platsen
-//         if (targetIndex.HasValue && targetIndex.Value >= 0 && targetIndex.Value < sourceContentItems.Count)
-//         {
-//             sourceContentItems.Insert(targetIndex.Value, itemToMove);
-//         }
-//         else
-//         {
-//             sourceContentItems.Add(itemToMove); // Lägg till sist om inget index ges
-//         }
-
-//         // Uppdatera sorteringsordningen efter flyttning
-//         await UpdateSortOrder(sourceContentItems);
-//     }
-// }
-
 
 // NY
 private async Task HandleDropWithinSameSection(List<ContentItem> sourceContentItems, List<ContentItem> targetContentItems, int? targetIndex, int originalIndex)
@@ -339,6 +303,7 @@ private async Task HandleDropWithinSameSection(List<ContentItem> sourceContentIt
         // Hämta objektet som ska flyttas
         var itemToMove = sourceContentItems[originalIndex];
         sourceContentItems.RemoveAt(originalIndex);
+        StateHasChanged();
 
         // Om targetIndex är giltigt, sätt in objektet på rätt position
         if (targetIndex.Value >= 0 && targetIndex.Value <= sourceContentItems.Count)
@@ -360,23 +325,26 @@ private async Task HandleDropWithinSameSection(List<ContentItem> sourceContentIt
 }
 
 
-
-
 private int CompareContentItems(ContentItem x, ContentItem y)
 {
     // Anpassa jämförelsen baserat på dina sorteringskriterier
     return x.SortOrder.CompareTo(y.SortOrder);
 }
-private async Task HandleDropBetweenSections(List<ContentItem> sourceContentItems, List<ContentItem> targetContentItems, int targetSectionId, int? targetIndex)
+
+private async Task HandleDropBetweenSections(ICollection<ContentItem> sourceContentItems, ICollection<ContentItem> targetContentItems, int targetSectionId, int? targetIndex)
 {
     Console.WriteLine("Handling drop between different sections.");
 
-    // Ta bort objektet från källsektionen
-    if (sourceContentItems.Contains(draggedItem))
+    if (draggedItem == null)
     {
-        sourceContentItems.Remove(draggedItem);
-        Console.WriteLine("Removed dragged item from source section.");
+        Console.WriteLine("No item is being dragged.");
+        Logger.LogWarning("No item is being dragged.");
+        return;
     }
+
+    // Ta bort objektet från källsektionen
+    sourceContentItems.Remove(draggedItem);
+    Console.WriteLine("Removed dragged item from source section.");
 
     // Uppdatera sektion ID för draget objekt
     draggedItem.SectionId = targetSectionId;
@@ -394,23 +362,10 @@ private async Task HandleDropBetweenSections(List<ContentItem> sourceContentItem
         Console.WriteLine("Added dragged item to the end of the target section.");
     }
 
-    // Uppdatera ContentItems i target sektionen
-    // Här antar vi att targetSection är en parameter eller en global variabel.
-    if (_sections.TryGetValue(targetSectionId, out var targetSection))
-    {
-        targetSection.ContentItems = targetContentItems;
-        Console.WriteLine($"Updated content items in target section: {targetSection.Name}");
-    }
-    else
-    {
-        Console.WriteLine("Target section not found while updating content items.");
-        Logger.LogWarning("Target section not found while updating content items.");
-    }
-
-    // Spara ändringar i databasen för det flyttade objektet (om nödvändigt)
-    await UpdateContentItemSectionAsync(draggedItem.ContentId, targetSectionId);
-    Console.WriteLine($"Updated section for dragged item ID: {draggedItem.ContentId}");
+    // Ingen mer uppdatering av targetSection.ContentItems behövs här,
+    // eftersom vi uppdaterade targetContentItems direkt.
 }
+
 
 
 
@@ -431,11 +386,9 @@ private async Task UpdateSortOrder(List<ContentItem> items)
     if (changesMade)
     {
         Console.WriteLine("Sort order updated.");
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
     }
 }
-
-
 
 
 
