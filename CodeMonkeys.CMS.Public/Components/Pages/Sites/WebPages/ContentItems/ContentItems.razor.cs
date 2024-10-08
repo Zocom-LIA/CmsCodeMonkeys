@@ -152,6 +152,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
                         Title = newContentItemText,
                         Body = newContentItemText,
                         OrdinalNumber = contentItems.Count(),
+                        SortOrder = contentItems.Count() + 1,
                         AuthorId = User!.Id,
                         WebPageId = WebPageId
                     };
@@ -212,7 +213,61 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
             await ContentItemService.UpdateSectionIdAsync(ContentId, newSectionId);
         }
 
-        private async Task OnDrop(ContentItem targetContentItem)
+        public async Task OnDrop(ContentItem targetItem)
+        {
+            // Store the original section
+            var itemToBeMoved = draggedItem;
+            var originalSection = itemToBeMoved.Section;
+
+            // Remove itemToBeMoved from its original section
+            originalSection.ContentItems.Remove(itemToBeMoved);
+
+            // Change the section of the item to the target section
+            var targetSection = targetItem.Section;
+            itemToBeMoved.SectionId = targetSection.SectionId;
+            itemToBeMoved.Section = targetSection;
+
+            // Find the position of the targetItem in the target section's ContentItems
+            int targetIndex = targetSection.ContentItems
+                                .OrderBy(ci => ci.SortOrder)
+                                .ToList()
+                                .IndexOf(targetItem);
+
+            // Insert itemToBeMoved right after the targetItem
+            var items = targetSection.ContentItems.ToList();
+            items.Insert(targetIndex + 1, itemToBeMoved);
+
+            targetSection.ContentItems = items;
+
+            // Adjust SortOrder for the original section (spanning from 1 to ContentItems.Count)
+            AdjustSortOrder(originalSection);
+
+            // Adjust SortOrder for the target section (spanning from 1 to ContentItems.Count)
+            AdjustSortOrder(targetSection);
+
+            // Collect all modified content items from both sections
+            var modifiedContentItems = originalSection.ContentItems
+                                         .Concat(targetSection.ContentItems)
+                                         .Distinct();
+
+            // Call to the update service for modified content items
+            await ContentItemService.SaveChangesAsync();
+        }
+
+        private void AdjustSortOrder(Section section)
+        {
+            // Reorder ContentItems by SortOrder and adjust their values to be sequential
+            var orderedItems = section.ContentItems
+                                      //.OrderBy(ci => ci.SortOrder)
+                                      .ToList();
+            for (int i = 0; i < orderedItems.Count; i++)
+            {
+                orderedItems[i].SortOrder = i + 1; // SortOrder should start from 1
+            }
+        }
+
+
+        private async Task OnDrop3(ContentItem targetContentItem)
         {
             if (draggedItem == null)
             {
@@ -226,41 +281,168 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
                 return;
             }
 
-            int targetPositionInSection = targetContentItem.SortOrder;
+            // Remove the dragged item from its current section
             Section sourceSection = draggedItem.Section;
-
             if (sourceSection == null)
             {
-                Logger.LogWarning("lsödjf öalksjdf ölakjdf ölakjsdfö laksd");
+                Logger.LogWarning("Invalid source section.");
                 return;
             }
 
-            // TODO: Fix the "#¤"!#¤%"#¤%"#¤% logic, goddammit!!!
-            sourceSection.ContentItems.Remove(draggedItem);
-            var contentItems = targetContentItem.Section.ContentItems;
+            // Determine the target section and its content items
+            Section targetSection = targetContentItem.Section;
+            var targetContentItems = targetSection.ContentItems.OrderBy(ci => ci.SortOrder).ToList();
 
-            if (targetPositionInSection == 1)
+            // Calculate the target position based on the target content item's order
+            int targetPosition = targetContentItems.IndexOf(targetContentItem);
+
+            // Set the dragged item's sort order
+            draggedItem.SortOrder = targetPosition + 1;
+            draggedItem.SectionId = targetSection.SectionId;
+
+            // Adjust SortOrder in the source section if necessary
+            if (sourceSection != targetSection)
             {
-                foreach (var content in contentItems)
+                sourceSection.ContentItems.Remove(draggedItem);
+                var items = sourceSection.ContentItems.ToArray();
+
+                // Update SortOrder for remaining items in the source section
+                for (int i = 0; i < sourceSection.ContentItems.Count; i++)
                 {
-                    content.SortOrder++;
+                    items[i].SortOrder = i + 1;
+                }
+            }
+
+            // Insert the dragged item at the target position and adjust other item orders
+            // Check if the dragged item is already in the target section
+            if (targetContentItems.Contains(draggedItem))
+            {
+                // Remove the duplicate before inserting
+                targetContentItems.Remove(draggedItem);
+            }
+
+            targetContentItems.Insert(targetPosition, draggedItem);
+
+            for (int i = targetPosition + 1; i < targetContentItems.Count; i++)
+            {
+                targetContentItems[i].SortOrder++;
+            }
+
+            // Update the target section's content items
+            targetSection.ContentItems = targetContentItems;
+            await ContentItemService.UpdateSectionContentItemsAsync(targetSection.ContentItems);
+
+            // Update the source section's content items only if it was modified
+            if (sourceSection != targetSection)
+            {
+                await ContentItemService.UpdateSectionContentItemsAsync(sourceSection.ContentItems);
+            }
+
+            StateHasChanged();
+        }
+
+        private async Task OnDrop2(ContentItem targetContentItem)
+        {
+            if (draggedItem == null)
+            {
+                Logger.LogWarning("No content item is being dragged.");
+                return;
+            }
+
+            if (draggedItem.ContentId <= 0)
+            {
+                Logger.LogWarning("Invalid ContentId: {0}", draggedItem.ContentId);
+                return;
+            }
+
+            // Remove the dragged item from its current section
+            Section sourceSection = draggedItem.Section;
+            if (sourceSection == null)
+            {
+                Logger.LogWarning("Invalid source section.");
+                return;
+            }
+
+            // Determine the target section and its content items
+            Section targetSection = targetContentItem.Section;
+            var targetContentItems = targetSection.ContentItems.OrderBy(ci => ci.SortOrder).ToList();
+
+            // Calculate the target position based on the target content item's order
+            int targetPosition = targetContentItems.IndexOf(targetContentItem);
+
+            // Set the dragged item's sort order
+            draggedItem.SortOrder = targetPosition + 1;
+            draggedItem.SectionId = targetSection.SectionId;
+
+            // Adjust SortOrder in the source section
+            if (sourceSection != targetSection)
+            {
+                sourceSection.ContentItems.Remove(draggedItem);
+                ContentItem[] items = sourceSection.ContentItems.OrderBy(ci => ci.SortOrder).ToArray();
+                for (int i = 0; i < sourceSection.ContentItems.Count; i++)
+                {
+                    items[i].SortOrder = i + 1;
                 }
 
-                draggedItem.SortOrder = targetPositionInSection;
+                sourceSection.ContentItems = items;
 
-                targetContentItem.Section.ContentItems.Add(draggedItem);
-                targetContentItem.Section.ContentItems = targetContentItem.Section.ContentItems.OrderBy(ci => ci.SortOrder).ToList();
-
-                await ContentItemService.UpdateSectionContentItemsAsync(targetContentItem.Section.ContentItems);
+                // Update the source section's content items
+                await ContentItemService.UpdateSectionContentItemsAsync(targetSection.ContentItems);
             }
-            else if (targetPositionInSection == contentItems.Count())
+
+            // Insert the dragged item at the target position and adjust other item orders
+            if (targetPosition == targetContentItems.Count)
             {
-                draggedItem.SortOrder = targetPositionInSection;
+                if (sourceSection == targetSection)
+                {
+                    // Remove from the target section
+                    targetContentItems.Remove(draggedItem);
+                }
 
-                targetContentItem.Section.ContentItems.Add(draggedItem);
-
-                await ContentItemService.UpdateSectionContentItemsAsync(targetContentItem.Section.ContentItems);
+                // Insert at the end
+                targetContentItems.Add(draggedItem);
             }
+            else
+            {
+                if (targetPosition == 0)
+                {
+                    if (sourceSection == targetSection)
+                    {
+                        // Remove from the target section
+                        targetContentItems.Remove(draggedItem);
+                    }
+
+                    // Insert at the beginning
+                    targetContentItems.Insert(0, draggedItem);
+                }
+                else
+                {
+                    if (sourceSection == targetSection)
+                    {
+                        var draggedPosition = targetContentItems.IndexOf(draggedItem);
+                        targetContentItems.Remove(draggedItem);
+
+                        //if (targetPosition > draggedPosition)
+                        //{
+                        //    targetPosition--;
+                        //}
+                    }
+
+                    // Insert in the middle and adjust orders
+                    targetContentItems.Insert(targetPosition, draggedItem);
+                }
+
+                for (int i = targetPosition + 1; i < targetContentItems.Count; i++)
+                {
+                    targetContentItems[i].SortOrder++;
+                }
+            }
+
+            // 
+            targetSection.ContentItems = targetContentItems;
+
+            // Update the target section's content items
+            await ContentItemService.UpdateSectionContentItemsAsync(sourceSection.ContentItems);
 
             StateHasChanged();
         }

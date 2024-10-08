@@ -296,5 +296,47 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                 await context.DisposeAsync();
             }
         }
+
+        public Task UpdateContentItemsAsync(IEnumerable<ContentItem> contentItems, CancellationToken cancellation = default)
+        {
+            var context = GetContext();
+
+            try
+            {
+                foreach (var contentItem in contentItems)
+                {
+                    // Attach the item to the context if it's not already being tracked
+                    var trackedItem = context.ContentItems.Local.FirstOrDefault(ci => ci.ContentId == contentItem.ContentId);
+                    if (trackedItem == null)
+                    {
+                        context.ContentItems.Attach(contentItem);
+                    }
+
+                    // Mark the item as modified to ensure it's updated
+                    context.Entry(contentItem).State = EntityState.Modified;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating content items.");
+                throw;
+            }
+            return Task.CompletedTask;
+        }
+
+        public async Task SaveChangeAsync(CancellationToken cancellation)
+        {
+            var context = GetContext();
+
+            try
+            {
+                await context.SaveChangesAsync(cancellation).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving changes.");
+                throw;
+            }
+        }
     }
 }

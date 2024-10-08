@@ -14,10 +14,10 @@
         else
         {
             <div class="box box1" @onclick="() => OpenColorPicker(_section1.SectionId)" style="background-color:@_section1.Color">
-                <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_section1.SectionId)">
+                <div class="list-container" ondragover="event.preventDefault()">
                     <h4>Header</h4>
                     <ul>
-                        @foreach (var contentItem in _section1?.ContentItems.OrderBy(ci => ci.SortOrder))
+                        @foreach (var contentItem in _section1?.ContentItems)
                         {
                             @RenderContentItemItem(contentItem)
                         }
@@ -79,10 +79,10 @@
         else
         {
             <div class="box box2" @onclick="() => OpenColorPicker(_section2.SectionId)" style="background-color:@_section2.Color">
-                <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_section2.SectionId)">
+                <div class="list-container" ondragover="event.preventDefault()">
                     <h4>Body</h4>
                     <ul>
-                        @foreach (var contentItem in _section2?.ContentItems.OrderBy(ci => ci.SortOrder))
+                        @foreach (var contentItem in _section2?.ContentItems)
                         {
                             @RenderContentItemItem(contentItem)
                         }
@@ -99,7 +99,7 @@
         else
         {
             <div class="box box4" @onclick="() => OpenColorPicker(_section4.SectionId)" style="background-color:@_section4.Color">
-                <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_section4.SectionId)">
+                <div class="list-container" ondragover="event.preventDefault()">
                    <h4>Footer</h4>
                     <ul>
                         @foreach (var contentItem in _section4?.ContentItems.OrderBy(ci => ci.SortOrder))
@@ -137,12 +137,12 @@
             <input type="number" placeholder="BorderRadius" @bind="newImageItem.BorderRadius" />
             <button @onclick="AddImageItem">Lägg till bild</button>
         </div>
-        <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_section3.SectionId)">
+        <div class="list-container" ondragover="event.preventDefault()">
             
             <ul>
                @if (_section3?.ContentItems?.Any() == true)
 {
-    @foreach (var contentItem in _section3.ContentItems.OrderBy(ci => ci.SortOrder))
+    @foreach (var contentItem in _section3.ContentItems)
     {
         @RenderContentItemItem(contentItem)
     }
@@ -220,11 +220,12 @@ else
     // Render content item for drag-and-drop
    RenderFragment RenderContentItemItem(ContentItem contentItem) => @<li draggable="true" 
         @ondragstart="() => OnDragStart(contentItem)" 
-        @ondragend="() => OnDragEnd(contentItem)">
+        @ondragend="() => OnDragEnd(contentItem)"
+        @ondrop="() => OnDrop(contentItem)">
 
         @if(contentItem.IsEditing)
-        
-        {    <div style="text-align:@($"{contentItem.TextAlign} !important")">
+        {    
+            <div style="text-align:@($"{contentItem.TextAlign} !important")">
             <span style="color:@contentItem.Color; font-size:@($"{contentItem.FontSize}px"); font-weight:@(contentItem.IsBold ? "bold" : "normal"); font-style:@(contentItem.IsItalic ? "italic" : "normal"); font-family:@contentItem.FontFamily;"
                 @onclick="() => ToggleEdit(contentItem)">
                 @contentItem.Text

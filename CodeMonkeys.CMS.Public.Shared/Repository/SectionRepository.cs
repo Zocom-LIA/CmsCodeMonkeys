@@ -175,8 +175,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 
                 var section = await context.Sections
                     .Where(s => s.WebPageId == webPageId && s.Name == name)
-                    .Include(s => s.ContentItems)
-                    .AsNoTracking()
+                    .Include(s => s.ContentItems.OrderBy(ci => ci.SortOrder))
+                    .AsTracking()
+                    .AsSplitQuery()
                     .FirstOrDefaultAsync(cancellation);
 
                 if (section == null)
@@ -213,9 +214,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                 cancellation.ThrowIfCancellationRequested();
                 return await context.Sections
                     .Where(s => s.WebPageId == webPageId)
-                    .Include(s => s.ContentItems)
-                    .AsNoTracking()
-                .ToDictionaryAsync(source => source.SectionId);
+                    .Include(s => s.ContentItems.OrderBy(ci => ci.SortOrder))
+                    .AsTracking()
+                    .AsSplitQuery()
+                    .ToDictionaryAsync(source => source.SectionId);
             }
             catch (Exception ex)
             {
