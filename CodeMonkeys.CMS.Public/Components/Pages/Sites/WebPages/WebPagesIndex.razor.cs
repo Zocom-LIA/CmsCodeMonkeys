@@ -17,6 +17,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
         private SiteModel Input { get; set; } = new SiteModel();
 
         [Parameter] public int siteId { get; set; }
+        [Inject] public IPageStatsService PageStatsService { get; set; }
         public Site? Site { get; set; }
 
         private WebPageModel _pageModel = new();
@@ -28,6 +29,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
         private string CancelButtonText = "Cancel";
         private EventCallback OnConfirm;
         private EventCallback OnCancel;
+        private IEnumerable<PageStats> PageStats;
 
         protected override async Task OnInitializedAsync()
         {
@@ -41,7 +43,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
                 ErrorMessage = "There is no such site available to edit";
                 return;
             }
-
+            PageStats = await PageStatsService.GetPageStatsAsync(siteId);
             Input.Name = Site.Name;
         }
 
@@ -121,8 +123,8 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
                     AuthorId = User?.Id
                 };
 
+                page = await WebPageService.CreateWebPageAsync(siteId, page);
                 Site!.Pages.Add(page);
-                await WebPageService.CreateWebPageAsync(siteId, page);
             }
             else
             {
@@ -145,7 +147,8 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
 
         public Task EditContentsAsync(int webPageId)
         {
-            Navigation.NavigateTo($"/sites/{siteId}/webpages/{webPageId}/edit");
+            Navigation.NavigateTo($"/sites/{siteId}/webpages/{webPageId}");
+            //Navigation.NavigateTo($"/sites/{siteId}/webpages/{webPageId}/edit");
             return Task.CompletedTask;
         }
 
@@ -191,6 +194,8 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages
         {
             Navigation.NavigateTo($"/sites/{siteId}");
         }
+
+        private int PageVisitCount(int pageId) => PageStats.Where(s => s.PageId == pageId).Select(s => s.PageVisits).Sum();
 
         public sealed class SiteModel
         {

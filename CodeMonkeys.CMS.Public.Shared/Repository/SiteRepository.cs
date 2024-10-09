@@ -1,4 +1,6 @@
-﻿using CodeMonkeys.CMS.Public.Shared.Data;
+﻿using AutoMapper;
+
+using CodeMonkeys.CMS.Public.Shared.Data;
 using CodeMonkeys.CMS.Public.Shared.Entities;
 
 using Microsoft.EntityFrameworkCore;
@@ -15,34 +17,31 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
 {
     public class SiteRepository : RepositoryBase, ISiteRepository
     {
-        public SiteRepository(IDbContextFactory<ApplicationDbContext> contextFactory, ILogger<SiteRepository> logger) : base(contextFactory, logger) { }
+        public SiteRepository(IDbContextFactory<ApplicationDbContext> contextFactory, IMapper mapper, ILogger<SiteRepository> logger) : base(contextFactory, mapper, logger) { }
 
-        public async Task CreateAsync(Site site, Guid? creatorId = null)
+        public async Task<Site> CreateAsync(Site site, Guid? creatorId = null, CancellationToken cancellation = default)
         {
+            ArgumentNullException.ThrowIfNull(site, nameof(site));
+
+
+            if (string.IsNullOrWhiteSpace(site.Name))
+            {
+                throw new ArgumentException("Site must have a valid name.", nameof(site));
+            }
+
             var context = GetContext();
 
             try
             {
-                // Hämta den befintliga användaren från databasen
-                creatorId ??= site.CreatorId;
-                creatorId ??= site.Creator?.Id;
+                var assignedCreatorId = creatorId ?? site.CreatorId ?? site.Creator?.Id;
 
-                // Skapa en ny Site och sätt Creator navigation property till den befintliga användaren
-                var newSite = new Site
-                {
-                    Name = site.Name,
+                site.CreatedDate = DateTime.Now;
+                site.LastModifiedDate = DateTime.Now;
+                site.CreatorId = assignedCreatorId;
 
-                    CreatedDate = DateTime.Now,
-                    LastModifiedDate = DateTime.Now,
-                    CreatorId = creatorId,
-                    LandingPageId = site.LandingPageId
-                };
-
-                // Lägg till den nya Site till kontexten
-                context.Sites.Add(newSite);
-
-                // Spara ändringarna till databasen
+                await context.Sites.AddAsync(site);
                 await context.SaveChangesAsync();
+                return site;
             }
             catch (Exception ex)
             {
@@ -55,7 +54,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             }
         }
 
-        public async Task UpdateSiteAsync(Site site)
+        public async Task UpdateSiteAsync(Site site, CancellationToken cancellation = default)
         {
             if (site == null) throw new ArgumentNullException(nameof(site), "Site must not be null.");
 
@@ -80,7 +79,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             }
         }
 
-        public async Task DeleteSiteAsync(Site site)
+        public async Task DeleteSiteAsync(Site site, CancellationToken cancellation = default)
         {
             if (site == null) throw new ArgumentNullException(nameof(site), "Site must not be null.");
 
@@ -102,7 +101,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             }
         }
 
-        public async Task<Site?> GetSiteWithContentsAsync(int siteId)
+        public async Task<Site?> GetSiteWithContentsAsync(int siteId, CancellationToken cancellation = default)
         {
             var context = GetContext();
             Site? site = null;
@@ -126,7 +125,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             return site;
         }
 
-        public async Task<IEnumerable<Site>> GetUserSitesAsync(Guid userId, int pageIndex = 0, int pageSize = 10)
+        public async Task<IEnumerable<Site>> GetUserSitesAsync(Guid userId, int pageIndex = 0, int pageSize = 10, CancellationToken cancellation = default)
         {
             if (pageIndex < 0) throw new ArgumentOutOfRangeException("PageIndex must be a positive number.");
             if (pageSize <= 0) throw new ArgumentOutOfRangeException("PageSize must be greater than zero.");
@@ -156,7 +155,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             return sites;
         }
 
-        public async Task<Site?> GetUserSiteAsync(Guid userId, int siteId)
+        public async Task<Site?> GetUserSiteAsync(Guid userId, int siteId, CancellationToken cancellation = default)
         {
             if (userId == Guid.Empty) throw new ArgumentException("UserId must not be empty.", nameof(userId));
 
@@ -180,26 +179,42 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             return site;
         }
 
-        public async Task<Site?> GetSiteAsync(int siteId)
+        public async Task<Site?> GetSiteAsync(int siteId, bool includeLandingPage = false, bool includePages = false, bool includeSections = false, bool includeContents = false, bool includeCreator = false, CancellationToken cancellation = default)
         {
             var context = GetContext();
             Site? site = null;
 
             try
             {
-                site = await context.Sites
-                    .Include(site => site.LandingPage)
-                    .Include(site => site.Pages)
-                    .ThenInclude(page => page.Contents)
-                    .Include(site => site.Creator)
-                    .FirstOrDefaultAsync(site => site.SiteId == siteId);
+                var query = context.Sites.Where(site => site.SiteId == siteId);
+
+                if (includeLandingPage)
+                {
+                    query = query.Include(site => site.LandingPage)
+                                 .ThenInclude(page => includeSections ? page.Sections : null)
+                                 .ThenInclude(section => includeSections && includeContents ? section.ContentItems : null);
+                }
+
+                if (includePages)
+                {
+                    query = query.Include(site => site.Pages)
+                                 .ThenInclude(page => includeSections ? page.Sections : null)
+                                 .ThenInclude(section => includeSections && includeContents ? section.ContentItems : null);
+                }
+
+                if (includeCreator)
+                {
+                    query = query.Include(site => site.Creator);
+                }
+
+                query = query.AsSplitQuery().AsNoTracking();
+
+                return await query.FirstOrDefaultAsync();
             }
             finally
             {
                 await context.DisposeAsync();
             }
-
-            return site;
         }
     }
 }

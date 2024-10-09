@@ -1,0 +1,35 @@
+﻿@page "/content/{webPageId:int}"
+<PageTitle>@WebPage?.Title</PageTitle>
+@using CodeMonkeys.CMS.Public.Shared.Repository
+@inherits ContentBaseComponent<SiteContentViewer>
+@rendermode InteractiveServer
+
+<style>
+    .section-containers {
+        margin-top: -48px;
+        height: auto;
+        text-align: center;
+    }
+
+    .section-header,
+    .section-body,
+    .section-footer {
+        min-height: 300px; /* Allows for flexible height */
+    }
+
+    .content-text {}
+    .content-link {}
+</style>
+
+
+<VisitorViewer  Title="@WebPage?.Title">
+    @if (WebPage != null)
+    {
+        @foreach(var section in WebPage.Sections)
+        {
+            <div class="section-containers">
+                @(section.RenderContent())
+            </div>
+        }
+    }
+</VisitorViewer>

@@ -1,4 +1,53 @@
-﻿.sites-row {
+﻿.sites-empty-box {
+    width: 100%;
+    /* Fyller hela bredden av föräldern */
+    max-height: 150px;
+    /* Maxhöjd 100 pixlar */
+    overflow: hidden;
+    /* Döljer allt överskjutande innehåll */
+    background-color: #f8f9fa;
+    /* Bakgrundsfärg */
+    border-radius: 5px;
+    /* Rundade hörn */
+}
+
+.content {
+    height: 100%;
+    /* Fyller hela höjden på boxen */
+    width: 100%;
+    display: flex;
+    /* Flexbox för inre innehåll */
+    align-items: center;
+    /* Centrerar innehållet vertikalt */
+    justify-content: center;
+    /* Centrerar innehållet horisontellt */
+    flex-direction: column;
+    /* För att stapla innehållet vertikalt */
+    transform: scale(0.233);
+    /* Zoomar ut innehållet till 33.3% */
+
+}
+
+.empty-content-message {
+    display: flex;
+    height: 150px;
+    font-size: 20px;
+    /* Flexbox för meddelandet */
+    align-items: center;
+    /* Centrerar meddelandet vertikalt */
+    justify-content: center;
+    /* Centrerar meddelandet horisontellt */
+   
+    /* Fyller hela höjden på boxen */
+    text-align: center;
+    /* Centrerar texten */
+    
+    /* Zoomar ut meddelandet till 33.3% */
+   
+}
+/* slutet */
+
+.sites-row {
     display: flex;
     flex-wrap: wrap;
     padding: 50px;

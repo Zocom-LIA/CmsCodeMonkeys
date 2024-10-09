@@ -4,44 +4,41 @@ using CodeMonkeys.CMS.Public.Shared.Services;
 
 public class SiteService : ISiteService
 {
-    public SiteService(ISiteRepository repository)
+    public SiteService(ISiteRepository repository, CancellationToken cancellation = default)
     {
         Repository = repository;
     }
 
     public ISiteRepository Repository { get; }
 
-    public async Task CreateSiteAsync(Site site)
+    public async Task<Site> CreateSiteAsync(Site site, CancellationToken cancellation = default)
     {
-        site.CreatedDate = DateTime.Now;
-        site.LastModifiedDate = DateTime.Now;
-
-        await Repository.CreateAsync(site);
+        return await Repository.CreateAsync(site);
     }
 
-    public async Task UpdateSiteAsync(Site site)
+    public async Task UpdateSiteAsync(Site site, CancellationToken cancellation = default)
     {
         await Repository.UpdateSiteAsync(site);
     }
 
-    public async Task DeleteSiteAsync(Site site)
+    public async Task DeleteSiteAsync(Site site, CancellationToken cancellation = default)
     {
         await Repository.DeleteSiteAsync(site);
     }
 
-    public async Task<IEnumerable<Site>> GetUserSitesAsync(Guid userId, int pageIndex = 0, int pageSize = 10)
+    public async Task<IEnumerable<Site>> GetUserSitesAsync(Guid userId, int pageIndex = 0, int pageSize = 10, CancellationToken cancellation = default)
     {
         return await Repository.GetUserSitesAsync(userId, pageIndex, pageSize);
     }
 
-    public async Task<Site?> GetUserSiteAsync(Guid userId, int siteId)
+    public async Task<Site?> GetUserSiteAsync(Guid userId, int siteId, CancellationToken cancellation = default)
     {
         return await Repository.GetUserSiteAsync(userId, siteId);
     }
 
     // Used for testing purposes only
-    public async Task<Site?> GetSiteAsync(int siteId)
+    public async Task<Site?> GetSiteAsync(int siteId, bool includeLandingPage = false, bool includePages = false, bool includeSections = false, bool includeContents = false, bool includeAuthor = false, CancellationToken cancellation = default)
     {
-        return await Repository.GetSiteAsync(siteId);
+        return await Repository.GetSiteAsync(siteId, includeLandingPage, includePages, includeSections, includeContents, includeAuthor, cancellation);
     }
 }
