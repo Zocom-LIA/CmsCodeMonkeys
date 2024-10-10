@@ -9,7 +9,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Configuration
     {
         public void Configure(EntityTypeBuilder<ContentItem> builder)
         {
-            builder.HasKey(ci => ci.ContentItemId);
+            builder.HasKey(ci => ci.ContentId);
             builder.Property(ci => ci.ContentType).IsRequired();
             builder.HasOne(ci => ci.Section).WithMany(s => s.ContentItems).HasForeignKey(ci => ci.SectionId);
         }
