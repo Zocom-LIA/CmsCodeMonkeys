@@ -42,15 +42,15 @@ namespace CodeMonkeys.CMS.Public.Shared.Configuration
                 .WithMany()
                 .HasForeignKey(content => content.WebPageId);
 
-            //builder.HasDiscriminator<string>("ContentType")
-            //    .HasValue<TextContent>(nameof(TextContent))
-            //    .HasValue<ImageContent>(nameof(ImageContent))
-            //    .HasValue<VideoContent>(nameof(VideoContent))
-            //    .HasValue<LinkContent>(nameof(LinkContent))
-            //    .HasValue<CodeContent>(nameof(CodeContent))
-            //    .HasValue<FileContent>(nameof(FileContent))
-            //    .HasValue<CodeContent>(nameof(CodeContent))
-            //    .HasValue<QuoteContent>(nameof(QuoteContent));
+            builder.HasDiscriminator<string>("ContentType")
+                .HasValue<TextContent>(nameof(TextContent))
+                .HasValue<ImageContent>(nameof(ImageContent))
+                .HasValue<VideoContent>(nameof(VideoContent))
+                .HasValue<LinkContent>(nameof(LinkContent))
+                .HasValue<CodeContent>(nameof(CodeContent))
+                .HasValue<FileContent>(nameof(FileContent))
+                .HasValue<CodeContent>(nameof(CodeContent))
+                .HasValue<QuoteContent>(nameof(QuoteContent));
         }
     }
 }

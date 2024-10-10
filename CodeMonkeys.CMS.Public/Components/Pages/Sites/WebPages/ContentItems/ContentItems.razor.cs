@@ -51,6 +51,8 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
             }
         }
 
+
+
         private async Task LoadSectionsAsync()
         {
             try
@@ -136,42 +138,46 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
         }
 
         private async Task AddContentItem()
+{
+    if (string.IsNullOrWhiteSpace(newContentItemText))
+        return;
+
+    if (_sections.TryGetValue(selectedList, out var section))
+    {
+        section.ContentItems ??= new List<ContentItem>();
+        var contentItem = new ContentItem
         {
-            if (!string.IsNullOrWhiteSpace(newContentItemText))
-            {
-                if (_sections.TryGetValue(selectedList, out var section))
-                {
-                    section.ContentItems ??= new List<ContentItem>();
-                    var contentItems = section.ContentItems;
-                    var contentItem = new ContentItem
-                    {
-                        SectionId = selectedList,
-                        Text = newContentItemText,
-                        Title = newContentItemText,
-                        Body = newContentItemText,
-                        OrdinalNumber = contentItems.Count(),
-                        AuthorId = User!.Id,
-                        WebPageId = WebPageId
-                    };
+            SectionId = selectedList,
+            Text = newContentItemText,
+            Title = newContentItemText,
+            Body = newContentItemText,
+            OrdinalNumber = section.ContentItems.Count(),
+            AuthorId = User!.Id,
+            WebPageId = WebPageId
+        };
 
-                    section.ContentItems.Add(contentItem);
+        section.ContentItems.Add(contentItem);
+        await ContentItemService.AddContentItemAsync(contentItem);
+        newContentItemText = string.Empty;
 
-                    await ContentItemService.AddContentItemAsync(contentItem);
-                    newContentItemText = string.Empty;
+        // Reset edit button visibility
+        ResetEditButtonVisibility();
+        StateHasChanged();
+    }
+    else
+    {
+        Logger.LogWarning("Section with ID {0} does not exist.", selectedList);
+    }
+}
 
-                    // Kontrollera och ställ in ShowEditButton endast om listan inte är tom
-                    ResetShowEditButton(_section1);
-                    ResetShowEditButton(_section2);
-                    ResetShowEditButton(_section3);
-                    ResetShowEditButton(_section4);
-                    StateHasChanged();
-                }
-                else
-                {
-                    Logger.LogWarning("Section with ID {0} does not exist.", selectedList);
-                }
-            }
-        }
+private void ResetEditButtonVisibility()
+{
+    ResetShowEditButton(_section1);
+    ResetShowEditButton(_section2);
+    ResetShowEditButton(_section3);
+    ResetShowEditButton(_section4);
+}
+
 
         private void ResetShowEditButton(Section section1)
         {
@@ -200,7 +206,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
         {
             if (ContentId <= 0)
             {
-                Logger.LogWarning("Invalid ContentItemId: {0}", ContentId);
+                Logger.LogWarning("Invalid ContentId: {0}", ContentId);
                 return; // Prevent further execution
             }
 
@@ -208,45 +214,234 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
             await ContentItemService.UpdateSectionIdAsync(ContentId, newSectionId);
         }
 
-        private async Task OnDrop(int targetSectionId)
+private bool sortOrderChanged = false;
+
+//NY Ondrop funkar
+
+private async Task OnDrop(int targetSectionId, int? targetIndex)
+{
+    Console.WriteLine($"OnDrop called with targetSectionId: {targetSectionId}, targetIndex: {targetIndex}");
+
+    if (draggedItem == null || draggedItem.ContentId <= 0)
+    {
+        HandleInvalidDragItem();
+        return;
+    }
+
+    var sourceSectionId = draggedItem.SectionId;
+    
+    Console.WriteLine($"Dragging item from section ID: {sourceSectionId}");
+
+    if (_sections.TryGetValue(sourceSectionId, out var sourceSection) &&
+        _sections.TryGetValue(targetSectionId, out var targetSection))
+    {
+        Console.WriteLine($"Source section found: {sourceSection.Name}, Target section found: {targetSection.Name}");
+        var originalIndex = GetOriginalIndex(sourceSection, draggedItem);
+
+        var sourceContentItems = sourceSection.ContentItems.ToList();
+        var targetContentItems = targetSection.ContentItems.ToList();
+
+        if (sourceSectionId == targetSectionId)
         {
-            if (draggedItem == null)
-            {
-                Logger.LogWarning("No content item is being dragged.");
-                return;
-            }
+            await HandleDropWithinSameSection(sourceContentItems, targetContentItems, targetIndex, originalIndex);
+            StateHasChanged();
+        }
+        else
+        {
+            await HandleDropBetweenSections(sourceContentItems, targetContentItems, targetSectionId, targetIndex);
+            StateHasChanged();
+        }
+        if (sortOrderChanged) // Add a flag to track changes
+        {
+            await UpdateSortOrder(sourceContentItems);
+            StateHasChanged();
+        }
+        
 
-            if (draggedItem.ContentId <= 0) // Kontrollera ContentId istället
-            {
-                Logger.LogWarning("Invalid ContentId: {0}", draggedItem.ContentId);
-                return; // Avbryt om ID är ogiltigt
-            }
+        // Uppdatera sektionen för det flyttade objektet
+        await UpdateContentItemSectionAsync(draggedItem.ContentId, targetSectionId);
+       
+        Console.WriteLine($"Updated section for dragged item ID: {draggedItem.ContentId}");
 
-            var sourceSectionId = draggedItem.SectionId;
+        Console.WriteLine("StateHasChanged called after drop operation.");
+        StateHasChanged();
+    }
+    else
+    {
+        Console.WriteLine("Source or target section not found.");
+        Logger.LogWarning("Source or target section not found.");
+    }
+}
 
-            if (_sections.TryGetValue(sourceSectionId, out var sourceSection) &&
-                _sections.TryGetValue(targetSectionId, out var targetSection))
-            {
-                // Ta bort från källsektionen
-                sourceSection.ContentItems.Remove(draggedItem);
 
-                // Uppdatera SectionId för det dragna objektet
-                draggedItem.SectionId = targetSectionId;
+private void HandleInvalidDragItem()
+{
+    if (draggedItem == null)
+    {
+        Console.WriteLine("No content item is being dragged.");
+        Logger.LogWarning("No content item is being dragged.");
+    }
+    else
+    {
+        Console.WriteLine($"Invalid ContentId: {draggedItem.ContentId}");
+        Logger.LogWarning("Invalid ContentId: {0}", draggedItem.ContentId);
+    }
+}
 
-                // Lägg till i målsektionen
-                targetSection.ContentItems.Add(draggedItem);
+private int GetOriginalIndex(Section sourceSection, ContentItem draggedItem)
+{
+    return sourceSection.ContentItems
+        .Select((item, index) => new { item, index })
+        .FirstOrDefault(x => x.item.OrdinalNumber == draggedItem.OrdinalNumber)?.index ?? -1;
+}
 
-                // Uppdatera databasen via en liknande metod som AddContentItem
-                await UpdateContentItemSectionAsync(draggedItem.ContentId, targetSectionId);
 
-                // Uppdatera UI
-                StateHasChanged();
-            }
+// NY
+private async Task HandleDropWithinSameSection(List<ContentItem> sourceContentItems, List<ContentItem> targetContentItems, int? targetIndex, int originalIndex)
+{
+    // Kontrollera om det finns ett giltigt targetIndex och om det skiljer sig från originalIndex
+    if (!targetIndex.HasValue || targetIndex.Value == originalIndex)
+    {
+        Console.WriteLine("No position change detected.");
+        return;
+    }
+
+    sortOrderChanged = true;
+
+    // Se till att originalIndex är giltigt
+    if (originalIndex >= 0 && originalIndex < sourceContentItems.Count)
+    {
+        // Hämta objektet som ska flyttas
+        var itemToMove = sourceContentItems[originalIndex];
+        sourceContentItems.RemoveAt(originalIndex);
+        StateHasChanged();
+
+        // Om targetIndex är giltigt, sätt in objektet på rätt position
+        if (targetIndex.Value >= 0 && targetIndex.Value <= sourceContentItems.Count)
+        {
+            sourceContentItems.Insert(targetIndex.Value, itemToMove);
+        }
+        else
+        {
+            // Lägg till objektet sist i listan om indexet är utanför gränserna
+            sourceContentItems.Add(itemToMove);
         }
 
+        // Uppdatera sorteringsordningen
+        await UpdateSortOrder(sourceContentItems);
+        
+        // Återge UI:t för att visa den uppdaterade ordningen
+        StateHasChanged();
+    }
+}
+
+
+private int CompareContentItems(ContentItem x, ContentItem y)
+{
+    // Anpassa jämförelsen baserat på dina sorteringskriterier
+    return x.SortOrder.CompareTo(y.SortOrder);
+}
+
+private async Task HandleDropBetweenSections(List<ContentItem> sourceContentItems, List<ContentItem> targetContentItems, int targetSectionId, int? targetIndex)
+{
+    Console.WriteLine("Handling drop between different sections.");
+
+    if (draggedItem == null)
+    {
+        Console.WriteLine("No item is being dragged.");
+        Logger.LogWarning("No item is being dragged.");
+        return;
+    }
+
+    // Ta bort objektet från källsektionen
+    if (sourceContentItems.Contains(draggedItem))
+    {
+        sourceContentItems.Remove(draggedItem);
+        Console.WriteLine("Removed dragged item from source section.");
+    }
+
+    // Uppdatera sektion ID för draget objekt
+    draggedItem.SectionId = targetSectionId;
+    Console.WriteLine($"Updated dragged item section ID to: {targetSectionId}");
+
+    // Lägg till objektet i den nya sektionen
+    if (targetContentItems == null)
+    {
+        Console.WriteLine("Target content items list is null.");
+        Logger.LogWarning("Target content items list is null.");
+        return;
+    }
+
+    if (targetIndex.HasValue && targetIndex.Value >= 0 && targetIndex.Value <= targetContentItems.Count)
+    {
+        targetContentItems.Insert(targetIndex.Value, draggedItem);
+        Console.WriteLine($"Inserted dragged item at index: {targetIndex.Value} in target section.");
+    }
+    else
+    {
+        targetContentItems.Add(draggedItem); // Lägg till sist om inget index ges
+        Console.WriteLine("Added dragged item to the end of the target section.");
+    }
+
+    // Uppdatera ContentItems i target sektionen
+    if (_sections.TryGetValue(targetSectionId, out var targetSection))
+    {
+        targetSection.ContentItems = targetContentItems;
+        Console.WriteLine($"Updated content items in target section: {targetSection.Name}");
+    }
+    else
+    {
+        Console.WriteLine("Target section not found while updating content items.");
+        Logger.LogWarning("Target section not found while updating content items.");
+    }
+
+    // Spara ändringar i databasen för det flyttade objektet (om nödvändigt)
+    try
+    {
+        await UpdateContentItemSectionAsync(draggedItem.ContentId, targetSectionId);
+        Console.WriteLine($"Updated section for dragged item ID: {draggedItem.ContentId}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error updating content item section: {ex.Message}");
+        Logger.LogError(ex, "Error updating content item section.");
+    }
+
+    // Uppdatera UI:n
+    StateHasChanged(); // Detta uppdaterar tillståndet på sidan
+}
 
 
 
+
+private async Task UpdateSortOrder(List<ContentItem> items)
+{
+    // Sort and update only if necessary
+    var changesMade = false;
+    for (int i = 0; i < items.Count; i++)
+    {
+        if (items[i].SortOrder != i + 1)
+        {
+            items[i].SortOrder = i + 1; // Sort orders start from 1
+            await UpdateContentItemSortOrderAsync(items[i].ContentId, items[i].SortOrder);
+            Console.WriteLine($"Updated sort order for item ID: {items[i].ContentId}, new sort order: {items[i].SortOrder}");
+            changesMade = true;
+        }
+    }
+    if (changesMade)
+    {
+        Console.WriteLine("Sort order updated.");
+        await InvokeAsync(StateHasChanged);
+    }
+}
+
+
+
+private async Task UpdateContentItemSortOrderAsync(int contentId, int sortOrder)
+        {
+            // Uppdatera sorteringsordningen i databasen via ditt ContentItemService
+            await ContentItemService.UpdateSortOrderAsync(contentId, sortOrder);
+        }
 
 
         private void ToggleEdit(ContentItem contentItem)
@@ -297,6 +492,14 @@ namespace CodeMonkeys.CMS.Public.Components.Pages.Sites.WebPages.ContentItems
             await LoadSectionsAsync(); // Uppdatera sektionerna efter borttagningen
             StateHasChanged();
         }
+
+        private async Task SaveTextAlignAsync(ContentItem contentItem, string newTextAlign)
+        {
+            contentItem.TextAlign = newTextAlign;
+            await ContentItemService.UpdateContentItemAsync(contentItem);
+            StateHasChanged(); // Uppdatera sidan så att den reflekterar ändringen
+        }
+
 
 
         private void ChangeFontSize(ContentItem contentItem, int change)
