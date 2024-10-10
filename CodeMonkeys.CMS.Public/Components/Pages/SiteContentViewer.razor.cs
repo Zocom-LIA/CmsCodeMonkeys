@@ -1,4 +1,5 @@
 ﻿using CodeMonkeys.CMS.Public.Components.Shared;
+using CodeMonkeys.CMS.Public.Services;
 using CodeMonkeys.CMS.Public.Shared.Entities;
 using CodeMonkeys.CMS.Public.Shared.Services;
 
@@ -13,11 +14,13 @@ namespace CodeMonkeys.CMS.Public.Components.Pages
 
         [Inject] required public ISiteService SiteService { get; set; }
         [Inject] required public ISectionService SectionService { get; set; }
+        [Inject] required public MenuConfigurationService MenuConfigurationService { get; set; }
 
         private Dictionary<int, Section> Sections { get; set; } = new Dictionary<int, Section>();
 
         protected override async Task OnInitializedAsync()
         {
+            MenuConfigurationService.IsEnabled = false;
             await ExecuteWithLoadingAsync(async () =>
             {
                 await base.OnInitializedAsync();
