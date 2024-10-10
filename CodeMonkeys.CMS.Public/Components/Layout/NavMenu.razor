@@ -8,11 +8,10 @@
 <style>
     html {
         scroll-padding-top: 92px;
-         overflow-y: scroll; /* Justera denna höjd baserat på höjden av din navigeringsmeny */
+        overflow-y: scroll; /* Justera denna höjd baserat på höjden av din navigeringsmeny */
     }
 
     [id]::before {
-        
         display: block;
         height: 25px; /* Justera denna höjd baserat på din navigeringsmeny */
         margin-top: -30px; /* Samma som höjden ovan */
@@ -30,43 +29,40 @@
                 <ul class="navbar-nav mr-auto">
                     <AuthorizeView>
                         <Authorized>
-                            <li class="nav-item">
-                                <NavLink class="nav-link" href="/" style="color: white;">Home</NavLink>
-                            </li>
-                            <li class="nav-item">
-                                <NavLink class="nav-link" href="sites" style="color: white;">
-                                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Site Index
-                                </NavLink>
-                            </li>
+                            @foreach (NavMenuEntry entry in Entries)
+                            {
+                                if (entry.ShowWhenAuthorized)
+                                {
+
+                                    <li class="nav-item">
+                                        <NavLink class="nav-link" href=@entry.Href style="color: white;">
+                                            @if (entry.EmptySpanClass != null)
+                                            {
+                                                <span class=@entry.EmptySpanClass aria-hidden="true"></span>
+                                            }
+                                            @entry.LinkText
+                                        </NavLink>
+                                    </li>
+                                }
+                            }
                         </Authorized>
                         <NotAuthorized>
-                         <li class="nav-item">
-                                <NavLink class="nav-link" href="LayoutFlashy2" style="color: white;">Test</NavLink>
-                            </li>
-                            <li class="nav-item">
-                                <NavLink class="nav-link" href="#section0" style="color: white;">Home</NavLink>
-                            </li>
-                              <li class="nav-item">
-                                <NavLink class="nav-link" href="#section1" style="color: white;">Om Verktyget</NavLink>
-                            </li>
-                              <li class="nav-item">
-                                <NavLink class="nav-link" href="#section2" style="color: white;">Våra Mallar</NavLink>
-                            </li>
-                              <li class="nav-item">
-                                <NavLink class="nav-link" href="#section3" style="color: white;">Möt Teamet</NavLink>
-                            </li>
-                              <li class="nav-item">
-                                <NavLink class="nav-link" href="#section4" style="color: white;">ZoCom</NavLink>
-                            </li>
-                              <li class="nav-item">
-                                <NavLink class="nav-link" href="#section5" style="color: white;">Kontakta Oss</NavLink>
-                            </li>
-                             <li class="nav-item">
-                                <NavLink class="nav-link" href="Account/Login" style="color: white;">Login</NavLink>
-                            </li>
-                            <li class="nav-item">
-                                <NavLink class="nav-link" href="Account/Register" style="color: white;">Register</NavLink>
-                            </li>
+                            @foreach (NavMenuEntry entry in Entries)
+                            {
+                                if (entry.ShowWhenUnauthorized)
+                                {
+
+                                    <li class="nav-item">
+                                        <NavLink class="nav-link" href=@entry.Href style="color: white;">
+                                            @if (entry.EmptySpanClass != null)
+                                            {
+                                                <span class=@entry.EmptySpanClass aria-hidden="true"></span>
+                                            }
+                                            @entry.LinkText
+                                        </NavLink>
+                                    </li>
+                                }
+                            }
                         </NotAuthorized>
                     </AuthorizeView>
                 </ul>
@@ -84,7 +80,7 @@
                             </li>
                         </Authorized>
                         <NotAuthorized>
-                           
+
                         </NotAuthorized>
                     </AuthorizeView>
                 </ul>
@@ -100,16 +96,16 @@
         </div>
 
 
-       
+
 
         <AuthorizeView>
             <Authorized>
-                        
+
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="/" style="color: white;">
                         Home
                     </NavLink>
-                </div>            
+                </div>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="sites" style="color: white;">
                         <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Site Index
@@ -161,7 +157,7 @@
                         <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Kontakt
                     </NavLink>
                 </div>
-                
+
                 <div class="nav-item ">
                     <NavLink class="nav-link" href="Account/Login" style="color: white;">
                         Login
@@ -172,13 +168,83 @@
                         Register
                     </NavLink>
                 </div>
-                
+
             </NotAuthorized>
         </AuthorizeView>
     </nav>
 </header> -->
-
 @code {
+    private List<NavMenuEntry> Entries { get; set; } =
+        new()
+            {
+            new NavMenuEntry()
+            {
+                Href = "/",
+                LinkText = "Home",
+                ShowWhenAuthorized = true
+            },
+            new NavMenuEntry()
+            {
+                Href = "sites",
+                LinkText = "Site Index",
+                ShowWhenAuthorized = true,
+                EmptySpanClass = "bi bi-list-nested-nav-menu"
+            },
+            new NavMenuEntry()
+            {
+                Href = "LayoutFlashy2",
+                LinkText = "Test",
+                ShowWhenUnauthorized = true
+            },
+            new NavMenuEntry()
+            {
+                Href = "#section0",
+                LinkText = "Home",
+                ShowWhenUnauthorized = true
+            },
+            new NavMenuEntry()
+            {
+                Href = "#section1",
+                LinkText = "Om Verktyget",
+                ShowWhenUnauthorized = true
+            },
+            new NavMenuEntry()
+            {
+                Href = "#section2",
+                LinkText = "Våra Mallar",
+                ShowWhenUnauthorized = true
+            },
+            new NavMenuEntry()
+            {
+                Href = "#section3",
+                LinkText = "Möt Teamet",
+                ShowWhenUnauthorized = true
+            },
+            new NavMenuEntry()
+            {
+                Href = "#section4",
+                LinkText = "ZoCom",
+                ShowWhenUnauthorized = true
+            },
+            new NavMenuEntry()
+            {
+                Href = "#section5",
+                LinkText = "Kontakta Oss",
+                ShowWhenUnauthorized = true
+            },
+            new NavMenuEntry()
+            {
+                Href = "Account/Login",
+                LinkText = "Login",
+                ShowWhenUnauthorized = true
+            },
+            new NavMenuEntry()
+            {
+                Href = "Account/Register",
+                LinkText = "Register",
+                ShowWhenUnauthorized = true
+            }
+            };
     private string? currentUrl;
 
     protected override void OnInitialized()
@@ -197,4 +263,6 @@
     {
         NavigationManager.LocationChanged -= OnLocationChanged;
     }
+
+
 }
