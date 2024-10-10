@@ -10,6 +10,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages
     public partial class SiteContentViewer : ContentBaseComponent<SiteContentViewer>
     {
         [Parameter] public int WebPageId { get; set; }
+        [Parameter] public bool TakeResponsibilityForNavBar { get; set; } = true;
         public WebPage? WebPage { get; set; }
 
         [Inject] required public ISiteService SiteService { get; set; }
@@ -20,7 +21,7 @@ namespace CodeMonkeys.CMS.Public.Components.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            MenuConfigurationService.IsEnabled = false;
+            if (TakeResponsibilityForNavBar) MenuConfigurationService.IsEnabled = false;
             await ExecuteWithLoadingAsync(async () =>
             {
                 await base.OnInitializedAsync();
