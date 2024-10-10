@@ -35,7 +35,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="wwwroot\Image\" />
+	  <Folder Include="Components\Pages\Contents\" />
 	</ItemGroup>
 
 </Project>
