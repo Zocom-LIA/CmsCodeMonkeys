@@ -1,7 +1,7 @@
 
 
 .grid-container {
-  padding-top: 4.5rem;
+  padding-top: 40px;
   display: grid;
   grid-template-columns: 1fr 400px;
   /* Box 3 är nu 400px bred */

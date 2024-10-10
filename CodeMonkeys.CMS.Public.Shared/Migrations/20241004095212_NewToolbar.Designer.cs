@@ -4,6 +4,7 @@ using CodeMonkeys.CMS.Public.Shared.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeMonkeys.CMS.Public.Shared.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241004095212_NewToolbar")]
+    partial class NewToolbar
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,11 +51,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("nvarchar(13)");
-
                     b.Property<DateTime>("LastModifiedDate")
                         .HasColumnType("datetime2");
 
@@ -72,11 +70,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasIndex("WebPageId");
 
-                    b.ToTable("Contents", (string)null);
-
-                    b.HasDiscriminator().HasValue("Content");
-
-                    b.UseTphMappingStrategy();
+                    b.ToTable("Contents");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Menu", b =>
@@ -98,7 +92,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasIndex("SiteId");
 
-                    b.ToTable("Menus", (string)null);
+                    b.ToTable("Menus");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.MenuItem", b =>
@@ -124,7 +118,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasIndex("WebPageId");
 
-                    b.ToTable("MenuItem", (string)null);
+                    b.ToTable("MenuItem");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.PageStats", b =>
@@ -135,9 +129,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PageStatsId"));
 
-                    b.Property<int>("PageId")
-                        .HasColumnType("int");
-
                     b.Property<string>("PageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -145,12 +136,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.Property<int>("PageVisits")
                         .HasColumnType("int");
 
-                    b.Property<int>("SiteId")
-                        .HasColumnType("int");
-
                     b.HasKey("PageStatsId");
 
-                    b.ToTable("PageStats", (string)null);
+                    b.ToTable("PageStats");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Role", b =>
@@ -160,44 +148,25 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("NormalizedName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles", (string)null);
-                });
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
 
-            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Section", b =>
-                {
-                    b.Property<int>("SectionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SectionId"));
-
-                    b.Property<string>("Color")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int>("WebPageId")
-                        .HasColumnType("int");
-
-                    b.HasKey("SectionId");
-
-                    b.HasIndex("WebPageId");
-
-                    b.ToTable("Sections", (string)null);
+                    b.ToTable("AspNetRoles", (string)null);
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Site", b =>
@@ -230,7 +199,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasIndex("LandingPageId");
 
-                    b.ToTable("Sites", (string)null);
+                    b.ToTable("Sites");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.User", b =>
@@ -243,10 +212,12 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
@@ -258,10 +229,12 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("NormalizedEmail")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("NormalizedUserName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
@@ -279,11 +252,20 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", b =>
@@ -316,7 +298,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasIndex("SiteId");
 
-                    b.ToTable("Pages", (string)null);
+                    b.ToTable("Pages");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -338,7 +320,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RoleClaims", (string)null);
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
@@ -360,7 +344,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserClaims", (string)null);
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
@@ -379,7 +365,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
-                    b.ToTable("UserLogins", (string)null);
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
@@ -392,7 +380,9 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasKey("UserId", "RoleId");
 
-                    b.ToTable("UserRoles", (string)null);
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
@@ -411,64 +401,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("UserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.ContentItem", b =>
-                {
-                    b.HasBaseType("CodeMonkeys.CMS.Public.Shared.Entities.Content");
-
-                    b.Property<int>("BoxNumber")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ContentItemId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FontFamily")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("FontSize")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsBold")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDragging")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsEditing")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsItalic")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsLinkEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("LinkDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LinkUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SectionId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("ShowEditButton")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TextColor")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasIndex("SectionId");
-
-                    b.HasDiscriminator().HasValue("ContentItem");
+                    b.ToTable("AspNetUserTokens", (string)null);
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Content", b =>
@@ -477,13 +410,11 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .WithMany()
                         .HasForeignKey("AuthorId");
 
-                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", "WebPage")
+                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", null)
                         .WithMany("Contents")
                         .HasForeignKey("WebPageId");
 
                     b.Navigation("Author");
-
-                    b.Navigation("WebPage");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Menu", b =>
@@ -512,17 +443,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                         .IsRequired();
 
                     b.Navigation("Menu");
-
-                    b.Navigation("WebPage");
-                });
-
-            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Section", b =>
-                {
-                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", "WebPage")
-                        .WithMany("Sections")
-                        .HasForeignKey("WebPageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("WebPage");
                 });
@@ -558,25 +478,60 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.Navigation("Site");
                 });
 
-            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.ContentItem", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.Section", "Section")
-                        .WithMany("ContentItems")
-                        .HasForeignKey("SectionId")
+                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.Role", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
+                {
+                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
+                {
+                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
+                {
+                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.Role", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Section");
+                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
+                {
+                    b.HasOne("CodeMonkeys.CMS.Public.Shared.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Menu", b =>
                 {
                     b.Navigation("Items");
-                });
-
-            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Section", b =>
-                {
-                    b.Navigation("ContentItems");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Site", b =>
@@ -594,8 +549,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.WebPage", b =>
                 {
                     b.Navigation("Contents");
-
-                    b.Navigation("Sections");
                 });
 #pragma warning restore 612, 618
         }

@@ -4,7 +4,10 @@
 
 <CascadingAuthenticationState>
     <div class="page">
-        <NavMenu />
+        @if (showNavigation)
+        {
+            <NavMenu />
+        }
         <main class="mt-5">
             <article class="content">
                 @Body
@@ -40,3 +43,21 @@
 
 
 </CascadingAuthenticationState>
+
+@inject NavigationManager Navigation
+
+@code {
+    private bool showNavigation = true;
+
+    protected override void OnInitialized()
+    {
+        // Determine the current page and set showNavMenu accordingly
+        var uri = Navigation.ToBaseRelativePath(Navigation.Uri).ToLower();
+
+        // Example: Hide NavMenu on specific page
+        if (uri.ToLower().StartsWith("content"))
+        {
+            showNavigation = false;
+        }
+    }
+}

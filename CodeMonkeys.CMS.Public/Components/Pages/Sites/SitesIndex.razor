@@ -4,6 +4,7 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Identity
 @inherits AuthenticationBaseComponent<SitesIndex>
+
 @rendermode InteractiveServer
 @attribute [Authorize(Roles = "User, Admin")]
 
@@ -56,7 +57,7 @@
             </div>
 
             <div>
-                @if (Sites != null)
+                @if (Sites != null && Sites.Any())
                 {
                     <div class="sites-row">
                         @foreach (Site site in Sites ?? [])
@@ -66,17 +67,32 @@
                                     <div class="sites-card-header text-center font-weight-bold">
                                         @site.Name
                                     </div>
+
+
                                     <div class="sites-card-body">
-                                        <div class="sites-empty-box bg-light" style="height: 150px;">
-                                            <!-- Bild kommer här senare -->
+                                        <div class="sites-empty-box bg-light">
+                                            @if (site.LandingPage?.WebPageId != null)
+                                            {
+                                                <div class="content">
+                                                    <SiteContentViewer WebPageId="site.LandingPage.WebPageId"/>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="empty-content-message">
+                                                    <p>No content available for this site.</p>
+                                                </div>
+                                            }
                                         </div>
                                     </div>
+
                                     <div class="sites-card-actions">
                                         <button type="button" class="btn btn-primary sites-btn sites-btn-edit" @onclick="async () => await  AddOrUpdateSite(site.SiteId)">Edit Site Properties</button>
                                         <a class="btn btn-secondary sites-btn sites-btn-overview" href="/sites/@site.SiteId/webpages">Manage Pages</a>
                                         @if (site.LandingPage != null)
                                         {
-                                            <a class="btn btn-secondary sites-btn" href="/userPages/@site.SiteId">Go To Landing Page</a>
+                                            @* <a class="btn btn-secondary sites-btn" href="/userPages/@site.SiteId">Go To Landing Page</a> *@
+                                            <a class="btn btn-secondary sites-btn" href="/content/@site.LandingPage.WebPageId">Go To Landing Page</a>
                                         }
                                         else
                                         {
@@ -85,7 +101,14 @@
                                         <button type="button" class="btn btn-danger sites-btn sites-btn-delete" @onclick="async () => await DeleteSite(site.SiteId)">Delete</button>
                                     </div>
                                     <div class="sites-card-footer text-muted">
-                                        Last Modified: @site.LastModifiedDate.ToString("yyyy-MM-dd")
+                                        <div class="container">
+                                            <div>
+                                                Visits: @GetSiteVisits(site.SiteId)
+                                            </div>
+                                            <div>
+                                                Last Modified: @site.LastModifiedDate.ToString("yyyy-MM-dd")
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

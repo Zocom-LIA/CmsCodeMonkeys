@@ -1,20 +1,21 @@
 ﻿@page "/userPages/{SiteId:int}"
 @page "/userPages/{SiteId:int}/{PageName}"
 @inherits ContentBaseComponent<ShowUserPage>
-@rendermode InteractiveServer
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
 @using CodeMonkeys.CMS.Public.Components.Shared
 @using CodeMonkeys.CMS.Public.Components.Account.Shared
 @using CodeMonkeys.CMS.Public.Shared.Entities
 @using CodeMonkeys.CMS.Public.Shared.Repository
+@using System.Text
 
 <PageTitle>@WebPage?.Title</PageTitle>
 <UserViewer>
     <UserViewHeader>@WebPage?.Title</UserViewHeader>
     <ChildContent>
-        <StatusMessage/>
-        @foreach(Content content in (WebPage?.Contents??[]).OrderBy(c=>c.OrdinalNumber))
+        <StatusMessage />
+        @foreach (ContentItem content in (WebPage?.Contents ?? []).OrderBy(c => c.OrdinalNumber))
         {
-            <span style="color:@content.Color">@content.Body</span>
+            <span style="@RenderContent(content)">@content.Body</span>
         }
     </ChildContent>
 </UserViewer>
@@ -25,6 +26,8 @@
     [Parameter] public required int SiteId { get; set; }
     [Parameter] public string? PageName { get; set; } = null;
     [Inject] public required ISiteRepository Repository { get; set; }
+    [Inject] public required IPageStatsRepository StatsRepository { get; set; }
+    [Inject] public required NavigationManager NavigationManager { get; set; }
 
     protected async override Task OnInitializedAsync()
     {
@@ -35,23 +38,40 @@
         {
             SetError($"No such site: {SiteId}");
             WebPage = NoSuchSitePage(SiteId);
-            // TODO return a 404
-            SetLoading(false);
-            return;
         }
-        if (PageName == null)
+        else
         {
-            WebPage = Site.LandingPage ?? NoLandingPageConfiguredPage(SiteId);
-            SetLoading(false);//TODO handle exceptions
-            return;
+            if (PageName == null)
+            {
+                if (Site.LandingPage == null)
+                {
+                    WebPage = NoLandingPageConfiguredPage(SiteId);
+                }
+                else
+                {
+                    WebPage = Site.LandingPage;
+                        await StatsRepository.UpdatePageCountAsync(SiteId, WebPage.WebPageId, NavigationManager.ToBaseRelativePath(NavigationManager.Uri));
+                }
+            }
+            else
+            {
+                WebPage = FindPage(Site, PageName);
+                if (WebPage == null)
+                {
+                    WebPage = NoSuchPagePage(PageName);
+                }
+                else
+                {
+                        await StatsRepository.UpdatePageCountAsync(SiteId, WebPage.WebPageId, NavigationManager.ToBaseRelativePath(NavigationManager.Uri));
+                }
+            }
         }
-        WebPage = FindPage(Site, PageName) ?? NoSuchPagePage(PageName);
         SetLoading(false);
     }
 
     /* A user that assigns the number of one page as the title of another page will not be able to access the latter by title. This is their problem.
      * A user that assigns the same name to multiple pages will have one displayed at random when a page with that title is requested. This is also their problem.
-     */
+    */
     private WebPage? FindPage(Site site, string pageName) => FindPageByNumber(site, pageName) ?? FindPageByTitle(site, pageName);
 
     private WebPage? FindPageByTitle(Site site, string pageName) => site.Pages.FirstOrDefault(p => p.Title == pageName);
@@ -71,10 +91,38 @@
 
     private WebPage NoLandingPageConfiguredPage(int SiteName)
     {
-        return new WebPage() {Title = "No landing page configured", Contents = [new Content() { Body = $"No landing page configured for site: {SiteName}" }] };
+        return new WebPage() { Title = "No landing page configured", Contents = [new Content() { Body = $"No landing page configured for site: {SiteName}" }] };
     }
     private WebPage NoSuchPagePage(string PageName)
     {
         return new WebPage() { Title = "No such page", Contents = [new Content() { Body = $"No such page: {PageName}" }] };
+    }
+
+    private RenderFragment RenderContent(ContentItem content)
+    {
+        return builder =>
+        {
+            builder.OpenElement(0, "span");
+            builder.AddAttribute(1, "style", GetStyle(content));
+
+            // Render the content body
+            builder.AddContent(2, content.Body);
+
+            builder.CloseElement();
+        };
+    }
+
+    public string GetStyle(ContentItem content)
+    {
+        var styleBuilder = new StringBuilder();
+
+        // Add styles based on ContentItem properties
+        styleBuilder.Append($"font-size:{content.FontSize}px; ");
+        styleBuilder.Append($"color:{content.TextColor}; ");
+        styleBuilder.Append($"font-weight:{(content.IsBold ? "bold" : "normal")}; ");
+        styleBuilder.Append($"font-style:{(content.IsItalic ? "italic" : "normal")}; ");
+        styleBuilder.Append($"font-family: {content.FontFamily}; ");
+
+        return styleBuilder.ToString();
     }
 }
