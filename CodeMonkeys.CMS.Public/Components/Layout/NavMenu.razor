@@ -3,7 +3,9 @@
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
+@using CodeMonkeys.CMS.Public.Services
 @using Microsoft.AspNetCore.Components.Authorization
+@using System.Collections.Immutable
 
 <style>
     html {
@@ -29,7 +31,7 @@
                 <ul class="navbar-nav mr-auto">
                     <AuthorizeView>
                         <Authorized>
-                            @foreach (NavMenuEntry entry in Entries)
+                            @foreach (NavMenuEntry entry in ConfigurationService.NavMenuEntries)
                             {
                                 if (entry.ShowWhenAuthorized)
                                 {
@@ -47,7 +49,7 @@
                             }
                         </Authorized>
                         <NotAuthorized>
-                            @foreach (NavMenuEntry entry in Entries)
+                            @foreach (NavMenuEntry entry in ConfigurationService.NavMenuEntries)
                             {
                                 if (entry.ShowWhenUnauthorized)
                                 {
@@ -174,9 +176,10 @@
     </nav>
 </header> -->
 @code {
-    private List<NavMenuEntry> Entries { get; set; } =
-        new()
-            {
+    [Inject] private MenuConfigurationService ConfigurationService { get; set; }
+    private static ImmutableList<NavMenuEntry> DefaultEntries { get; set; } =
+        new List<NavMenuEntry>()
+        {
             new NavMenuEntry()
             {
                 Href = "/",
@@ -244,13 +247,15 @@
                 LinkText = "Register",
                 ShowWhenUnauthorized = true
             }
-            };
+        }.ToImmutableList();
     private string? currentUrl;
 
     protected override void OnInitialized()
     {
         currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         NavigationManager.LocationChanged += OnLocationChanged;
+        ConfigurationService.SetEntries(DefaultEntries, 1);
+        ConfigurationService.NotificationActions.Add(StateHasChanged);
     }
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
