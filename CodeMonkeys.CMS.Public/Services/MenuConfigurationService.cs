@@ -11,19 +11,10 @@ namespace CodeMonkeys.CMS.Public.Services
             set
             {
                 _isEnabled = value;
-                Notify();
+                DataUpdated();
 
             }
         }
-
-        void Notify()
-        {
-            foreach (Action action in NotificationActions)
-            {
-                action();
-            }
-        }
-        public HashSet<Action> NotificationActions { get; } = new();
 
         // We absolutely do not want to provide a reference to the list that could be used to change it without triggering the notifications.
         private ImmutableList<NavMenuEntry> _entries = new List<NavMenuEntry>().ToImmutableList();
@@ -40,8 +31,10 @@ namespace CodeMonkeys.CMS.Public.Services
             {
                 _entries = entries;
                 currentPriority = priority;
-                Notify();
+                DataUpdated();
             }
         }
+
+        public event Action DataUpdated = delegate { };
     }
 }

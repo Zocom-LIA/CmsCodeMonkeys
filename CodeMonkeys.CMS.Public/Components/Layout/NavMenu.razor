@@ -255,7 +255,7 @@
         currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         NavigationManager.LocationChanged += OnLocationChanged;
         ConfigurationService.SetEntries(DefaultEntries, 1);
-        ConfigurationService.NotificationActions.Add(StateHasChanged);
+        ConfigurationService.DataUpdated += (StateHasChanged);
     }
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
@@ -267,6 +267,7 @@
     public void Dispose()
     {
         NavigationManager.LocationChanged -= OnLocationChanged;
+        ConfigurationService.DataUpdated -= StateHasChanged;
     }
 
 

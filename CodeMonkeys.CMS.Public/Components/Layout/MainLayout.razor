@@ -1,6 +1,7 @@
 ﻿@using CodeMonkeys.CMS.Public.Services
 @using Microsoft.AspNetCore.Components.Authorization
 @inherits LayoutComponentBase
+@implements IDisposable
 
 
 <CascadingAuthenticationState>
@@ -32,12 +33,13 @@
 @code {
     protected override void OnInitialized()
     {
-        MenuConfiguration.NotificationActions.Add(StateHasChanged);
+        MenuConfiguration.DataUpdated += StateHasChanged;
         base.OnInitialized();
     }
 
-    private void notify()
+
+    public void Dispose()
     {
-        StateHasChanged();
+        MenuConfiguration.DataUpdated -= StateHasChanged;
     }
 }
