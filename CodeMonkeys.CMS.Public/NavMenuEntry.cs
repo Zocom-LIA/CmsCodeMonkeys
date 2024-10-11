@@ -2,8 +2,8 @@
 {
     public class NavMenuEntry
     {
-        public bool ShowWhenAuthorized { get; set; } = false;
-        public bool ShowWhenUnauthorized { get; set; }= false;
+        public bool ShowWhenAuthorized { get; set; } = true;
+        public bool ShowWhenUnauthorized { get; set; }= true;
         public string Href { get; set; }
         public string LinkText { get; set; }
         public string? EmptySpanClass { get; set; }
