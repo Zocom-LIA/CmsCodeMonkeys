@@ -398,3 +398,4 @@ FodyWeavers.xsd
 *.sln.iml
 CodeMonkeys.CMS.Public.Shared/Migrations
 CodeMonkeys.CMS.Public.Shared/Migrations/ApplicationDbContextModelSnapshot.cs
+/CodeMonkeys.CMS.Public/appsettings.json
