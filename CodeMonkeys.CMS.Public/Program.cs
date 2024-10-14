@@ -2,6 +2,7 @@ using AutoMapper;
 
 using CodeMonkeys.CMS.Public.Components;
 using CodeMonkeys.CMS.Public.Components.Account;
+using CodeMonkeys.CMS.Public.Services;
 using CodeMonkeys.CMS.Public.Shared;
 using CodeMonkeys.CMS.Public.Shared.Data;
 using CodeMonkeys.CMS.Public.Shared.Entities;
@@ -82,6 +83,7 @@ builder.Services.AddScoped<IContentItemService, ContentItemService>();
 builder.Services.AddScoped<CodeMonkeys.CMS.Public.Shared.Repository.IContentItemRepository, CodeMonkeys.CMS.Public.Shared.Repository.ContentItemRepository>();
 builder.Services.AddScoped<ISectionService, SectionService>();
 builder.Services.AddScoped<ISectionRepository, SectionRepository>();
+builder.Services.AddScoped<MenuConfigurationService>();
 
 var app = builder.Build();
 

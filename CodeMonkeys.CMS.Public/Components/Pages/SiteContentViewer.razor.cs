@@ -1,4 +1,5 @@
 ﻿using CodeMonkeys.CMS.Public.Components.Shared;
+using CodeMonkeys.CMS.Public.Services;
 using CodeMonkeys.CMS.Public.Shared.Entities;
 using CodeMonkeys.CMS.Public.Shared.Services;
 
@@ -9,15 +10,18 @@ namespace CodeMonkeys.CMS.Public.Components.Pages
     public partial class SiteContentViewer : ContentBaseComponent<SiteContentViewer>
     {
         [Parameter] public int WebPageId { get; set; }
+        [Parameter] public bool TakeResponsibilityForNavBar { get; set; } = true;
         public WebPage? WebPage { get; set; }
 
         [Inject] required public ISiteService SiteService { get; set; }
         [Inject] required public ISectionService SectionService { get; set; }
+        [Inject] required public MenuConfigurationService MenuConfigurationService { get; set; }
 
         private Dictionary<int, Section> Sections { get; set; } = new Dictionary<int, Section>();
 
         protected override async Task OnInitializedAsync()
         {
+            if (TakeResponsibilityForNavBar) MenuConfigurationService.IsEnabled = false;
             await ExecuteWithLoadingAsync(async () =>
             {
                 await base.OnInitializedAsync();

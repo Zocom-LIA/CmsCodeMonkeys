@@ -1,10 +1,12 @@
-﻿@using Microsoft.AspNetCore.Components.Authorization
+﻿@using CodeMonkeys.CMS.Public.Services
+@using Microsoft.AspNetCore.Components.Authorization
 @inherits LayoutComponentBase
+@implements IDisposable
 
 
 <CascadingAuthenticationState>
     <div class="page">
-        @if (showNavigation)
+        @if (MenuConfiguration.IsEnabled)
         {
             <NavMenu />
         }
@@ -14,7 +16,7 @@
             </article>
         </main>
     </div>
-    @if (showNavigation)
+    @if (MenuConfiguration.IsEnabled)
     {
         <footer class="footer">
             <!-- Here we added the class="footer" -->
@@ -26,19 +28,18 @@
 </CascadingAuthenticationState>
 
 @inject NavigationManager Navigation
+@inject MenuConfigurationService MenuConfiguration
 
 @code {
-    private bool showNavigation = true;
-
     protected override void OnInitialized()
     {
-        // Determine the current page and set showNavMenu accordingly
-        var uri = Navigation.ToBaseRelativePath(Navigation.Uri).ToLower();
+        MenuConfiguration.DataUpdated += StateHasChanged;
+        base.OnInitialized();
+    }
 
-        // Example: Hide NavMenu on specific page
-        if (uri.ToLower().StartsWith("content"))
-        {
-            showNavigation = false;
-        }
+
+    public void Dispose()
+    {
+        MenuConfiguration.DataUpdated -= StateHasChanged;
     }
 }
