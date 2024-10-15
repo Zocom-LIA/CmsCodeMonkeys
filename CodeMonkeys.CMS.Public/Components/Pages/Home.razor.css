@@ -1,0 +1,70 @@
+﻿/* Container för layouten */
+.content-layout {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+    gap: 20px;
+}
+
+/* Vänstra sektionen - text */
+.left-section {
+    flex: 1 1 45%; /* Ta upp 45% av bredden */
+    padding: 20px;
+    background-color: #f8f9fa; /* Ljusgrå bakgrund */
+    border: 1px solid #ddd; /* Lätt grå ram */
+    border-radius: 8px; /* Rundade hörn */
+}
+
+/* Högra sektionen - bild */
+.right-section {
+    flex: 1 1 45%; /* Ta upp 45% av bredden */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Gör bilden responsiv */
+.responsive-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px; /* Rundade hörn */
+}
+
+/* Nedre sektionen */
+.bottom-section {
+    flex: 1 1 100%; /* Ta upp hela bredden */
+    padding: 20px;
+    background-color: #f1f1f1; /* Lättare grå bakgrund */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+/* Stil för rubriker */
+h1, h2 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* Stil för text */
+p {
+    color: #555;
+    line-height: 1.6;
+}
+
+/* Responsiv design - justering vid mindre skärmar */
+@media (max-width: 768px) {
+    .content-layout {
+        flex-direction: column; /* Staplar sektionerna vertikalt på små skärmar */
+    }
+
+    .left-section, .right-section, .bottom-section {
+        flex: 1 1 100%; /* Varje sektion tar upp hela bredden */
+    }
+
+    .responsive-image {
+        max-width: 80%; /* Minska bildstorleken på små skärmar */
+    }
+}
