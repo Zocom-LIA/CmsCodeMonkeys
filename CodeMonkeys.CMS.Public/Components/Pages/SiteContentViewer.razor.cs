@@ -34,8 +34,8 @@ namespace CodeMonkeys.CMS.Public.Components.Pages
                 {
                     Navigation.NavigateTo("/error");
                 }
+                if (TakeResponsibilityForNavBar) await InsertNavbar(WebPage);
             });
-            if (TakeResponsibilityForNavBar) await InsertNavbar(WebPage);
         }
 
         private async Task InsertNavbar(WebPage? webPage)
