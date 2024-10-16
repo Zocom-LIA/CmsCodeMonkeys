@@ -1,280 +1,533 @@
+/* Grundläggande styling för hela sidan */
 .StartPage {
-  margin-top: -8%;
-  width: auto;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    /*background-color: #c9ff99;*/
+    background-image: radial-gradient(at 45% 30%, hsla(241,77%,65%,1) 0px, transparent 50%), radial-gradient(at 17% 10%, hsla(271,87%,70%,1) 0px, transparent 50%), radial-gradient(at 59% 50%, hsla(318,69%,68%,1) 0px, transparent 50%), radial-gradient(at 49% 78%, hsla(224,65%,69%,1) 0px, transparent 50%), radial-gradient(at 23% 68%, hsla(266,84%,73%,1) 0px, transparent 50%), radial-gradient(at 13% 15%, hsla(267,96%,62%,1) 0px, transparent 50%), radial-gradient(at 69% 56%, hsla(263,65%,70%,1) 0px, transparent 50%), radial-gradient(at 2% 0%, hsla(320,61%,60%,1) 0px, transparent 50%), radial-gradient(at 17% 58%, hsla(296,84%,77%,1) 0px, transparent 50%), radial-gradient(at 95% 67%, hsla(181,83%,66%,1) 0px, transparent 50%);
+    background-size: 200% 200%;
+    font-family: 'Arial', sans-serif;
+    animation: moveBackground 50s ease-in-out infinite;
 }
 
-/* Standard bakgrundsfärg */
-.StartPage {
-  background-color: lightgray;
+@keyframes moveBackground {
+    0% {
+        background-position: 0% 0%;
+    }
+
+    50% {
+        background-position: 100% 100%;
+    }
+
+    100% {
+        background-position: 0% 0%;
+    }
 }
 
-.StartPage-div0,
-.StartPage-div1,
-.StartPage-div2,
-.StartPage-div3,
-.StartPage-div4,
-.StartPage-div5 {
-  
-  height: 900px;
+.main-section {
+    min-height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.StartPage-div0{
-  /* background: radial-gradient(circle at 50% 50%, #ffe5ce, #fcc6b4, #faa8b0, #f795ca, #e589f4, #9c71f2); */
-background-size: 100% 100%;
-background-position: 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px;
-background-image: radial-gradient(18% 28% at 24% 50%, #FFEEEE8A 1%, #073AFF00 100%), radial-gradient(18% 28% at 18% 71%, #FFFFFF59 6%, #073AFF00 100%), radial-gradient(70% 53% at 36% 76%, #FF8E737A 31%, #073AFF00 100%), radial-gradient(42% 53% at 15% 94%, #FFFFFFFF 7%, #073AFF00 100%), radial-gradient(18% 28% at 35% 87%, #FFFFFFFF 7%, #073AFF00 100%), radial-gradient(31% 43% at 7% 98%, #FFFFFFFF 24%, #073AFF00 100%), radial-gradient(21% 37% at 72% 23%, #6DE9FF99 1%, #073AFF00 100%), radial-gradient(35% 56% at 91% 74%, #8A4FFFF5 9%, #073AFF00 100%), radial-gradient(74% 86% at 67% 38%, #FF6DDFF5 24%, #073AFF00 100%), linear-gradient(125deg, #FF7F4EFF 1%, #4C00FCFF 100%);
+/* Dynamisk storlek för text och rubriker */
+h1 {
+    font-size: 5vw;
+    margin-bottom: 2vw;
+    background: linear-gradient(90deg, yellow, green, blue, yellow, green);
+    background-size: 400% 100%;
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: rainbowWave 40s ease-in-out infinite;
+    font-weight: bold;
 }
 
-.StartPage-div0 h1{
-  padding-top: 12%;
-  text-align: center;
-  font-size: 150px;
-  font-family:'futura pt book';
-  color: #1E1E1E;
+@keyframes rainbowWave {
+    0% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+p {
+    font-size: 1.5vw;
+    color: #555;
+    line-height: 1.6;
+}
+
+/* Styling för sektion 0 */
+.StartPage-div0 {
+    background: url('/Image/background.jpg') no-repeat center center;
+    background-size: cover;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+}
+
+    .StartPage-div0 h1 {
+        font-size: 6vw;
+        margin: 0;
+    }
+
+    .StartPage-div0 h4 {
+        font-size: 2.5vw;
+        margin-top: 2vw;
+    }
+
+/* Sektion 1 */
+.StartPage-div1 {
+    padding: 5vw;
+    background-color: #ffffff;
+    text-align: center;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 2vw;
+    align-items: center;
+}
+
+.grid-item {
+    padding: 2vw;
+    text-align: center;
+}
+
+.grid-container p {
+    max-width: 80vw;
+    font-size: 1.5vw;
+}
+
+/* Dynamisk storlek för bilder */
+.imgdator1, .imgdator {
+    max-width: 90vw;
+    height: auto;
+    object-fit: contain;
+    border-radius: 5px;
+}
+
+/* Sektion 2 */
+.StartPage-div2 {
+    padding: 5vw;
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    min-height: 100vh;
+    box-sizing:border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.StartPage-div2 p {
+    font-size: 1.5vw;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Lägger till en skugga */
+    line-height: 1.6;
 }
 
 
-
-.StartPage-div0 h4 {
-  text-align: center;
-  font-size: 50px;
-  font-family: 'futura pf light';
-  color: #1E1E1E;
-}
-
-/* Om Verktyget Section 1*/
-.StartPage-div1{
-  background-color: #ffffff;
-}
-
-.StartPage-div1 h1,
-.StartPage-div2 h1,
-.StartPage-div3 h1,
-.StartPage-div4 h1,
-.StartPage-div5 h1 {
-  text-align: center;
-  font-size: 40px;
-  font-family: 'futura pt book';
-  color: #1E1E1E;
-  margin-top: 14px;
-}
-
-.StartPage-div1 p,
-.StartPage-div2 p,
-.StartPage-div3 p,
-.StartPage-div4 p,
-.StartPage-div5 p {
-  font-size: 20px;
-  font-family: 'futura pf light';
-  color: #1E1E1E;
-}
-
-/* GRID SYSTEM */
 
 .StartPage-div-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 90px;
-  padding: 20px;
-}
-.StartPage-div-grid div {
-  background-color: #C9C9C9;
-  /* Bakgrundsfärg för boxarna */
-  padding: 20px;
-  /* Inre marginal */
-  border: 1px solid #ccc;
-  /* Ram runt boxarna */
-  border-radius: 50px;
-}
-
-/* Custom layout 2 */
-.StartPage-div-grid2 {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 10px;
-  height: 750px;
-  
-}
-
-.StartPage-div-grid2 div {
-  border-radius: 50px;
-  padding: 10px;
-  background-color: #C9C9C9;
-}
-
-/* Möt Teamet inline */
-/* Övergripande layout för sektionen */
-.StartPage-div3 {
-  padding: 20px;
-  background-color: #ffffff;
-  text-align: center;
-}
-
-.StartPage-div3 h1 {
-  font-size: 32px;
-  margin-bottom: 20px;
-}
-
-/* Grid layout för teamsektionen */
-.StartPage-div-grid2 {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
-  padding: 20px;
-}
-
-.a-team {
-  font-size: 28px;
-  margin-bottom: 20px;
-}
-
-/* Layout för teammedlemmarnas bilder */
-.StartPage-div-teamet {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 20px;
-  justify-items: center;
-  margin-bottom: 20px;
-}
-
-.StartPage-div-teamet div {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Stil för bilderna */
-.StartPage-div-teamet img {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #ccc;
-  margin-bottom: 10px;
-}
-
-/* Namn under varje bild */
-.StartPage-div-teamet div {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-/* Specifik styling för Angelia, där det finns en lista */
-.StartPage-div-teamet div p {
-  margin-bottom: 10px;
-}
-
-.StartPage-div-teamet ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  text-align: left;
-  font-size: 14px;
-}
-
-/* Lista för Angelia */
-.StartPage-div-teamet ul li {
-  margin: 5px 0;
-}
-
-
-
-/* Våra Mallar Section 2 */
-
-/* Möt Teamet Section 3 */
-
-
-/* ZoCom  Section 4*/
-
-/* Kontakt Section 5*/
-.StartPage-div5-Contact p {
-  margin-left: 40px;
-}
-
-.map-container {
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-  
-}
-
-.map-iframe {
-  margin-top: 20px;
-  width: 750px;
-  height: 600px;
-  border: 0;
-  border-radius: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3vw;
 }
 
 .imgdator {
-  border-radius: 50px;
-  max-width: 90%;
-  margin-left: 5%;
+    max-width: 80vw;
+    height: auto;
+    object-fit: contain;
+    border-radius: 5px;
 }
 
-/* Mobil (upp till 480px) */
+/* Sektion 3 (Möt Teamet) */
+.StartPage-div3 {
+    padding-top: 10px;
+    padding: 6vw;
+    background-color: #ffffff;
+    text-align: center;
+    min-height: 100vh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.StartPage-div3 h2 {
+    padding-bottom: 20px;
+}
+
+.StartPage-div-grid2 {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* Skapa 5 kolumner */
+    gap: 1vw;
+    /*width: 200%;*/
+    /*max-width: 100%;*/
+    box-sizing: border-box;
+}
+
+
+
+
+
+/* Responsiv design */
+@media screen and (max-width: 1200px) {
+    .team-member img {
+        width: 130px; /* Minska storleken på bilderna */
+        height: 130px;
+    }
+
+    .StartPage-div-grid2 {
+        grid-template-columns: repeat(4, 1fr); /* 4 kolumner på medelstora skärmar */
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .team-member img {
+        width: 110px; /* Ännu mindre storlek för små skärmar */
+        height: 110px;
+    }
+
+    .StartPage-div-grid2 {
+        grid-template-columns: repeat(2, 1fr); /* 2 kolumner på mindre skärmar */
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .team-member img {
+        width: 90px; /* Anpassa för mycket små skärmar */
+        height: 90px;
+    }
+
+    .StartPage-div-grid2 {
+        grid-template-columns: 1fr; /* 1 kolumn på små skärmar */
+    }
+}
+
+
+.team-member {
+    background-color: #D9D9D9;
+    padding: 3vw;
+    border-radius: 5px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%; /* Gör att korten fyller hela bredden */
+    max-width: 300px; /* Sätt maxbredd för att förhindra att korten blir för stora */
+    height: auto; /* Justera höjd till auto för att tillåta flexibel text */
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+    /* Responsiva, runda och lika stora bilder */
+    .team-member img {
+        width: 150px; /* Fast storlek för stora skärmar */
+        height: 150px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin-bottom: 15px;
+        transition: width 0.3s, height 0.3s; /* Mjuk övergång när storleken ändras */
+    }
+
+    /* Gör att namn och listan ligger på samma rad */
+    .team-member-content {
+        display: flex;
+        justify-content: center; /* Ger utrymme mellan textblocken */
+        align-items: center; /* Justerar vertikalt i mitten */
+        flex-direction: column;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+
+    .team-member p {
+        font-size: 1.2vw;
+        font-weight: bold;
+        margin: 10px 0; /* Justera marginaler för bättre utrymme */
+        width: 100%;
+        text-align: center;
+
+        /* Begränsar till 3 rader */
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis; /* Lägger till "..." vid överflödig text */
+    }
+
+    .team-member ul {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        list-style: none;
+        padding: 0;
+        margin: 10px 0;
+
+        /* Begränsar till 3 rader */
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .team-member li {
+        font-size: 1vw;
+        color: #666;
+        margin-top: 5px;
+        margin-right: 10px;
+        margin-bottom: 5px;
+/*        text-align: center;*/
+        width: 100%;
+        /* Begränsar till 3 rader */
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Styla länkar */
+    .team-member a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+        .team-member a:hover {
+            text-decoration: underline;
+        }
+
+
+/* Sektion ZoCom */
+.StartPage-div4 {
+    padding: 4.5vw;
+    text-align: center; /* Centrera texten */
+    background-color: #ffffff;
+}
+
+
+.StartPage-div-grid4 {
+    padding-top: 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Två kolumner */
+    width: 100%; /* Full bredd */
+    max-width: none; /* Ta bort max-bredd */
+    box-sizing: border-box; /* Inkludera padding i totalbredden */
+}
+
+.about-us, .why-choose-us {
+    background-color: #343a40;
+    padding: 5vw;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center; /* Centrerar texten i artikeln */
+    height: auto;
+    width: 100%; /* Se till att de fyller hela bredden */
+    box-sizing: border-box; /* Inkludera padding i totalbredden */
+}
+
+
+/* Responsiv design för mindre skärmar */
+@media screen and (max-width: 900px) {
+    .StartPage-div-grid4 {
+        grid-template-columns: 1fr; /* En kolumn på mindre skärmar */
+    }
+
+    .about-us, .why-choose-us {
+        padding: 6vw; /* Justera padding på mindre skärmar */
+        text-align: center; /* Centrerar texten */
+    }
+}
+
+
+.StartPage-div-grid4 h2 {
+    width: 100%;
+    text-align: center;
+    font-size: 2vw;
+    margin-bottom: 2vw;
+    color: white;
+}
+
+.StartPage-div-grid4 p {
+    font-size: 1.5vw;
+    margin-bottom: 1vw;
+    color: white;
+}
+
+
+/* Kontakt-sektion */
+.StartPage-div5 {
+    padding: 2.5vw; /* Minskar paddingen för att ge mer plats åt kartan */
+    background-image: radial-gradient(at 45% 30%, hsla(241,77%,65%,1) 0px, transparent 50%), radial-gradient(at 17% 10%, hsla(271,87%,70%,1) 0px, transparent 50%), radial-gradient(at 59% 50%, hsla(318,69%,68%,1) 0px, transparent 50%), radial-gradient(at 49% 78%, hsla(224,65%,69%,1) 0px, transparent 50%), radial-gradient(at 23% 68%, hsla(266,84%,73%,1) 0px, transparent 50%), radial-gradient(at 13% 15%, hsla(267,96%,62%,1) 0px, transparent 50%), radial-gradient(at 69% 56%, hsla(263,65%,70%,1) 0px, transparent 50%), radial-gradient(at 2% 0%, hsla(320,61%,60%,1) 0px, transparent 50%), radial-gradient(at 17% 58%, hsla(296,84%,77%,1) 0px, transparent 50%), radial-gradient(at 95% 67%, hsla(181,83%,66%,1) 0px, transparent 50%);
+    background-size: 200% 200%;
+    font-family: 'Arial', sans-serif;
+    animation: moveBackground 30s ease-in-out infinite;
+    text-align: center;
+    min-height: auto;
+    padding-bottom: 50px; /* Lämnar utrymme för footern */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.StartPage-div5-Contact{
+    align-content:center;
+}
+
+.StartPage-div5-Contact h1 {
+    font-size: 3vw;
+    background: linear-gradient(90deg, yellow, green, blue);
+    background-size: 400% 100%;
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: rainbowWave 20s ease-in-out infinite;
+    font-weight: bold;
+}
+
+.StartPage-div5-Contact h2 {
+    text-align: center;
+    font-size: 2vw;
+    margin-bottom: 1vw;
+    color: black;
+}
+
+.imgdator2 {
+    padding-top: 1vw; /* Minskar top-padding för att få mer utrymme */
+    max-width: 15vw;
+    height: auto;
+    object-fit: contain;
+    border-radius: 5px;
+}
+
+.StartPage-div-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr; /* Ger mer utrymme åt kartan */
+    gap: 2vw; /* Minskar gapet för att få mer utrymme */
+    width: 100%;
+}
+
+.map-container {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.map-iframe {
+    width: 100%; /* Låt kartan ta upp hela utrymmet i sin grid-kolumn */
+    max-width: none; /* Ta bort maxbredden för att låta den växa */
+    height: 65vh; /* Ökar kartans höjd, men håller plats för footern */
+}
+
+
+
+
+/* För att säkerställa att footern alltid syns */
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex-grow: 1; /* Gör så att innehållet växer och lämnar plats åt footern */
+}
+
+footer {
+    padding: 20px;
+    background-color: #f4f4f4;
+    text-align: center;
+}
+
+
+/* Responsiv design med media queries */
+/* Justeringar för mycket små skärmar (480px eller mindre) */
 @media (max-width: 480px) {
-  .StartPage {
-    background-color: lightblue;
-    /* Bakgrundsfärg för mobil */
-  }
+    h1 {
+        font-size: 8vw; /* Anpassa rubrikstorlek */
+    }
+
+    h4 {
+        font-size: 6vw; /* Anpassa underrubrikstorlek */
+    }
+
+    p, ul, li {
+        font-size: 5vw; /* Större textstorlek för stycken och listor */
+        line-height: 1.8; /* Ökad radavstånd för bättre läsbarhet */
+        margin-bottom: 1.5em; /* Avstånd mellan textblock */
+        padding: 0 5%; /* Extra padding på sidorna för bättre luft */
+        color: #333; /* Kontrast för läsbarhet */
+    }
+
+    .grid-container, .StartPage-div-grid, .StartPage-div-grid4 {
+        grid-template-columns: 1fr; /* En kolumn för mindre skärmar */
+        width: 100%;
+    }
 }
 
-/* Liten surfplatta (481px till 768px) */
+/* Små skärmar (481px till 768px) */
 @media (min-width: 481px) and (max-width: 768px) {
-  .StartPage {
-    background-color: lightgreen;
-    /* Bakgrundsfärg för liten surfplatta */
-  }
+    h1 {
+        font-size: 7vw;
+    }
+
+    h4 {
+        font-size: 5vw;
+    }
+
+    p, ul, li {
+        font-size: 4vw;
+        line-height: 1.7;
+        margin-bottom: 1.5em;
+        padding: 0 5%;
+        color: #333;
+    }
 }
 
-/* Surfplatta (769px till 1024px) */
+/* Mellanstora skärmar (769px till 1024px) */
 @media (min-width: 769px) and (max-width: 1024px) {
-  .StartPage {
-    background-color: lightcoral;
-    /* Bakgrundsfärg för större surfplattor */
-  }
+    h1 {
+        font-size: 6vw;
+    }
+
+    h4 {
+        font-size: 4.5vw;
+    }
+
+    p, ul, li {
+        font-size: 3vw;
+        line-height: 1.6;
+        margin-bottom: 1.2em;
+        padding: 0 3%;
+        color: #333;
+    }
 }
 
-/* Liten laptop eller mindre desktop (1025px till 1280px) */
-@media (min-width: 1025px) and (max-width: 1280px) {
-  .StartPage {
-    background-color: lightgoldenrodyellow;
-    /* Bakgrundsfärg för små laptops */
-  }
-}
 
-/* Laptop eller desktop (1281px till 1600px) */
-@media (min-width: 1281px) and (max-width: 1400px) {
-  .StartPage {
-    background-color: lightsalmon;
-    /* Bakgrundsfärg för laptops/desktops */
-  }
-}
 
-@media (min-width: 1400px) and (max-width: 1600px) {
-  .StartPage {
-    background-color: lightsalmon;
-    
-   
-    /* Bakgrundsfärg för laptops/desktops */
-  }
-}
 
-/* Full HD 1920x1080 (1601px till 1920px) */
-@media (min-width: 1601px) and (max-width: 1920px) {
-  .StartPage {
-    background-color: lightseagreen;
 
-    /* Bakgrundsfärg för Full HD-skärmar */
-  }
-}
 
-/* Stora skärmar och 4K (1921px och uppåt) */
-@media (min-width: 1921px) {
-  .StartPage {
-    background-color: lightsteelblue;
-    /* Bakgrundsfärg för stora skärmar eller 4K */
-  }
-}
+
