@@ -1,4 +1,5 @@
 using AutoMapper;
+
 using CodeMonkeys.CMS.Public.Components;
 using CodeMonkeys.CMS.Public.Components.Account;
 using CodeMonkeys.CMS.Public.Services;
@@ -8,10 +9,12 @@ using CodeMonkeys.CMS.Public.Shared.Entities;
 using CodeMonkeys.CMS.Public.Shared.Profiles;
 using CodeMonkeys.CMS.Public.Shared.Repository;
 using CodeMonkeys.CMS.Public.Shared.Services;
+
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+
 using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
 
@@ -29,7 +32,6 @@ bool USEWindowsSql = false;
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-   
     .AddJsonFile("appsettings.OutSourceDB.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
@@ -51,7 +53,7 @@ else if (USEWindowsSql)
     Console.WriteLine($"Using connection string: DefaultConnectioString");
     Console.WriteLine($"Using connection string:{connectionString}");
 }
-else 
+else
 {
     connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     Console.WriteLine($"Using connection string: DefaultConnection");
