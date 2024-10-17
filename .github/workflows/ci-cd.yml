@@ -43,7 +43,7 @@ jobs:
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v3
       with:
-        app-name: 'YOUR_APP_SERVICE_NAME'
+        app-name: ${{ secrets.AZURE_APP_SERVICE_NAME }}
         slot-name: 'production'
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
 
@@ -51,6 +51,6 @@ jobs:
       run: echo "DB_CONNECTION_STRING=${{ secrets.DB_CONNECTION_STRING }}" >> $GITHUB_ENV
 
     - name: Deploy database migrations
-      run: dotnet ef database update --no-build --context YOUR_DB_CONTEXT
+      run: dotnet ef database update --no-build --context ApplicationDbContext
       env:
         ConnectionStrings__DefaultConnection: ${{ secrets.DB_CONNECTION_STRING }}
