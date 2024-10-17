@@ -4,6 +4,8 @@
 @using CodeMonkeys.CMS.Public.Shared.Services
 @inject IMenuService MenuService
 @rendermode InteractiveServer
+@attribute [Authorize(Roles = "User, Admin")]
+
 
 
 <UserViewer>
@@ -11,6 +13,45 @@
         @if (Site != null)
         {
             <h2>Manage Menus for "@Site.Name"</h2>
+            <!--Copied from WebPagesIndex and modified without necessarily understanding it.-->
+            if (!((Menus?.Any()) ?? false))
+            {
+                <div class="alert-info">
+                    <p>There are no menus for this site yet. Click the button above to create a new page.</p>
+                </div>
+            }
+            else
+            {
+                <div class="menus-row mt-4">
+                    @foreach (Menu menu in (Menus ?? new List<Menu>()))
+                    {
+                        <div class="menus-col-md-4 menus-mb-4">
+                            <div class="menus-card h-100">
+                                <div class="menus-card-header text-center font-weight-bold">
+                                    @menu.Name
+                                </div>
+                                <div class="menus-card-body">
+                                    <div class="menus-empty-box bg-light" style="height: 150px;">
+                                        <!-- Additional content can go here -->
+                                    </div>
+                                </div>
+                                <div class="menus-card-actions">
+                                    <!--
+                                    <button class="btn btn-primary" @onclick="async () => await AddOrUpdatePageAsync(webPage.WebPageId)">Edit page title</button>
+                                    <button class="btn btn-secondary" @onclick="async () => await EditContentsAsync(webPage.WebPageId)">Edit contents</button>
+                                    <button class="btn btn-danger" @onclick="async () => await DeletePageAsync(webPage.WebPageId)">Delete</button>
+                                    <a class="btn btn-secondary" href="/content/@(webPage.WebPageId)">Go to page</a>
+                                    -->
+                                </div>
+                                <div class="menus-card-footer text-muted">
+                                    <div class="container">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
         }
     </div>
 </UserViewer>
