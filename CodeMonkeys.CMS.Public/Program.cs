@@ -73,15 +73,23 @@ if (string.IsNullOrEmpty(connectionString))
     connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
     Console.WriteLine($"Using connection string: ENV FILE");
 }
+Action<DbContextOptionsBuilder> dbConfigFunction;
 
-// Kontrollera om anslutningssträngen är tom
-if (string.IsNullOrEmpty(connectionString))
+if (builder.Configuration["database"] == "inMemory")
 {
-    throw new InvalidOperationException("Ingen giltig anslutningssträng hittades.");
+    string databaseName = builder.Configuration["database_name"] ?? "Something";
+    dbConfigFunction = (options) => options.UseInMemoryDatabase(databaseName);
 }
+else
+{
+    // Kontrollera om anslutningssträngen är tom
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        throw new InvalidOperationException("Ingen giltig anslutningssträng hittades.");
+    }
 
-Action<DbContextOptionsBuilder> dbConfigFunction = options => options.UseSqlServer(connectionString);
-
+    dbConfigFunction = (options) => options.UseSqlServer(connectionString);
+}
 // Lägg till tjänster till containern
 builder.Services.AddDbContextFactory<ApplicationDbContext>(dbConfigFunction);
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();

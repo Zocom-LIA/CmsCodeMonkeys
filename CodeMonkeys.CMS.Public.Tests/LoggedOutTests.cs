@@ -44,7 +44,7 @@ namespace CodeMonkeys.CMS.Public.Tests
             Driver.Navigate().GoToUrl(HomeUrl);
 
             Assert.That(Driver.FindElement(By.XPath("//header//a")).Text, Is.EqualTo("CODE MONKEYS"));
-            Assert.That(Driver.FindElement(By.XPath("//main//h1")).Text, Is.EqualTo("Public"));
+            Assert.That(Driver.FindElement(By.XPath("//main//h1")).Text, Is.EqualTo("PUBLIC"));
         }
 
         [Test]
