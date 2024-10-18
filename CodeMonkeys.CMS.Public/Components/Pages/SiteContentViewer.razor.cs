@@ -4,6 +4,7 @@ using CodeMonkeys.CMS.Public.Shared.Entities;
 using CodeMonkeys.CMS.Public.Shared.Services;
 
 using Microsoft.AspNetCore.Components;
+using System.Collections.Immutable;
 
 namespace CodeMonkeys.CMS.Public.Components.Pages
 {
@@ -15,13 +16,14 @@ namespace CodeMonkeys.CMS.Public.Components.Pages
 
         [Inject] required public ISiteService SiteService { get; set; }
         [Inject] required public ISectionService SectionService { get; set; }
+        [Inject] protected IMenuService MenuService { get; set; }
         [Inject] required public MenuConfigurationService MenuConfigurationService { get; set; }
 
         private Dictionary<int, Section> Sections { get; set; } = new Dictionary<int, Section>();
 
         protected override async Task OnInitializedAsync()
         {
-            if (TakeResponsibilityForNavBar) MenuConfigurationService.IsEnabled = false;
+            
             await ExecuteWithLoadingAsync(async () =>
             {
                 await base.OnInitializedAsync();
@@ -32,8 +34,60 @@ namespace CodeMonkeys.CMS.Public.Components.Pages
                 {
                     Navigation.NavigateTo("/error");
                 }
+                if (TakeResponsibilityForNavBar) await InsertNavbar(WebPage);
             });
         }
+
+        private async Task InsertNavbar(WebPage? webPage)
+        {
+            if (webPage == null)
+            {
+                MenuConfigurationService.IsEnabled = false;
+                return;
+            }
+            int? maybeSiteId = webPage.SiteId;
+            if (maybeSiteId == null) {
+                MenuConfigurationService.IsEnabled = false;
+                return;
+            }
+            int siteId = maybeSiteId.Value;
+            IEnumerable<Menu>? menuList = await MenuService.GetMenusBySiteIdAsync(siteId);
+            if (menuList == null)
+            {
+                MenuConfigurationService.IsEnabled = false;
+                return;
+            }
+            if (!menuList.Any())
+            {
+                MenuConfigurationService.IsEnabled = false;
+                return;
+            }
+            Menu? menu = menuList.FirstOrDefault(); // For now.
+            if (menu == null)
+            {
+                MenuConfigurationService.IsEnabled = false;
+                return;
+            }
+            if(menu.Items == null)
+            {
+                MenuConfigurationService.IsEnabled = false;
+                return;
+            }
+            if (!menu.Items.Any())
+            {
+                MenuConfigurationService.IsEnabled = false;
+                return;
+            }
+            MenuConfigurationService.IsEnabled = true;
+            MenuConfigurationService.SetEntries(
+                menu.Items.Select(item => new NavMenuEntry()
+                {
+                    Href = $"content/{item.WebPageId}",
+                    LinkText = item.WebPage.Title
+                })
+                .ToImmutableList(), 2);
+        }
+
 
         private WebPage NoLandingPageConfiguredPage()
         {
