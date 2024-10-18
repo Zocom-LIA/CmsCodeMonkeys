@@ -27,6 +27,7 @@ var builder = WebApplication.CreateBuilder(args);
 bool UseDockerConnection = false; // Sätt till true för Docker eller false för DefaultConnection
 bool UseOutSourceDB = false; // Sätt till true för OutSourceDB
 bool USEWindowsSql = false;
+bool DBAzure = true;
 
 // Konfigurera appsettings och miljöinställningar
 builder.Configuration
@@ -47,18 +48,19 @@ else if (UseDockerConnection)
     connectionString = builder.Configuration.GetConnectionString("DockerConnectionString");
     Console.WriteLine($"Using connection string: DockerConnectionString");
 }
-else if (USEWindowsSql)
+else if (DBAzure)
+{
+    connectionString = builder.Configuration.GetConnectionString("DB_CONNECTION_STRING");
+    Console.WriteLine($"Using connection string: DockerConnectionString");
+}
+// else (USEWindowsSql)
+else
 {
     connectionString = builder.Configuration.GetConnectionString("DefaultConnectioString");
     Console.WriteLine($"Using connection string: DefaultConnectioString");
     Console.WriteLine($"Using connection string:{connectionString}");
 }
-else
-{
-    connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    Console.WriteLine($"Using connection string: DefaultConnection");
-    Console.WriteLine($"Using connection string:{connectionString}");
-}
+// ß
 
 // Hämta anslutningssträngen från miljövariabeln om den inte hittades i konfigurationen
 if (string.IsNullOrEmpty(connectionString))
