@@ -1,0 +1,30 @@
+﻿@inherits ComponentBase
+<div class="configuration-backdrop" style="display:@(_isVisible ? "block" : "none")">
+    <div class="configuration">
+        <div class="configuration-content">
+            <div class="configuration-header">
+                <button type="button" class="btn-close" aria-label="Close" @onclick="Cancel">
+                    <span aria-hidden="true"></span>
+                </button>
+                @if (!string.IsNullOrEmpty(Title))
+                {
+                    <h5 class="configuration-title">@Title</h5>
+                }
+            </div>
+            <div class="configuration-body">
+                @if (!string.IsNullOrEmpty(ConfigurationMessage))
+                {
+                    <p>@ConfigurationMessage</p>
+                }
+                else if (ChildContent != null)
+                {
+                    @ChildContent
+                }
+            </div>
+            <div class="configuration-footer">
+                <button type="button" class="btn btn-sm btn-secondary" @onclick="Confirm">@ConfigurationButtonText</button>
+                <button type="button" class="btn btn-sm btn-danger" @onclick="Cancel">@CancelButtonText</button>
+            </div>
+        </div>
+    </div>
+</div>

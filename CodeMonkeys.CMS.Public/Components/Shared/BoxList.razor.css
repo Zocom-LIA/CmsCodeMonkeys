@@ -1,0 +1,27 @@
+li {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+
+.box-grid li * {
+    margin: 0;
+    padding: 0;
+}
+
+.box-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    /* Example: 5 equal columns */
+    grid-auto-rows: minmax(100px, auto);
+    /* Adjust row height */
+    gap: 0;
+    padding: 0;
+    margin: 0;
+    /* Adjust gap between boxes */
+}
+
+.grid-item {
+    min-height: 100%;
+}

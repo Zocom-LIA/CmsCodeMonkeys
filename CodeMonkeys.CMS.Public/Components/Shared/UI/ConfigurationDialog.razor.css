@@ -1,0 +1,83 @@
+﻿.configuration-backdrop {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    background-color: #000;
+    background-color: rgba(0,0,0,.4);
+}
+
+.configuration {
+    position: fixed;
+    top: 105px !important;
+    right: 0;
+    width: 20%;
+    height: auto;
+    z-index: 101;
+    -webkit-overflow-scrolling: touch;
+    outline: 0;
+    border-radius: 5px;
+    border-style: double;
+    border-width: 1px;
+    background-color: #f8fafc;
+}
+
+.configuration, .configuration-content {
+    border-style: double;
+    border-width: 1px;
+    background-color: #f8fafc;
+    margin: 2px;
+}
+
+.configuration-header {
+    padding: 1rem;
+    text-align: center;
+}
+
+
+
+    .configuration-header button {
+        border-radius: 5px;
+        float: right;
+    }
+
+.configuration-content {
+    z-index: 102;
+    background-color: rgba(0,0,0,0.05);
+    border-radius: 5px;
+}
+
+.configuration-title {
+}
+
+.configuration-body {
+    padding: 1rem;
+    text-align: left;
+}
+
+.configuration-footer {
+    padding: 1rem;
+    text-align: right;
+}
+
+.configuration button:focus {
+    outline: 2px solid #0091ff;
+}
+
+.configuration .btn-secondary {
+    color: #fff;
+    background-color: #4c855d;
+    border-color: #6c757d;
+}
+
+    .configuration .btn-secondary:hover {
+        color: #fff;
+        background-color: #5a6268;
+        border-color: #545b62;
+    }
+
+.configuration dd {
+    min-width: 150px;
+}

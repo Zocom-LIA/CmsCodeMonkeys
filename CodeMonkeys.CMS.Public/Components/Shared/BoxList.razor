@@ -1,0 +1,273 @@
+@using CodeMonkeys.CMS.Public.Components.Shared.UI;
+@using CodeMonkeys.CMS.Public.Shared.Models;
+
+@using Microsoft.AspNetCore.Components;
+
+<h3>Skapa nya boxar:</h3>
+<button @onclick="ToggleButtonsVisibility">
+    @(showButtons ? "Dölj Knappar" : "Visa Knappar")
+</button>
+
+@if (showButtons)
+{
+    <button @onclick="AddTextModel">Lägg till Text Box</button>
+    <button @onclick="AddImageModel">Lägg till Image Box</button>
+    <button @onclick="AddContainer">Lägg till Container</button>
+
+    <button @onclick="ClearAll">Rensa Alla Boxar</button>
+}
+
+<div class="box-grid">
+    @foreach (var box in boxes)
+    {
+        <div style="grid-row: @box.Row; grid-column: @box.Column;">
+            @RenderContentItem(box, null)
+        </div>
+    }
+</div>
+<ConfigurationDialog @ref="Configuration"
+                     ConfigurationButtonText="Spara"
+                     CancelButtonText="Avbryt"
+                     OnConfirm="OnConfigurationConfirm"
+                     OnCancel="OnConfigurationCancel">
+    @if (ConfigurationInput != null)
+    {
+        @ConfigurationInput
+    }
+</ConfigurationDialog>
+
+@code {
+    private RenderFragment RenderContentItem(ContentModel box, SectionModel? parentContainer) => @<li>
+    <div @onclick="() => HandleImageClick(box)" style="text-align:@box.TextAlign;">
+        @box.GetContent()
+    </div>
+
+    @if (box.IsEditing)
+    {
+        <button @onclick="() => Changes(box)">Ändra</button>
+        <button @onclick="() => Save(box)">Spara</button>
+    @if (parentContainer == null) // Only for top level
+    {
+        <select @onchange="(e) => ChangeTextAlign(box, e)" value="@box.TextAlign">
+            <option value="left">Vänster</option>
+            <option value="center">Center</option>
+            <option value="right">Höger</option>
+        </select>
+        <br />
+
+    @if (IsValidPosition(box.Row - 1, box.Column))
+    {
+        <button @onclick="() => MoveBoxUp(box)">Flytta Upp</button>
+    }
+    @if (IsValidPosition(box.Row + 1, box.Column))
+    {
+        <button @onclick="() => MoveBoxDown(box)">Flytta Ner</button>
+    }
+        <br />
+
+    @if (IsValidPosition(box.Row, box.Column - 1))
+    {
+        <button @onclick="() => MoveBoxLeft(box)">Flytta Vänster</button>
+    }
+    @if (IsValidPosition(box.Row, box.Column + 1))
+    {
+        <button @onclick="() => MoveBoxRight(box)">Flytta Höger</button>
+    }
+        <br />
+        <button @onclick="() => CloneBox(box)">Klona Box</button>
+        <button @onclick="() => RemoveBox(box)">Ta bort box</button>
+    }
+    else // Inner boxes
+    {
+        <button @onclick="() => MoveInnerUp(box, parentContainer)">Flytta upp</button>
+        <button @onclick="() => MoveInnerDown(box, parentContainer)">Flytta ner</button>
+        <button @onclick="() => RemoveInnerBox(box, parentContainer)">Ta bort box</button>
+
+        <select @onchange="(e) => ChangeTextAlign(box, e)" value="@box.TextAlign">
+            <option value="left">Vänster</option>
+            <option value="center">Center</option>
+            <option value="right">Höger</option>
+        </select>
+
+        <select @onchange="(e) => ChangeContainer(box, e)" value="@box.SelectedContainerId">
+            <option value="">Välj Container</option>
+            @foreach (var c in containers)
+        {
+            <option value="@c.Id">@c.Title</option>
+        }
+        </select>
+    }
+    }
+    else
+    {
+    // Display only when not in edit mode
+    @if (box.ShowEditButton)
+    {
+    // TODO: Remember the current state in order to restore on cancel.
+    ConfigurationInput = RenderConfiguration(box);
+    OnConfigurationCancel = EventCallback.Factory.Create(this, () => ToggleEdit(box));
+    OnConfigurationConfirm = EventCallback.Factory.Create(this, () => ToggleEdit(box));
+
+    Configuration.Show();
+    }
+    }
+
+    @if (box is SectionModel container)
+    {
+        <ul style="@container.GetStyles();">
+            @foreach (var innerBox in container.InnerBoxes)
+        {
+            @RenderContentItem(innerBox, container)
+        }
+        </ul>
+
+    @if (showButtons)
+    {
+        <button @onclick="() => AddInnerTextModel(container)">Lägg till Text Box i Container</button>
+        <button @onclick="() => AddInnerImageModel(container)">Lägg till Image Box i Container</button>
+        <br />
+        <button @onclick="() => CloneSection(container)">Klona Containern</button>
+        <button @onclick="() => RemoveContainer(container)">Ta bort Container</button>
+        <button @onclick="() => ClearContainer(container)">Rensa Innehåll</button>
+        <p>Container ID: @container.Id</p>
+        <div>
+            @if (CanMoveBox(container, -1, 0))
+        {
+            <button @onclick="() => MoveBoxUp(container)">Flytta Upp</button>
+        }
+            @if (CanMoveBox(container, 1, 0))
+        {
+            <button @onclick="() => MoveBoxDown(container)">Flytta Ner</button>
+        }
+            @if (CanMoveBox(container, 0, -1))
+        {
+            <button @onclick="() => MoveBoxLeft(container)">Flytta Vänster</button>
+        }
+            @if (CanMoveBox(container, 0, 1))
+        {
+            <button @onclick="() => MoveBoxRight(container)">Flytta Höger</button>
+        }
+
+        </div>
+    }
+    }
+    </li>;
+
+    private RenderFragment RenderConfiguration(ContentModel box) =>@<div>
+        <dl>
+            @if (box is ImageModel image)
+        {
+            <dt>
+                <label>Image URL:</label>
+            </dt>
+            <dd>
+                <input type="text" @bind="@image.ImageUrl" />
+            </dd>
+            <dt>
+                <label>Height:</label>
+            </dt>
+            <dd>
+                <input type="number" @bind="@image.Height" />
+            </dd>
+            <dt>
+                <label>Width:</label>
+            </dt>
+            <dd>
+                <input type="number" @bind="@image.Width" />
+            </dd>
+        }
+            @if (box is TextModel txtModel)
+        {
+            <dt>
+                <label>Text:</label>
+            </dt>
+            <dd>
+                <input type="text" @bind="@txtModel.Text" />
+            </dd>
+            <dt>
+                <label>FontSize:</label>
+            </dt>
+            <dd>
+                <input type="number" @bind="@txtModel.FontSize" />
+            </dd>
+            <dt>
+                <label>Color:</label>
+            </dt>
+            <dd>
+                <input type="color" @bind="@txtModel.Color" />
+            </dd>
+        }
+
+            @if (box is SectionModel container)
+        {
+            <dt>
+                <label>Container Title:</label>
+            </dt>
+            <dd>
+                <input type="text" @bind="@container.Title" />
+            </dd>
+            <dt>
+                <label>Height:</label>
+            </dt>
+            <dd>
+                <input type="number" @bind="@container.Height" />
+            </dd>
+        }
+
+            <dt>
+                <label>Padding:</label>
+            </dt>
+            <dd>
+                <input type="number" @bind="@box.Padding" />
+            </dd>
+            <dt>
+                <label>Margin top:</label>
+            </dt>
+            <dd>
+                <input type="number" @bind="@box.MarginTop" />
+            </dd>
+            <dt>
+                <label>Margin bottom:</label>
+            </dt>
+            <dd>
+                <input type="number" @bind="@box.MarginBottom" />
+            </dd>
+            <dt>
+                <label>Margin left:</label>
+            </dt>
+            <dd>
+                <input type="number" @bind="@box.MarginLeft" />
+            </dd>
+            <dt>
+                <label> Margin right:</label>
+            </dt>
+            <dd>
+                <input type="number" @bind="@box.MarginRight" />
+            </dd>
+            <dt>
+                <label> BackgroundColor:</label>
+            </dt>
+            <dd>
+                <input type="color" @bind="@box.BackgroundColor" />
+            </dd>
+            <dt>
+                <label> Border color:</label>
+            </dt>
+            <dd>
+                <input type="color" @bind="@box.BackgroundBorder" />
+            </dd>
+            <dt>
+                <label> Border size:</label>
+            </dt>
+            <dd>
+                <input type="number" @bind="@box.BorderPix" />
+            </dd>
+            <dt>
+                <label> Border Radius:</label>
+            </dt>
+            <dd>
+                <input type="number" @bind="@box.BorderRadius" />
+            </dd>
+        </dl>
+    </div>;
+}

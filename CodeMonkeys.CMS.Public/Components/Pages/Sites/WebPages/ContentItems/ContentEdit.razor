@@ -1,0 +1,14 @@
+﻿@page "/sites/{siteId:int}/webpages/{webPageId:int}"
+@inherits AuthenticationBaseComponent<ContentEdit>
+@using CodeMonkeys.CMS.Public.Shared.Models
+@using CodeMonkeys.CMS.Public.Components.Shared
+@rendermode InteractiveServer
+
+<UserViewer>
+    <BoxList OnBoxSelected="(box) => {}" />
+</UserViewer>
+
+@code {
+    [Parameter] public int SiteId { get; set; }
+    [Parameter] public int WebPageId { get; set; }
+}

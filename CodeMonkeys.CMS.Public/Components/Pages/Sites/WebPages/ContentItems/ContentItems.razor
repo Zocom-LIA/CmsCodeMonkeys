@@ -1,4 +1,3 @@
-@page "/sites/{siteId:int}/webpages/{webPageId:int}"
 @using CodeMonkeys.CMS.Public.Components.Shared
 @inherits AuthenticationBaseComponent<ContentItems>
 @rendermode InteractiveServer
@@ -13,67 +12,67 @@
         }
         else
         {
-        <div class="box box1" @onclick="() => OpenColorPicker(_section1.SectionId)" style="background-color:@_section1.Color">
-            <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_section1.SectionId, null)">
-                <h4>Header</h4>
-                <ul>
-                    @if (_section1?.ContentItems != null)
-                    {
-                        foreach (var contentItem in _section1.ContentItems.OrderBy(ci => ci.SortOrder))
+            <div class="box box1" @onclick="() => OpenColorPicker(_section1.SectionId)" style="background-color:@_section1.Color">
+                <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_section1.SectionId, null)">
+                    <h4>Header</h4>
+                    <ul>
+                        @if (_section1?.ContentItems != null)
                         {
-                            <li ondragover="event.preventDefault()" 
-                                @ondrop="() => OnDrop(_section1.SectionId, _section1.ContentItems.ToList().IndexOf(contentItem))">
-                                @RenderContentItemItem(contentItem)
+                            foreach (var contentItem in _section1.ContentItems.OrderBy(ci => ci.SortOrder))
+                            {
+                                <li ondragover="event.preventDefault()"
+                                    @ondrop="() => OnDrop(_section1.SectionId, _section1.ContentItems.ToList().IndexOf(contentItem))">
+                                    @RenderContentItemItem(contentItem)
+                                </li>
+                            }
+                        }
+                    </ul>
+
+                    <h4>Bildgalleri</h4>
+                    <ul>
+                        @foreach (var image in imageItems)
+                        {
+                            <li style="text-align:@($"{image.ImageAlign} !important")">
+                                <img src="@image.Url"
+                                     style="border-radius:@($"{image.BorderRadius}px"); height:@($"{image.Height}px"); width:@($"{image.Width}px"); cursor: pointer;"
+                                     @onclick="() => ToggleImageEdit(image)" />
+
+                                @if (image.IsEditing)
+                                {
+                                    <button @onclick="() => SaveEditImage(image)">
+                                        @(image.ShowMessage ? "Spara" : "Ändra")
+                                    </button>
+                                    <button @onclick="() => RemoveImage(image)">Ta bort</button>
+
+                                    @if (image.ShowMessage)
+                                    {
+                                        <div class="imageinpage">
+                                            <label>Bildens URL:</label>
+                                            <input type="text" placeholder="Bildens URL" @bind="image.Url" />
+
+                                            <label>Bredd:</label>
+                                            <input type="number" placeholder="Bredd" @bind="image.Width" />
+
+                                            <label>Höjd:</label>
+                                            <input type="number" placeholder="Höjd" @bind="image.Height" />
+
+                                            <label>BorderRadius:</label>
+                                            <input type="number" placeholder="BorderRadius" @bind="image.BorderRadius" />
+
+                                            <label>Text Align:</label>
+                                            <select @bind="image.ImageAlign">
+                                                <option value="left">Vänster</option>
+                                                <option value="center">Centrerad</option>
+                                                <option value="right">Höger</option>
+                                            </select>
+                                        </div>
+                                    }
+                                }
                             </li>
                         }
-                    }
-                </ul>
-                
-                <h4>Bildgalleri</h4>
-                <ul>
-                    @foreach (var image in imageItems)
-                    {
-                        <li style="text-align:@($"{image.ImageAlign} !important")">
-                            <img src="@image.Url" 
-                                style="border-radius:@($"{image.BorderRadius}px"); height:@($"{image.Height}px"); width:@($"{image.Width}px"); cursor: pointer;" 
-                                @onclick="() => ToggleImageEdit(image)"/>
-                                
-                            @if (image.IsEditing)
-                            {
-                                <button @onclick="() => SaveEditImage(image)">
-                                    @(image.ShowMessage ? "Spara" : "Ändra")
-                                </button>
-                                <button @onclick="() => RemoveImage(image)">Ta bort</button>
-                                
-                                @if (image.ShowMessage)
-                                {   
-                                    <div class="imageinpage">
-                                        <label>Bildens URL:</label>
-                                        <input type="text" placeholder="Bildens URL" @bind="image.Url" />
-                                        
-                                        <label>Bredd:</label>
-                                        <input type="number" placeholder="Bredd" @bind="image.Width" />
-                                        
-                                        <label>Höjd:</label>
-                                        <input type="number" placeholder="Höjd" @bind="image.Height" />
-                                        
-                                        <label>BorderRadius:</label>
-                                        <input type="number" placeholder="BorderRadius" @bind="image.BorderRadius" />
-                                        
-                                        <label>Text Align:</label>
-                                        <select @bind="image.ImageAlign">
-                                            <option value="left">Vänster</option>
-                                            <option value="center">Centrerad</option>
-                                            <option value="right">Höger</option>
-                                        </select>
-                                    </div>
-                                }
-                            }
-                        </li>
-                    }
-                </ul>
+                    </ul>
+                </div>
             </div>
-        </div>
 
         }
 
@@ -92,8 +91,7 @@
                         {
                             foreach (var contentItem in _section2.ContentItems.OrderBy(ci => ci.SortOrder))
                             {
-                                <li 
-                                    ondragover="event.preventDefault()" 
+                                <li ondragover="event.preventDefault()"
                                     @ondrop="() => OnDrop(_section2.SectionId, _section2.ContentItems.ToList().IndexOf(contentItem))">
                                     @RenderContentItemItem(contentItem)
                                 </li>
@@ -113,7 +111,7 @@
         }
         else
         {
-           <div class="box box4" @onclick="() => OpenColorPicker(_section4.SectionId)" style="background-color:@_section4.Color">
+            <div class="box box4" @onclick="() => OpenColorPicker(_section4.SectionId)" style="background-color:@_section4.Color">
                 <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_section4.SectionId, null)">
                     <h4>Footer</h4>
                     <ul>
@@ -122,8 +120,7 @@
                             // Ordna och iterera genom ContentItems
                             foreach (var contentItem in _section4.ContentItems.OrderBy(ci => ci.SortOrder))
                             {
-                                <li 
-                                    ondragover="event.preventDefault()" 
+                                <li ondragover="event.preventDefault()"
                                     @ondrop="() => OnDrop(_section4.SectionId, _section4.ContentItems.ToList().IndexOf(contentItem))">
                                     @RenderContentItemItem(contentItem)
                                 </li>
@@ -142,13 +139,13 @@
             <h4>Toolbar</h4>
             <input @bind="newContentItemText" placeholder="Skriv en uppgift" />
             <select @bind="selectedList">
-                @foreach(var kvp in _sections)
+                @foreach (var kvp in _sections)
                 {
                     <option value="@kvp.Key">@kvp.Value.Name</option>
                 }
             </select>
             <br />
-              <br />
+            <br />
             <button @onclick="AddContentItem">Lägg till</button>
             <button @onclick="RemoveAllContentItemsAsync">Rensa Allt</button>
         </div>
@@ -161,23 +158,23 @@
             <button @onclick="AddImageItem">Lägg till bild</button>
         </div>
         <!-- <div class="list-container" ondragover="event.preventDefault()" @ondrop="() => OnDrop(_section3.SectionId, null)">
-            
-            <ul>
-               @if (_section3?.ContentItems?.Any() == true)
-{
-    @foreach (var contentItem in _section3.ContentItems.OrderBy(ci => ci.SortOrder))
-    {
-        @RenderContentItemItem(contentItem)
-    }
-}
-else
-{
-    <p>Inga innehållsobjekt tillgängliga i sektion 3.</p>
-}
 
-            </ul>
-            
-        </div> -->
+                    <ul>
+        @if (_section3?.ContentItems?.Any() == true)
+        {
+        @foreach (var contentItem in _section3.ContentItems.OrderBy(ci => ci.SortOrder))
+        {
+        @RenderContentItemItem(contentItem)
+        }
+        }
+        else
+        {
+            <p>Inga innehållsobjekt tillgängliga i sektion 3.</p>
+        }
+
+                    </ul>
+
+                </div> -->
     </div>
 </div>
 
@@ -200,13 +197,13 @@ else
 {
     public class ImageItem
     {
-    public string Url { get; set; }
-    public int Width { get; set; } = 100; // Standardbredd
-    public int Height { get; set; } = 100; // Standardhöjd
-    public int BorderRadius { get; set; } = 0; // Standardhöjd
-    public bool IsEditing { get; set; } = false;
-    public bool ShowMessage { get; set; } = false;
-    public string ImageAlign {get;set;}
+        public string Url { get; set; }
+        public int Width { get; set; } = 100; // Standardbredd
+        public int Height { get; set; } = 100; // Standardhöjd
+        public int BorderRadius { get; set; } = 0; // Standardhöjd
+        public bool IsEditing { get; set; } = false;
+        public bool ShowMessage { get; set; } = false;
+        public string ImageAlign { get; set; }
     }
 
     private ImageItem newImageItem = new ImageItem();
@@ -221,7 +218,7 @@ else
         }
     }
 
-     private void ToggleImageEdit(ImageItem image)
+    private void ToggleImageEdit(ImageItem image)
     {
         image.IsEditing = !image.IsEditing; // Toggle editing state
         image.ShowMessage = false; // Hide message when toggling edit state
@@ -241,39 +238,41 @@ else
 
 
     // Render content item for drag-and-drop
-   RenderFragment RenderContentItemItem(ContentItem contentItem) => @<li draggable="true" 
-        @ondragstart="() => OnDragStart(contentItem)" 
-        @ondragend="() => OnDragEnd(contentItem)">
+    RenderFragment RenderContentItemItem(ContentItem contentItem) => @<li draggable="true"
+    @ondragstart="() => OnDragStart(contentItem)"
+    @ondragend="() => OnDragEnd(contentItem)">
 
-        @if(contentItem.IsEditing)
-        
-        {    <div style="text-align:@($"{contentItem.TextAlign} !important")">
+    @if(contentItem.IsEditing)
+
+    {
+        <div style="text-align:@($"{contentItem.TextAlign} !important")">
             <span style="color:@contentItem.Color; font-size:@($"{contentItem.FontSize}px"); font-weight:@(contentItem.IsBold ? "bold" : "normal"); font-style:@(contentItem.IsItalic ? "italic" : "normal"); font-family:@contentItem.FontFamily;"
-                @onclick="() => ToggleEdit(contentItem)">
+                  @onclick="() => ToggleEdit(contentItem)">
                 @contentItem.Text
                 @if(contentItem.IsLinkEnabled && !string.IsNullOrEmpty(contentItem.LinkUrl) && !string.IsNullOrEmpty(contentItem.LinkDescription))
-                {
-                    <a href="https://@contentItem.LinkUrl" target="_blank" style="color:blue; text-decoration:underline;" @onclick:stopPropagation>-@contentItem.LinkDescription</a>
-                }
-                else if (!string.IsNullOrEmpty(contentItem.LinkDescription))
-                {
-                    <span>- @contentItem.LinkDescription</span>
-                }
+            {
+                <a href="https://@contentItem.LinkUrl" target="_blank" style="color:blue; text-decoration:underline;" @onclick:stopPropagation>-@contentItem.LinkDescription</a>
+            }
+            else if (!string.IsNullOrEmpty(contentItem.LinkDescription))
+            {
+                <span>- @contentItem.LinkDescription</span>
+            }
             </span>
         </div>
-            <div class="TextEditor">
+        <div class="TextEditor">
             <h4>Text Editor</h4>
-            
+
             <label>Text:</label>
             <input @bind="contentItem.Text" />
             <br /> <br />
             <button style="mr-4" @onclick="() => SaveEdit(contentItem)">Spara</button>
             <button @onclick="() => RemoveContentItemAsync(contentItem)">Ta bort</button>
- <br />
-  <br />
+            <br />
+            <br />
             <!-- Font, Color och Text Align Options -->
             <div>
-                <label>Text Align:
+                <label>
+                    Text Align:
                     <select @bind="contentItem.TextAlign">
                         <option value="left">Vänster</option>
                         <option value="center">Centrerad</option>
@@ -281,28 +280,31 @@ else
                     </select>
                 </label>
                 <br />
-                <label>Font Family:
+                <label>
+                    Font Family:
                     <select @bind="contentItem.FontFamily">
                         <option value="">Välj en typsnitt</option>
                         @foreach(var font in fontFamilyOptions)
-                        {
-                            <option value="@font.Value">@font.Key</option>
-                        }
+                    {
+                        <option value="@font.Value">@font.Key</option>
+                    }
                     </select>
                 </label>
                 <br />
-                <label>Text Color:
+                <label>
+                    Text Color:
                     <select @bind="contentItem.Color">
                         @foreach(var color in colorOptions)
-                        {
-                            <option value="@color.Value">@color.Key</option>
-                        }
+                    {
+                        <option value="@color.Value">@color.Key</option>
+                    }
                     </select>
                 </label>
                 <br />
-                <label>Text Size: @contentItem.FontSize
-                <button @onclick="() => ChangeFontSize(contentItem, 1)">+</button>
-                <button @onclick="() => ChangeFontSize(contentItem, -1)">-</button>
+                <label>
+                    Text Size: @contentItem.FontSize
+                    <button @onclick="() => ChangeFontSize(contentItem, 1)">+</button>
+                    <button @onclick="() => ChangeFontSize(contentItem, -1)">-</button>
                 </label>
             </div>
 
@@ -311,40 +313,40 @@ else
                 <label><input type="checkbox" @bind="contentItem.IsBold" /> Bold</label><br />
                 <label><input type="checkbox" @bind="contentItem.IsItalic" /> Italic</label><br />
                 <label><input type="checkbox" @bind="contentItem.IsLinkEnabled" /> Enable Link</label>
-                
+
                 @if(contentItem.IsLinkEnabled)
-                {
-                    <div>
-                        <input type="text" placeholder="Enter link description" @bind="contentItem.LinkDescription" />
-                        <input type="text" placeholder="Enter link URL (start with https://)" @bind="contentItem.LinkUrl" />
-                    </div>
-                }
+            {
+                <div>
+                    <input type="text" placeholder="Enter link description" @bind="contentItem.LinkDescription" />
+                    <input type="text" placeholder="Enter link URL (start with https://)" @bind="contentItem.LinkUrl" />
+                </div>
+            }
             </div>
-            </div>
-        }
-        else
-        {
+        </div>
+    }
+    else
+    {
         <div style="text-align:@($"{contentItem.TextAlign} !important")">
             <span style="color:@contentItem.Color; font-size:@($"{contentItem.FontSize}px"); font-weight:@(contentItem.IsBold ? "bold" : "normal"); font-style:@(contentItem.IsItalic ? "italic" : "normal"); font-family:@contentItem.FontFamily;"
-                @onclick="() => ToggleEdit(contentItem)">
+                  @onclick="() => ToggleEdit(contentItem)">
                 @contentItem.Text
                 @if(contentItem.IsLinkEnabled && !string.IsNullOrEmpty(contentItem.LinkUrl) && !string.IsNullOrEmpty(contentItem.LinkDescription))
-                {
-                    <a href="https://@contentItem.LinkUrl" target="_blank" style="color:blue; text-decoration:underline;" @onclick:stopPropagation>-@contentItem.LinkDescription</a>
-                }
-                else if (!string.IsNullOrEmpty(contentItem.LinkDescription))
-                {
-                    <span>- @contentItem.LinkDescription</span>
-                }
-            </span>
-             @if(contentItem.ShowEditButton)
-            {   
-                <button @onclick="() => StartEdit(contentItem)">Ändra</button>
+            {
+                <a href="https://@contentItem.LinkUrl" target="_blank" style="color:blue; text-decoration:underline;" @onclick:stopPropagation>-@contentItem.LinkDescription</a>
             }
+            else if (!string.IsNullOrEmpty(contentItem.LinkDescription))
+            {
+                <span>- @contentItem.LinkDescription</span>
+            }
+            </span>
+            @if(contentItem.ShowEditButton)
+        {
+            <button @onclick="() => StartEdit(contentItem)">Ändra</button>
+        }
         </div>
 
 
-           
-        }
+
+    }
     </li>;
 }

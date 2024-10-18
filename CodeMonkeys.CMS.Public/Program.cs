@@ -26,7 +26,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Definiera en flagga för att välja databasanslutning
 bool UseDockerConnection = false; // Sätt till true för Docker eller false för DefaultConnection
 bool UseOutSourceDB = false; // Sätt till true för OutSourceDB
-bool USEWindowsSql = false;
+bool USEWindowsSql = true;
 
 // Konfigurera appsettings och miljöinställningar
 builder.Configuration
