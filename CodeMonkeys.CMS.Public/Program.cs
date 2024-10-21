@@ -38,49 +38,52 @@ builder.Configuration
 
 // Hämta anslutningssträngen baserat på flaggorna
 string connectionString;
-if (UseOutSourceDB)
+Action<DbContextOptionsBuilder> dbConfigFunction;
+if (builder.Configuration["database"] == "inMemory")
 {
-    connectionString = builder.Configuration.GetConnectionString("OutSourceDBConnectionString");
-    Console.WriteLine($"Using connection string: OutSourceDBConnectionString");
-}
-else if (UseDockerConnection)
-{
-    connectionString = builder.Configuration.GetConnectionString("DockerConnectionString");
-    Console.WriteLine($"Using connection string: DockerConnectionString");
-}
-else if (USEWindowsSql)
-{
-    connectionString = builder.Configuration.GetConnectionString("DefaultConnectioString");
-    Console.WriteLine($"Using connection string: DefaultConnectioString");
-    Console.WriteLine($"Using connection string:{connectionString}");
-}
-else if (AzConnection)
-{
-    connectionString = builder.Configuration.GetConnectionString("DB_CONNECTION_STRING");
-    Console.WriteLine($"Using connection string: DefaultConnection");
-    Console.WriteLine($"Using connection string:{connectionString}");
+    string databaseName = builder.Configuration["database_name"] ?? "Something";
+    dbConfigFunction = (options) => options.UseInMemoryDatabase(databaseName);
 }
 else
 {
-    connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    Console.WriteLine($"Using connection string: DefaultConnection");
-    Console.WriteLine($"Using connection string:{connectionString}");
-}
+    if (UseOutSourceDB)
+    {
+        connectionString = builder.Configuration.GetConnectionString("OutSourceDBConnectionString");
+        Console.WriteLine($"Using connection string: OutSourceDBConnectionString");
+    }
+    else if (UseDockerConnection)
+    {
+        connectionString = builder.Configuration.GetConnectionString("DockerConnectionString");
+        Console.WriteLine($"Using connection string: DockerConnectionString");
+    }
+    else if (USEWindowsSql)
+    {
+        connectionString = builder.Configuration.GetConnectionString("DefaultConnectioString");
+        Console.WriteLine($"Using connection string: DefaultConnectioString");
+        Console.WriteLine($"Using connection string:{connectionString}");
+    }
+    else
+    {
+        connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        Console.WriteLine($"Using connection string: DefaultConnection");
+        Console.WriteLine($"Using connection string:{connectionString}");
+    }
 
-// Hämta anslutningssträngen från miljövariabeln om den inte hittades i konfigurationen
-if (string.IsNullOrEmpty(connectionString))
-{
-    connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
-    Console.WriteLine($"Using connection string: ENV FILE");
-}
+    // Hämta anslutningssträngen från miljövariabeln om den inte hittades i konfigurationen
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+        Console.WriteLine($"Using connection string: ENV FILE");
+    }
 
-// Kontrollera om anslutningssträngen är tom
-if (string.IsNullOrEmpty(connectionString))
-{
-    throw new InvalidOperationException("Ingen giltig anslutningssträng hittades.");
-}
+    // Kontrollera om anslutningssträngen är tom
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        throw new InvalidOperationException("Ingen giltig anslutningssträng hittades.");
+    }
 
-Action<DbContextOptionsBuilder> dbConfigFunction = options => options.UseSqlServer(connectionString);
+    dbConfigFunction = (options) => options.UseSqlServer(connectionString);
+}
 
 // Lägg till tjänster till containern
 builder.Services.AddDbContextFactory<ApplicationDbContext>(dbConfigFunction);
