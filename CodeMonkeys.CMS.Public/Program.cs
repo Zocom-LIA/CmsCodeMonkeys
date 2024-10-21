@@ -24,7 +24,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 //Använd vilken flagga du vill använda för databasen, Använd false i samband med push och inkl commiten med [USE_CICD] för att använda CICD pipeline mot cloud
 // Definiera en flagga för att välja databasanslutning
-bool UseDockerConnection = true; // Sätt till true för Docker eller false för DefaultConnection
+bool UseDockerConnection = false; // Sätt till true för Docker eller false för DefaultConnection
 bool UseOutSourceDB = false; // Sätt till true för OutSourceDB
 bool USEWindowsSql = false;
 bool AzConnection = false;
