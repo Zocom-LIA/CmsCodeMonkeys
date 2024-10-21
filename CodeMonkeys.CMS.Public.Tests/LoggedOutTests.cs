@@ -42,7 +42,7 @@ namespace CodeMonkeys.CMS.Public.Tests
         public void EntryPageTest()
         {
             Driver.Navigate().GoToUrl(HomeUrl);
-
+            Thread.Sleep(100);
             Assert.That(Driver.FindElement(By.XPath("//header//a")).Text, Is.EqualTo("CODE MONKEYS"));
             Assert.That(Driver.FindElement(By.XPath("//main//h1")).Text, Is.EqualTo("Public"));
         }
@@ -53,17 +53,17 @@ namespace CodeMonkeys.CMS.Public.Tests
             string email = FindFreeEmail();
             string password = "Password1!";
             Driver.Navigate().GoToUrl(HomeUrl);
-            Thread.Sleep(10); // The wait command below only rarely achieves a state where the click succeeds.
+            Thread.Sleep(100); // The wait command below only rarely achieves a state where the click succeeds.
             //new WebDriverWait(Driver, TimeSpan.FromSeconds(10)).Until(ExpectedConditions.ElementToBeClickable(By.LinkText("Register")));
             Driver.FindElement(By.LinkText("Register")).Click();
-            Thread.Sleep(70); // Empirically determined value. Presumably system-specific. Presumably, a better way exists.
+            Thread.Sleep(100); // Empirically determined value. Presumably system-specific. Presumably, a better way exists.
             Driver.FindElement(By.Name("Input.Email")).SendKeys(email);
             Driver.FindElement(By.Name("Input.Password")).SendKeys(password);
             Driver.FindElement(By.Name("Input.ConfirmPassword")).SendKeys(password);
             Driver.FindElement(By.XPath("//form/button")).Click();
-            Thread.Sleep(10);
+            Thread.Sleep(100);
             Driver.FindElement(By.LinkText("Click here to confirm your account")).Click();
-            Thread.Sleep(10);
+            Thread.Sleep(100);
             using (ApplicationDbContext dbContext = new ApplicationDbContext(DbContextOptionsBuilder.Options, new FakeLogger<ApplicationDbContext>()))
                 Assert.That(dbContext.Users.FirstOrDefault(user => user.Email == email), Is.InstanceOf(typeof(User)));
         }
