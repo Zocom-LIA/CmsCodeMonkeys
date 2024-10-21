@@ -64,13 +64,13 @@ namespace CodeMonkeys.CMS.Public.Tests
                 dbContext.SaveChanges();
             }
             Driver.Navigate().GoToUrl(HomeUrl);
-            Thread.Sleep(10);
+            Thread.Sleep(100);
             Driver.FindElement(By.LinkText("Login")).Click();
-            Thread.Sleep(70);
+            Thread.Sleep(100);
             Driver.FindElement(By.Name("Input.Email")).SendKeys(email);
             Driver.FindElement(By.Name("Input.Password")).SendKeys(password);
             Driver.FindElement(By.XPath("//form//button")).Click();
-            Thread.Sleep(70);
+            Thread.Sleep(100);
             Assert.That(Driver.FindElement(By.XPath("//main//*[@class='left-top']//h1")).Text, Is.EqualTo("Logged in"));
 
         }
