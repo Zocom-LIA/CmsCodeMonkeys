@@ -85,6 +85,7 @@ else
     dbConfigFunction = (options) => options.UseSqlServer(connectionString);
 }
 
+
 // Lägg till tjänster till containern
 builder.Services.AddDbContextFactory<ApplicationDbContext>(dbConfigFunction);
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
