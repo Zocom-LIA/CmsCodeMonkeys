@@ -75,10 +75,10 @@ if (string.IsNullOrEmpty(connectionString))
 }
 
 // Kontrollera om anslutningssträngen är tom
-// if (string.IsNullOrEmpty(connectionString))
-// {
-//     throw new InvalidOperationException("Ingen giltig anslutningssträng hittades.");
-// }
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("Ingen giltig anslutningssträng hittades.");
+}
 
 Action<DbContextOptionsBuilder> dbConfigFunction = options => options.UseSqlServer(connectionString);
 
