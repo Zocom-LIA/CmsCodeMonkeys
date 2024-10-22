@@ -35,7 +35,7 @@ jobs:
           dotnet-version: "8.0.x"
 
       - name: Restore NuGet packages
-        run: dotnet restore
+        run: dotnet restore CodeMonkeys.CMS.Public.Shared/CodeMonkeys.CMS.Public.Shared.csproj
 
       - name: Build solution
         run: dotnet build --configuration Release --no-restore
@@ -58,9 +58,7 @@ jobs:
           dotnet-version: "8.0.x"
 
       - name: Install dotnet-ef tool
-        run: |
-          dotnet tool install --global dotnet-ef
-          echo "${{ runner.tool_cache }}/.dotnet/tools" >> $GITHUB_PATH  # Uppdaterar sökvägen för dotnet-ef
+        run: dotnet tool install --global dotnet-ef
 
       - name: Set environment variable for connection string
         run: echo "DB_CONNECTION_STRING=${{ secrets.DB_CONNECTION_STRING }}" >> $GITHUB_ENV
@@ -76,7 +74,7 @@ jobs:
 
       - name: Deploy database migrations
         run: |
-          cd CodeMonkeys.CMS.Public.Shared
+          cd CodeMonkeys.CMS.Public.Shared  
           dotnet ef database update --no-build --context ApplicationDbContext
         env:
           ConnectionStrings__DefaultConnection: ${{ secrets.DB_CONNECTION_STRING }}
