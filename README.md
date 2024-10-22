@@ -6,29 +6,54 @@ This application was built with passion and dedication by a talented team of dev
 
 ### **Team Members:**
 **Ulf Bourelius**
+
 Role:
+
 Full Stack Developer
+
 https://www.linkedin.com/in/ulf-bourelius-a9090248/
 
+---
+
 **Angelia Burgos Zamora**
+
 Role:
+
 Full Stack Developer/ UX & Product Owner 
+
 https://www.linkedin.com/in/angelia-burgos-zamora/
 
+---
+
 **Felix Edenborgh**
+
 Role: 
+
 Full Stack Developer & Scrum Master 
+
 https://www.linkedin.com/in/felix-edenborgh/
 
+---
+
 **Andreas Hohwü-Christensen**
+
 Role: 
+
 Full Stack Developer & Tester 
+
 https://www.linkedin.com/in/andreas-hohwü-christensen-662311240/
 
+---
+
 **Olle Tengnér**
+
 Role: 
+
 Full Stack Developer 
+
 https://www.linkedin.com/in/olle-tengnér-331835175/
+
+---
 
 Below is a comprehensive informational page that combines all the details from the various pages we've built:
 
