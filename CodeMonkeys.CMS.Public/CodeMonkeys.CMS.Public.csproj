@@ -13,7 +13,11 @@
 	  <Content Remove="Components\Pages\Contents\**" />
 	  <EmbeddedResource Remove="Components\Pages\Contents\**" />
 	  <None Remove="Components\Pages\Contents\**" />
+		
 	</ItemGroup>
+<ItemGroup>
+  <Content Update="wwwroot\**\*.*" CopyToOutputDirectory="PreserveNewest" />
+</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.8" />
