@@ -3,10 +3,10 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main # Endast på push till main branch
+      - main # Only on push to main branch
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -43,8 +43,19 @@ jobs:
       - name: Run tests
         run: dotnet test --no-restore --verbosity normal --logger "trx;LogFileName=test_results.trx"
 
-      - name: Publish .NET application
-        run: dotnet publish --configuration Release --output ./publish
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: contains(github.event.head_commit.message, '[USE_CICD]')
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "8.0.x"
 
       - name: Set environment variable for connection string
         run: echo "DB_CONNECTION_STRING=${{ secrets.DB_CONNECTION_STRING }}" >> $GITHUB_ENV
@@ -55,6 +66,10 @@ jobs:
           app-name: ${{ secrets.AZURE_APP_SERVICE_NAME }}
           slot-name: "production"
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./publish
         env:
           DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
+
+      - name: Deploy database migrations
+        run: dotnet ef database update --no-build --context ApplicationDbContext
+        env:
+          ConnectionStrings__DefaultConnection: ${{ secrets.DB_CONNECTION_STRING }}
