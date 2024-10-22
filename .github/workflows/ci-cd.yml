@@ -13,6 +13,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
+      - name: List files in the repository
+        run: ls -R # Detta hjälper dig att verifiera mappstrukturen
+
       - name: Check for USE_CICD in commit message
         id: check_commit
         run: |
@@ -35,7 +38,7 @@ jobs:
           dotnet-version: "8.0.x"
 
       - name: Restore NuGet packages
-        run: dotnet restore CodeMonkeys.CMS.sln # Update this path if necessary
+        run: dotnet restore CodeMonkeys.CMS.Public.sln # Använd den korrekta lösningsfilen
 
       - name: Build solution
         run: dotnet build --configuration Release --no-restore
