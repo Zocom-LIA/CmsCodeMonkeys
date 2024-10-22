@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main # Endast på push till main-grenen
+      - main # Only on push to main branch
 
 jobs:
   build-and-deploy:
@@ -20,7 +20,6 @@ jobs:
             echo "Commit message does not contain USE_CICD. Aborting."
             exit 1
           fi
-
       - name: Cache NuGet packages
         uses: actions/cache@v3
         with:
@@ -28,7 +27,6 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
           restore-keys: |
             ${{ runner.os }}-nuget-
-
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v3
         with:
@@ -52,11 +50,8 @@ jobs:
       - name: Install dotnet-ef tool
         run: dotnet tool install --global dotnet-ef
 
-      - name: Add .NET tools to PATH
-        run: echo "::add-path::$HOME/.dotnet/tools"
-
-      - name: Verify dotnet-ef installation
-        run: dotnet ef --version
+      - name: Set environment variable for dotnet tools path
+        run: echo "PATH=$HOME/.dotnet/tools:$PATH" >> $GITHUB_ENV
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
@@ -71,7 +66,7 @@ jobs:
       - name: Deploy database migrations
         run: |
           cd CodeMonkeys.CMS.Public.Shared
-          # Lista filer för att säkerställa att deps.json finns
+          # List the files to ensure deps.json exists
           ls -R bin/Release/net8.0/ || echo "Directory not found"
           dotnet ef database update --no-build --context ApplicationDbContext --configuration Release
         env:
