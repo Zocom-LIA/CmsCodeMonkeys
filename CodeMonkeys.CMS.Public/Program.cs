@@ -49,8 +49,8 @@ builder.Services.AddAuthentication(options =>
 })
     .AddIdentityCookies();
 
-
 Action<DbContextOptionsBuilder> dbConfigFunction;
+
 if (builder.Configuration["database"] == "inMemory")
 {
     string databaseName = builder.Configuration["database_name"] ?? "Something";
@@ -58,9 +58,18 @@ if (builder.Configuration["database"] == "inMemory")
 }
 else
 {
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+    // Försök hämta anslutningssträngen från miljövariabeln
+    var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING")
+        ?? builder.Configuration.GetConnectionString("DefaultConnection");
+
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        throw new InvalidOperationException("Connection string not found. Please set the DB_CONNECTION_STRING environment variable.");
+    }
+    
     dbConfigFunction = (options) => options.UseSqlServer(connectionString);
 }
+
 builder.Services.AddDbContextFactory<ApplicationDbContext>(dbConfigFunction);
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
