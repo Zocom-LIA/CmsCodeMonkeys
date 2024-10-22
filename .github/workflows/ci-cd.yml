@@ -73,6 +73,8 @@ jobs:
           DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
 
       - name: Deploy database migrations
-        run: dotnet ef database update --no-build --context ApplicationDbContext
+        run: |
+          cd YourProjectFolder  # Change this to your project directory
+          dotnet ef database update --no-build --context ApplicationDbContext
         env:
           ConnectionStrings__DefaultConnection: ${{ secrets.DB_CONNECTION_STRING }}
