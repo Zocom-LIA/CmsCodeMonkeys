@@ -14,19 +14,22 @@ namespace CodeMonkeys.CMS.Public.Shared.Data
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ILogger<ApplicationDbContext> logger) : base(options)
         {
-            var _logger = LoggerFactory.Create(builder => builder.AddProvider(new ConsoleLoggerProvider(LogLevel.Debug)))
-                .CreateLogger<ApplicationDbContext>();
-            this._logger = _logger ?? throw new ArgumentNullException(nameof(logger));
-            _logger.LogDebug("ApplicationDbContext created");
         }
 
         public DbSet<PageStats> PageStats => Set<PageStats>();
         public DbSet<Site> Sites => Set<Site>();
         public DbSet<WebPage> Pages => Set<WebPage>();
         public DbSet<Content> Contents => Set<Content>();
+        public DbSet<Menu> Menus => Set<Menu>();
         public DbSet<ContentItem> ContentItems => Set<ContentItem>();
         public DbSet<Section> Sections => Set<Section>();
-        public DbSet<Menu> Menus => Set<Menu>();
+        public DbSet<TextContent> TextContents => Set<TextContent>();
+        public DbSet<ImageContent> ImageContent => Set<ImageContent>();
+        public DbSet<VideoContent> VideoContent => Set<VideoContent>();
+        public DbSet<LinkContent> LinkContent => Set<LinkContent>();
+        public DbSet<CodeContent> CodeContent => Set<CodeContent>();
+        public DbSet<FileContent> FileContent => Set<FileContent>();
+        public DbSet<QuoteContent> QuoteContent => Set<QuoteContent>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -52,14 +55,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Data
         public override void Dispose()
         {
             base.Dispose();
-            if (!_isDisposed)
-            {
-                _logger.LogDebug("ApplicationDbContext disposed");
-            }
-            else
-            {
-                _logger.LogDebug("Calling Dispose in ApplicationDbContext when already disposed.");
-            }
         }
     }
 }
