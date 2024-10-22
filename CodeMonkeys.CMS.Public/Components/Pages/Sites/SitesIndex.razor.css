@@ -15,7 +15,7 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    transform: scale(0.233); /* Zooma ut innehållet till 33.3% */
+    transform: scaleY(0.22) scaleX(200); /* Zooma ut innehållet till 33.3% */
 }
 
 .empty-content-message {
