@@ -38,7 +38,7 @@ jobs:
           dotnet-version: "8.0.x"
 
       - name: Restore NuGet packages
-        run: dotnet restore CodeMonkeys.CMS.Public.sln # Använd den korrekta lösningsfilen
+        run: dotnet restore CodeMonkeys.CMS.Public.sln # Använd s den korrekta lösningsfilen
 
       - name: Build solution
         run: dotnet build --configuration Release --no-restore
