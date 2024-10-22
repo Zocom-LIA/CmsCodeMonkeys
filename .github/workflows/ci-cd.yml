@@ -73,7 +73,10 @@ jobs:
         run: dotnet build CodeMonkeys.CMS.Public.sln --configuration Release --no-restore --verbosity detailed
 
       - name: Install dotnet-ef tool
-        run: dotnet tool install --global dotnet-ef
+        run: |
+          if ! dotnet tool list -g | grep -q "dotnet-ef"; then
+            dotnet tool install --global dotnet-ef
+          fi
 
       - name: Set environment variable for connection string
         run: echo "DB_CONNECTION_STRING=${{ secrets.DB_CONNECTION_STRING }}" >> $GITHUB_ENV
