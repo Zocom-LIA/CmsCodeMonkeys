@@ -4,28 +4,28 @@ CMS project for Team Code Monkeys
 Team Behind the Application
 This application was built with passion and dedication by a talented team of developers, designers, and contributors. The Code Monkeys CMS team is committed to delivering a secure, user-friendly, and reliable platform for managing user accounts and personal data.
 
-Team Members:
-Ulf Bourelius 
+### **Team Members:**
+**Ulf Bourelius**
 Role:
 Full Stack Developer
 https://www.linkedin.com/in/ulf-bourelius-a9090248/
 
-Angelia Burgos Zamora
+**Angelia Burgos Zamora**
 Role:
 Full Stack Developer/ UX & Product Owner 
 https://www.linkedin.com/in/angelia-burgos-zamora/
 
-Felix Edenborgh
+**Felix Edenborgh**
 Role: 
 Full Stack Developer & Scrum Master 
 https://www.linkedin.com/in/felix-edenborgh/
 
-Andreas Hohwü-Christensen
+**Andreas Hohwü-Christensen**
 Role: 
 Full Stack Developer & Tester 
 https://www.linkedin.com/in/andreas-hohwü-christensen-662311240/
 
-Olle Tengnér
+**Olle Tengnér**
 Role: 
 Full Stack Developer 
 https://www.linkedin.com/in/olle-tengnér-331835175/
