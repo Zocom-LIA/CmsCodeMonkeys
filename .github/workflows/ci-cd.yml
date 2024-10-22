@@ -41,7 +41,10 @@ jobs:
         run: dotnet restore CodeMonkeys.CMS.Public.sln # Use the correct solution file
 
       - name: Build solution
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build CodeMonkeys.CMS.Public.sln --configuration Release --verbosity detailed
+
+      - name: List files after build
+        run: ls -R CodeMonkeys.CMS.Public.Shared/bin/Debug/net8.0/ || echo "Directory not found"
 
       - name: Run tests
         run: dotnet test --no-restore --verbosity normal --logger "trx;LogFileName=test_results.trx"
@@ -66,8 +69,8 @@ jobs:
       - name: Build the solution
         run: dotnet build CodeMonkeys.CMS.Public.sln --configuration Release --verbosity detailed
 
-      - name: List output directory
-        run: ls -R CodeMonkeys.CMS.Public.Shared/bin/Debug/net8.0/ # Verify that the necessary files are generated
+      - name: List files before deployment
+        run: ls -R CodeMonkeys.CMS.Public.Shared/bin/Debug/net8.0/ || echo "Directory not found"
 
       - name: Install dotnet-ef tool
         run: dotnet tool install --global dotnet-ef
@@ -87,6 +90,8 @@ jobs:
       - name: Deploy database migrations
         run: |
           cd CodeMonkeys.CMS.Public.Shared
+          # List the files to ensure deps.json exists
+          ls -R bin/Debug/net8.0/ || echo "Directory not found"
           dotnet ef database update --no-build --context ApplicationDbContext
         env:
           ConnectionStrings__DefaultConnection: ${{ secrets.DB_CONNECTION_STRING }}
