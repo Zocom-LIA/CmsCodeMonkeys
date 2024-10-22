@@ -29,6 +29,7 @@ bool UseOutSourceDB = false; // Sätt till true för OutSourceDB
 bool USEWindowsSql = false;
 bool AzConnection = false;
 
+
 // Konfigurera appsettings och miljöinställningar
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
