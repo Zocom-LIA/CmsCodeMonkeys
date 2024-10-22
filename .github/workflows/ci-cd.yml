@@ -74,7 +74,7 @@ jobs:
 
       - name: Deploy database migrations
         run: |
-          cd YourProjectFolder  # Change this to your project directory
+          cd CodeMonkeys.CMS.Public.Shared  
           dotnet ef database update --no-build --context ApplicationDbContext
         env:
           ConnectionStrings__DefaultConnection: ${{ secrets.DB_CONNECTION_STRING }}
