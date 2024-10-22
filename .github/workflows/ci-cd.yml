@@ -42,7 +42,13 @@ jobs:
         run: dotnet test CodeMonkeys.CMS.Public.sln --no-restore --verbosity normal --logger "trx;LogFileName=test_results.trx"
 
       - name: Publish .NET application
-        run: dotnet publish CodeMonkeys.CMS.Public.sln --configuration Release --output ./publish
+        run: dotnet publish CodeMonkeys.CMS.Public.sln --configuration Release --output ./publish --no-restore
+
+      - name: Verify published assets
+        run: |
+          # Check that wwwroot and scoped styles are included
+          ls -R ./publish/wwwroot/ || echo "wwwroot not found"
+          ls -R ./publish/_framework/scoped.styles.css || echo "scoped.styles.css not found"
 
       - name: Set environment variable for connection string
         run: echo "DB_CONNECTION_STRING=${{ secrets.DB_CONNECTION_STRING }}" >> $GITHUB_ENV
