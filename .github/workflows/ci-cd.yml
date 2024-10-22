@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main # Only on push to main brancha
+      - main # Only on push to main branch
 
 jobs:
   build:
@@ -60,20 +60,6 @@ jobs:
       - name: Set environment variable for connection string
         run: echo "DB_CONNECTION_STRING=${{ secrets.DB_CONNECTION_STRING }}" >> $GITHUB_ENV
 
-      - name: Install dotnet-ef tool
-        run: |
-          dotnet tool install --global dotnet-ef
-          echo "::add-path::/home/runner/.dotnet/tools"
-        env:
-          DOTNET_ROOT: /usr/share/dotnet
-          PATH: $PATH:/home/runner/.dotnet/tools
-
-      - name: Verify dotnet-ef installation
-        run: dotnet ef --version
-        env:
-          DOTNET_ROOT: /usr/share/dotnet
-          PATH: $PATH:/home/runner/.dotnet/tools
-
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
@@ -82,8 +68,3 @@ jobs:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
         env:
           DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
-
-      - name: Deploy database migrations
-        run: dotnet ef database update --no-build --context ApplicationDbContext
-        env:
-          ConnectionStrings__DefaultConnection: ${{ secrets.DB_CONNECTION_STRING }}
