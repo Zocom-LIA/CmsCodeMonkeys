@@ -23,7 +23,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("CodeMonkeys.CMS.Public.Tests")]
 
 var builder = WebApplication.CreateBuilder(args);
-
+//UFFES
 // Configure Serilog console logging and enrichers
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
