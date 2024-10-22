@@ -66,6 +66,9 @@ jobs:
       - name: Restore NuGet packages for Shared project
         run: dotnet restore CodeMonkeys.CMS.Public.Shared/CodeMonkeys.CMS.Public.Shared.csproj
 
+      - name: Build the Shared project
+        run: dotnet build CodeMonkeys.CMS.Public.Shared/CodeMonkeys.CMS.Public.Shared.csproj --configuration Release
+
       - name: Set environment variable for connection string
         run: echo "DB_CONNECTION_STRING=${{ secrets.DB_CONNECTION_STRING }}" >> $GITHUB_ENV
 
