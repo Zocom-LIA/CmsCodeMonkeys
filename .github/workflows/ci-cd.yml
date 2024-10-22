@@ -66,6 +66,9 @@ jobs:
       - name: Build the solution
         run: dotnet build CodeMonkeys.CMS.Public.sln --configuration Release --verbosity detailed
 
+      - name: List output directory
+        run: ls -R CodeMonkeys.CMS.Public.Shared/bin/Debug/net8.0/ # Verify that the necessary files are generated
+
       - name: Install dotnet-ef tool
         run: dotnet tool install --global dotnet-ef
 
