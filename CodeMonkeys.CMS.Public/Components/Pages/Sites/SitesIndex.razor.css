@@ -1,4 +1,9 @@
 ﻿/* Justera för att ha en grå ram runt boxarna */
+.admin-container{
+    margin-top: 60px;   
+}
+
+
 .sites-empty-box {
     width: 100%;
     max-height: 150px;
