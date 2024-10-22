@@ -78,14 +78,6 @@ jobs:
             dotnet tool install --global dotnet-ef
           fi
 
-      - name: Deploy database migrations
-        run: |
-          cd CodeMonkeys.CMS.Public.Shared
-          ls -R bin/Release/net8.0/ || echo "Directory not found"
-          dotnet ef database update --no-build --context ApplicationDbContext --configuration Release
-        env:
-          ConnectionStrings__DefaultConnection: ${{ secrets.DB_CONNECTION_STRING }}
-
       - name: Set environment variable for connection string
         run: echo "DB_CONNECTION_STRING=${{ secrets.DB_CONNECTION_STRING }}" >> $GITHUB_ENV
 
@@ -97,3 +89,12 @@ jobs:
           publish-profile: ${{ secrets.API_PUBLISH_SECRET }}
         env:
           DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
+
+      - name: Deploy database migrations
+        run: |
+          cd CodeMonkeys.CMS.Public.Shared
+          # List the files to ensure deps.json exists
+          ls -R bin/Release/net8.0/ || echo "Directory not found"
+          dotnet ef database update --no-build --context ApplicationDbContext --configuration Release
+        env:
+          ConnectionStrings__DefaultConnection: ${{ secrets.DB_CONNECTION_STRING }}
