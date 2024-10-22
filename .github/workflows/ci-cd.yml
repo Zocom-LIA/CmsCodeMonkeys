@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: List files in the repository
-        run: ls -R # Detta hjälper dig att verifiera mappstrukturen
+        run: ls -R # Helps verify the folder structure
 
       - name: Check for USE_CICD in commit message
         id: check_commit
@@ -38,7 +38,7 @@ jobs:
           dotnet-version: "8.0.x"
 
       - name: Restore NuGet packages
-        run: dotnet restore CodeMonkeys.CMS.Public.sln # Använd s den korrekta lösningsfilen
+        run: dotnet restore CodeMonkeys.CMS.Public.sln # Use the correct solution file
 
       - name: Build solution
         run: dotnet build --configuration Release --no-restore
@@ -65,6 +65,9 @@ jobs:
 
       - name: Build the solution
         run: dotnet build CodeMonkeys.CMS.Public.sln --configuration Release --verbosity detailed
+
+      - name: Install dotnet-ef tool
+        run: dotnet tool install --global dotnet-ef
 
       - name: Set environment variable for connection string
         run: echo "DB_CONNECTION_STRING=${{ secrets.DB_CONNECTION_STRING }}" >> $GITHUB_ENV
