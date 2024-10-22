@@ -12,7 +12,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
         Task AddMenuItemAsync(MenuItem menuItem);
         Task<Menu?> GetMenuAsync(int menuId);
         Task<IEnumerable<Menu>> GetMenusBySiteIdAsync(int siteId);
-        Task SaveChangesAsync();
     }
     public class MenuRepository :RepositoryBase, IMenuRepository
     {
@@ -21,7 +20,14 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
         }
 
 
-        public Task AddAsync(Menu menu) => throw new NotImplementedException();
+        public async Task AddAsync(Menu menu)
+        {
+            using (ApplicationDbContext context = GetContext())
+            {
+                await context.Menus.AddAsync(menu);
+                await context.SaveChangesAsync();
+            }
+        }
         public Task AddMenuItemAsync(MenuItem menuItem) => throw new NotImplementedException();
         public Task<Menu?> GetMenuAsync(int menuId) => throw new NotImplementedException();
         public async Task<IEnumerable<Menu>> GetMenusBySiteIdAsync(int siteId)
@@ -35,6 +41,5 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                                           .ToListAsync();
             }
         }
-        public Task SaveChangesAsync() => throw new NotImplementedException();
     }
 }

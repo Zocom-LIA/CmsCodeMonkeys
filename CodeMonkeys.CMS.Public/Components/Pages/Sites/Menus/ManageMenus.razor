@@ -1,7 +1,10 @@
 ﻿@page "/sites/{siteId:int}/menus"
 @inherits AuthenticationBaseComponent<ManageMenus>
+@using CodeMonkeys.CMS.Public.Components.Account.Shared
+@using CodeMonkeys.CMS.Public.Components.Shared.UI
 @using CodeMonkeys.CMS.Public.Shared.Entities
 @using CodeMonkeys.CMS.Public.Shared.Services
+@using Microsoft.AspNetCore.Components.Forms
 @inject IMenuService MenuService
 @rendermode InteractiveServer
 @attribute [Authorize(Roles = "User, Admin")]
@@ -14,10 +17,12 @@
         {
             <h2>Manage Menus for "@Site.Name"</h2>
             <!--Copied from WebPagesIndex and modified without necessarily understanding it.-->
+            <button type="button" class="btn btn-primary" @onclick="async() => await OpenMenuDialogAsync()">Create new menu</button>
+
             if (!((Menus?.Any()) ?? false))
             {
                 <div class="alert-info">
-                    <p>There are no menus for this site yet. Click the button above to create a new page.</p>
+                    <p>There are no menus for this site yet. Click the button above to create a new menu.</p>
                 </div>
             }
             else
@@ -54,23 +59,73 @@
             }
         }
     </div>
+    <ConfirmationDialog @ref="MenuDialog" Title="@MenuDialogTitle" ConfirmationButtonText=@MenuDialogConfirmationText CancelButtonText="Cancel" OnCancel="() => MenuDialog.Hide()" OnConfirm = "SaveMenuDialogContents">
+        <EditForm Model="@menuModel">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <StatusMessage Message="@ErrorMessage" />
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="menuModel.Name" class="form-control" autocomplete="name" aria-required="true" placeholder="Menu name" />
+                <label for="name" class="form-label">Menu Name</label>
+                <ValidationMessage For="() => menuModel.Name" class="text-danger" />
+            </div>
+        </EditForm>
+    </ConfirmationDialog>
 </UserViewer>
 
 @code {
     [Parameter]
     public int siteId { get; set; }
-    public Site? Site { get; set; }
-    public IEnumerable<Menu>? Menus { get; set; }
+    public Site? Site { get; set; } // Initialized with GetUserSiteAsync, does not actually contain the menus
+    public List<Menu>? Menus { get; set; }
+    private ConfirmationDialog? MenuDialog { get; set; }
+    private string MenuDialogConfirmationText { get; set; }
+    private string MenuDialogTitle { get; set; }
+    private MenuModel menuModel = new();
+
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         Site = await SiteService.GetUserSiteAsync(User!.Id, siteId);
-         
+
         if (Site == null)
         {
             Logger.LogWarning($"Site for user with ID '{User!.Id}' not found");
         }
-        Menus = await MenuService.GetMenusBySiteIdAsync(siteId);
+        Menus = (await MenuService.GetMenusBySiteIdAsync(siteId)).ToList();
+    }
+
+    public Task OpenMenuDialogAsync(int? menuId = null)
+    {
+        if (menuId == null)
+        {
+            MenuDialogTitle = "Add Menu";
+            MenuDialogConfirmationText = "Add";
+        }
+        else
+        {
+            MenuDialogTitle = "Edit Menu";
+            MenuDialogConfirmationText = "Update";
+        }
+
+        MenuDialog.Show();
+        return Task.CompletedTask;
+    }
+
+    public async Task SaveMenuDialogContents()
+    {
+        if(menuModel.MenuID == null)
+        {
+            Menu menu = await MenuService.CreateMenuAsync(siteId, menuModel.Name);
+            Menus.Add(menu);
+        }
+    }
+
+
+    protected sealed class MenuModel
+    {
+        public int? MenuID { get; set; } = null;
+        public string Name { get; set; } = string.Empty;
     }
 }

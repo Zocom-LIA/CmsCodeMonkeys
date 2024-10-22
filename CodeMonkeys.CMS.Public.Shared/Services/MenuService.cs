@@ -14,18 +14,17 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        public async Task CreateMenuAsync(int siteId, string name)
+        public async Task<Menu> CreateMenuAsync(int siteId, string name)
         {
             var menu = new Menu { SiteId = siteId, Name = name };
             await _repository.AddAsync(menu);
-            await _repository.SaveChangesAsync();
+            return menu;
         }
 
         public async Task AddMenuItemAsync(int webPageId, int order = 0)
         {
             var menuItem = new MenuItem { WebPageId = webPageId, Order = order };
             await _repository.AddMenuItemAsync(menuItem);
-            await _repository.SaveChangesAsync();
         }
 
         public async Task<Menu?> GetMenuAsync(int menuId)
