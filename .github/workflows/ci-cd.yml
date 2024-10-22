@@ -49,6 +49,12 @@ jobs:
       - name: Set environment variable for connection string
         run: echo "DB_CONNECTION_STRING=${{ secrets.DB_CONNECTION_STRING }}" >> $GITHUB_ENV
 
+      - name: Install dotnet-ef tool
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Set environment variable for dotnet tools path
+        run: echo "PATH=$HOME/.dotnet/tools:$PATH" >> $GITHUB_ENV
+
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
