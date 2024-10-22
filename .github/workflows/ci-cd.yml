@@ -63,6 +63,9 @@ jobs:
       - name: Install dotnet-ef tool
         run: dotnet tool install --global dotnet-ef
 
+      - name: Restore NuGet packages for Shared project
+        run: dotnet restore CodeMonkeys.CMS.Public.Shared/CodeMonkeys.CMS.Public.Shared.csproj
+
       - name: Set environment variable for connection string
         run: echo "DB_CONNECTION_STRING=${{ secrets.DB_CONNECTION_STRING }}" >> $GITHUB_ENV
 
