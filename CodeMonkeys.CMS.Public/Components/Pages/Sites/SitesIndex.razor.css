@@ -142,6 +142,22 @@
 }
 
 @media (max-width: 767.98px) {
+    .admin-profile-section{
+        width: 100%;
+    }
+
+    .admin-templates-section{
+        width: 100%;
+    }
+
+    .admin-container {
+
+        display: block;
+            background-color: red;
+        }
+
+
+
     .sites-btn {
         margin-bottom: 5px;
     }
@@ -173,3 +189,14 @@
         .admin-action-buttons a:last-child {
             margin-right: 0;
         }
+
+@media (max-width: 426.98px) {
+
+    .admin-templates-title{
+        margin-bottom:0px;
+    }
+
+    .admin-action-buttons{
+        margin-top: 20px;
+    }
+}
