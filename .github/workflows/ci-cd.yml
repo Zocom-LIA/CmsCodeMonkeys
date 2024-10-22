@@ -86,7 +86,7 @@ jobs:
         with:
           app-name: ${{ secrets.AZURE_APP_SERVICE_NAME }}
           slot-name: "production"
-          publish-profile: ${{ secrets.API_PUBLISH_SECRET }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
         env:
           DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
 
