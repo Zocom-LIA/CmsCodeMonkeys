@@ -40,8 +40,11 @@ jobs:
       - name: Restore NuGet packages
         run: dotnet restore CodeMonkeys.CMS.Public.sln # Use the correct solution file
 
+      - name: Clean solution
+        run: dotnet clean CodeMonkeys.CMS.Public.sln --configuration Release
+
       - name: Build solution
-        run: dotnet build CodeMonkeys.CMS.Public.sln --configuration Release --verbosity detailed
+        run: dotnet build CodeMonkeys.CMS.Public.sln --configuration Release --no-restore --verbosity detailed
 
       - name: List files after build
         run: ls -R CodeMonkeys.CMS.Public.Shared/bin/Debug/net8.0/ || echo "Directory not found"
@@ -66,8 +69,11 @@ jobs:
       - name: Restore NuGet packages for the solution
         run: dotnet restore CodeMonkeys.CMS.Public.sln
 
+      - name: Clean solution
+        run: dotnet clean CodeMonkeys.CMS.Public.sln --configuration Release
+
       - name: Build the solution
-        run: dotnet build CodeMonkeys.CMS.Public.sln --configuration Release --verbosity detailed
+        run: dotnet build CodeMonkeys.CMS.Public.sln --configuration Release --no-restore --verbosity detailed
 
       - name: List files before deployment
         run: ls -R CodeMonkeys.CMS.Public.Shared/bin/Debug/net8.0/ || echo "Directory not found"
@@ -91,7 +97,7 @@ jobs:
         run: |
           cd CodeMonkeys.CMS.Public.Shared
           # List the files to ensure deps.json exists
-          ls -R bin/Debug/net8.0/ || echo "Directory not found"
+          ls -R bin/ || echo "Directory not found"
           dotnet ef database update --no-build --context ApplicationDbContext
         env:
           ConnectionStrings__DefaultConnection: ${{ secrets.DB_CONNECTION_STRING }}
