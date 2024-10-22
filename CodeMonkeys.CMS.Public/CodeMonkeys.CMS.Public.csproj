@@ -17,6 +17,7 @@
 	</ItemGroup>
 <ItemGroup>
   <Content Update="wwwroot\**\*.*" CopyToOutputDirectory="PreserveNewest" />
+	 <None Update="**/*.razor.css" CopyToOutputDirectory="PreserveNewest" />
 </ItemGroup>
 
 	<ItemGroup>
