@@ -27,7 +27,7 @@ var builder = WebApplication.CreateBuilder(args);
 bool UseDockerConnection = false; // Sätt till true för Docker eller false för DefaultConnection
 bool UseOutSourceDB = false; // Sätt till true för OutSourceDB
 bool USEWindowsSql = false;
-bool AzConnection = false;
+bool AzConnection = true;
 
 
 // Konfigurera appsettings och miljöinställningar
