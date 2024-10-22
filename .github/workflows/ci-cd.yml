@@ -35,7 +35,7 @@ jobs:
           dotnet-version: "8.0.x"
 
       - name: Restore NuGet packages
-        run: dotnet restore CodeMonkeys.CMS.Public.Shared/CodeMonkeys.CMS.Public.Shared.csproj
+        run: dotnet restore # Restore for the entire solution
 
       - name: Build solution
         run: dotnet build --configuration Release --no-restore
