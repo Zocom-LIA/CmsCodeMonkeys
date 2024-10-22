@@ -6,7 +6,7 @@ on:
       - main # Endast på push till main branch
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -45,20 +45,6 @@ jobs:
 
       - name: Publish .NET application
         run: dotnet publish --configuration Release --output ./publish
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    if: contains(github.event.head_commit.message, '[USE_CICD]')
-
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: "8.0.x"
 
       - name: Set environment variable for connection string
         run: echo "DB_CONNECTION_STRING=${{ secrets.DB_CONNECTION_STRING }}" >> $GITHUB_ENV
