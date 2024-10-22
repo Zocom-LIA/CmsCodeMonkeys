@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main
+      - main # Endast på push till main-grenen
 
 jobs:
   build-and-deploy:
@@ -46,11 +46,17 @@ jobs:
       - name: Publish .NET application
         run: dotnet publish CodeMonkeys.CMS.Public.sln --configuration Release --output ./publish
 
-      - name: List published files
-        run: ls -R ./publish
-
       - name: Set environment variable for connection string
         run: echo "DB_CONNECTION_STRING=${{ secrets.DB_CONNECTION_STRING }}" >> $GITHUB_ENV
+
+      - name: Install dotnet-ef tool
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Add .NET tools to PATH
+        run: echo "::add-path::$HOME/.dotnet/tools"
+
+      - name: Verify dotnet-ef installation
+        run: dotnet ef --version
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
@@ -65,6 +71,7 @@ jobs:
       - name: Deploy database migrations
         run: |
           cd CodeMonkeys.CMS.Public.Shared
+          # Lista filer för att säkerställa att deps.json finns
           ls -R bin/Release/net8.0/ || echo "Directory not found"
           dotnet ef database update --no-build --context ApplicationDbContext --configuration Release
         env:
