@@ -16,6 +16,21 @@
     </Content>
   </ItemGroup>
 
+  <!-- Inkludera alla .razor.css-filer -->
+<ItemGroup>
+  <Content Update="**/*.razor.css">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </Content>
+</ItemGroup>
+
+<!-- Inkludera alla bilder i wwwroot -->
+<ItemGroup>
+  <None Update="wwwroot/Image/**/*">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </None>
+</ItemGroup>
+
+
   <!-- Inkludera alla bilder i wwwroot -->
   <ItemGroup>
     <None Include="wwwroot\Image\**" CopyToOutputDirectory="PreserveNewest" />
@@ -66,5 +81,10 @@
     <EmbeddedResource Remove="Components\Pages\Contents\**" />
     <None Remove="Components\Pages\Contents\**" />
   </ItemGroup>
+
+  <PropertyGroup>
+  <CopyAllFilesToOutputDirectory>PreserveNewest</CopyAllFilesToOutputDirectory>
+</PropertyGroup>
+
 
 </Project>
