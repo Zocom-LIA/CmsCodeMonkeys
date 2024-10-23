@@ -1,4 +1,5 @@
 using AutoMapper;
+
 using CodeMonkeys.CMS.Public.Components;
 using CodeMonkeys.CMS.Public.Components.Account;
 using CodeMonkeys.CMS.Public.Services;
@@ -8,18 +9,21 @@ using CodeMonkeys.CMS.Public.Shared.Entities;
 using CodeMonkeys.CMS.Public.Shared.Profiles;
 using CodeMonkeys.CMS.Public.Shared.Repository;
 using CodeMonkeys.CMS.Public.Shared.Services;
+
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+
 using Serilog;
 using Serilog.Extensions.Logging;
+
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("CodeMonkeys.CMS.Public.Tests")]
 
 var builder = WebApplication.CreateBuilder(args);
-
+//UFFES
 // Configure Serilog console logging and enrichers
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -43,7 +47,7 @@ builder.Services.AddAuthentication(options =>
     options.DefaultScheme = IdentityConstants.ApplicationScheme;
     options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
 })
-.AddIdentityCookies();
+    .AddIdentityCookies();
 
 Action<DbContextOptionsBuilder> dbConfigFunction;
 
@@ -54,6 +58,7 @@ if (builder.Configuration["database"] == "inMemory")
 }
 else
 {
+    // Försök hämta anslutningssträngen från miljövariabeln
     var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING")
         ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -75,8 +80,13 @@ builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirme
     .AddRoleManager<RoleManager<Role>>() // Corrected this line
     .AddDefaultTokenProviders();
 
-// Scoped services
+builder.Services.AddAutoMapper(typeof(EntityProfiles).Assembly);
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 builder.Services.AddScoped<CodeMonkeys.CMS.Public.Shared.Repository.IContentItemRepository, CodeMonkeys.CMS.Public.Shared.Repository.ContentItemRepository>();
+builder.Services.AddScoped<ContentItemRepository>();
+builder.Services.AddScoped<IContentItemRepository, ContentItemRepository>();
 builder.Services.AddScoped<IContentItemService, ContentItemService>();
 builder.Services.AddScoped<IContentRepository, ContentRepository>();
 builder.Services.AddScoped<IContentService, ContentService>();
@@ -84,16 +94,23 @@ builder.Services.AddScoped<IMenuRepository, MenuRepository>();
 builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<IPageStatsRepository, PageStatsRepository>();
 builder.Services.AddScoped<IPageStatsService, PageStatsService>();
+builder.Services.AddScoped<IPageStatsService, PageStatsService>();
 builder.Services.AddScoped<ISectionRepository, SectionRepository>();
 builder.Services.AddScoped<ISectionService, SectionService>();
 builder.Services.AddScoped<ISiteRepository, SiteRepository>();
 builder.Services.AddScoped<ISiteService, SiteService>();
 builder.Services.AddScoped<IWebPageRepository, WebPageRepository>();
 builder.Services.AddScoped<IWebPageService, WebPageService>();
+builder.Services.AddScoped<IdentityRedirectManager>();
+builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<MenuConfigurationService>();
 builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
 
 var app = builder.Build();
+
+
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -103,17 +120,20 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    app.UseHsts(); // The default HSTS value is 30 days.
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles(); // Ensure static files can be served.
+
+app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseAntiforgery();
 
-// Map Razor components and interactive server render mode.
+//app.UseMiddleware<VisitCounterMiddleware>();
+
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
