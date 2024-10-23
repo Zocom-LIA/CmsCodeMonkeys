@@ -19,7 +19,6 @@ jobs:
           if [[ "${{ github.event.head_commit.message }}" != *"[USE_CICD]"* ]]; then
             echo "Commit message does not contain USE_CICD. Aborting."
             exit 1
-          fi
       - name: Cache NuGet packages
         uses: actions/cache@v3
         with:
@@ -41,14 +40,22 @@ jobs:
       - name: Run tests
         run: dotnet test CodeMonkeys.CMS.Public.sln --no-restore --verbosity normal --logger "trx;LogFileName=test_results.trx"
 
-      - name: Publish .NET application
-        run: dotnet publish CodeMonkeys.CMS.Public.sln --configuration Release --output ./publish --no-restore --no-cache
+      # Add test results as an artifact
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: "**/test_results.trx"
 
-      - name: Verify published assets
-        run: |
-          # Check that wwwroot and scoped styles are included
-          ls -R ./publish/wwwroot/ || echo "wwwroot not found"
-          ls -R ./publish/_framework/scoped.styles.css || echo "scoped.styles.css not found"
+      - name: Publish .NET application
+        run: dotnet publish CodeMonkeys.CMS.Public.sln --configuration Release --output ./publish
+
+      # Upload build artifacts
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: ./publish
 
       - name: Set environment variable for connection string
         run: echo "DB_CONNECTION_STRING=${{ secrets.DB_CONNECTION_STRING }}" >> $GITHUB_ENV

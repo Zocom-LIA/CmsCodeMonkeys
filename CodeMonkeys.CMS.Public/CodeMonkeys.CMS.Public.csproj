@@ -16,45 +16,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	<None Include="wwwroot\Image\**" CopyToOutputDirectory="PreserveNewest" />
-
-    <None Update="Components/Account/Pages/Login.razor.css" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Components/Account/Pages/Register.razor.css" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Components/Layout/MainLayout.razor.css" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Components/Layout/NavMenu.razor.css" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Components/Pages/Sites/WebPages/ContentItems/ContentItems.razor.css" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Components/Pages/Sites/WebPages/WebPagesEdit.razor.css" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Components/Pages/Sites/WebPages/WebPagesIndex.razor.css" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Components/Pages/Sites/SitesCreate.razor.css" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Components/Pages/Sites/SitesIndex.razor.css" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Components/Pages/Home.razor.css" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Components/Pages/SiteContentViewer.razor.css" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Components/Pages/StartPage.razor.css" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Components/Pages/TestPageEdit.razor.css" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Components/Shared/UI/ConfirmationDialog.razor.css" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Components/Shared/UI/Modal.razor.css" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Components/Shared/UserViewer.razor.css" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Components/Shared/VisitorViewer.razor.css" CopyToOutputDirectory="PreserveNewest" />
-    <!-- Repeat for each scoped CSS file -->
-		<EmbeddedResource Include="wwwroot/Image/Andreas-Bild.png" />
-		<EmbeddedResource Include="wwwroot/Image/Angelia-Bild.png" />
-		<EmbeddedResource Include="wwwroot/Image/Felix-Bild.jpg" />
-		<EmbeddedResource Include="wwwroot/Image/LandingPage.png" />
-		<EmbeddedResource Include="wwwroot/Image/Olle-Bild.png" />
-		<EmbeddedResource Include="wwwroot/Image/original.png" />
-		<EmbeddedResource Include="wwwroot/Image/Photo by Amy Santos.png" />
-		<EmbeddedResource Include="wwwroot/Image/public-mall.png" />
-		<EmbeddedResource Include="wwwroot/Image/Ulf-Bild.png" />
-
-</ItemGroup>
-	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.8" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.8" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8" />
-		<PackageReference Include="Serilog" Version="4.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>
