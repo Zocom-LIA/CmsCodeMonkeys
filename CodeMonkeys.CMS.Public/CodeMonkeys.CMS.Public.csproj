@@ -24,17 +24,19 @@
 </ItemGroup>
 
 <!-- Inkludera alla bilder i wwwroot -->
+  
 <ItemGroup>
-  <None Update="wwwroot/Image/**/*">
+  <None Update="wwwroot/Image/*.{png,jpg}">
     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </None>
 </ItemGroup>
 
-<ItemGroup>
-  <None Update="Components/Pages/*.razor.css" CssScope="custom-scope-identifier" />
-</ItemGroup>
-<!-- 
-<ItemGroup>
+<!-- <ItemGroup>
+  <None Update="Components/**/*.razor.css" CssScope="custom-scope-identifier" />
+</ItemGroup> -->
+
+
+<!-- <ItemGroup>
   <None Update="Components/Account/Pages/*.razor.css" CssScope="custom-scope-identifier" />
   <None Update="Components/Layout/*.razor.css" CssScope="custom-scope-identifier" />
   <None Update="Components/Pages/*.razor.css" CssScope="custom-scope-identifier" />
