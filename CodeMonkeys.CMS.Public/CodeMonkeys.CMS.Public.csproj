@@ -16,6 +16,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	<None Include="wwwroot\Image\**" CopyToOutputDirectory="PreserveNewest" />
+
     <None Update="Components/Account/Pages/Login.razor.css" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Components/Account/Pages/Register.razor.css" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Components/Layout/MainLayout.razor.css" CopyToOutputDirectory="PreserveNewest" />
