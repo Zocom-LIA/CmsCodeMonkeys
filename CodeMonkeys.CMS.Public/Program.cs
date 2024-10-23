@@ -44,29 +44,16 @@ builder.Services.AddAuthentication(options =>
 
 Action<DbContextOptionsBuilder> dbConfigFunction;
 
-// Konfigurera databasanslutning baserat på miljön
-if (builder.Environment.IsDevelopment())
+if (builder.Configuration["database"] == "inMemory")
 {
-    // Använd Docker-anslutningssträngen under utveckling
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-    if (string.IsNullOrEmpty(connectionString))
-    {
-        throw new InvalidOperationException("Connection string not found for development. Please set the DefaultConnection in your appsettings.json.");
-    }
-
-    dbConfigFunction = (options) => options.UseSqlServer(connectionString);
-}
-else if (builder.Environment.IsEnvironment("Testing"))
-{
-    // Använd in-memory databas för testning
-    string databaseName = builder.Configuration["database_name"] ?? "TestDatabase";
+    string databaseName = builder.Configuration["database_name"] ?? "Something";
     dbConfigFunction = (options) => options.UseInMemoryDatabase(databaseName);
 }
 else
 {
-    // Använd DB_CONNECTION_STRING i produktion
-    var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+    // Försök hämta anslutningssträngen från miljövariabeln
+    var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING")
+        ?? builder.Configuration.GetConnectionString("DockerConnection");
 
     if (string.IsNullOrEmpty(connectionString))
     {
@@ -75,6 +62,8 @@ else
     
     dbConfigFunction = (options) => options.UseSqlServer(connectionString);
 }
+
+
 
 // Registrera DbContext
 builder.Services.AddDbContextFactory<ApplicationDbContext>(dbConfigFunction);
