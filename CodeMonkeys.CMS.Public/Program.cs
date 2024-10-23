@@ -19,10 +19,7 @@ using System.Runtime.CompilerServices;
 var builder = WebApplication.CreateBuilder(args);
 //UFFES
 // Configure Serilog console logging and enrichers
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Debug()
-    .WriteTo.Console()
-    .CreateLogger();
+
 
 // Configure Serilog console logging and enrichers
 
