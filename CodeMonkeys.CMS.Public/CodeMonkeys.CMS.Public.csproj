@@ -14,6 +14,7 @@
   <!-- Denna del ser till att alla CSS-filer och andra resurser i wwwroot publiceras korrekt -->
   <ItemGroup>
     <Content Update="wwwroot\**\*.*" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="wwwroot\**\*" CopyToPublishDirectory="PreserveNewest" />
 		<None Include="wwwroot\Image\**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

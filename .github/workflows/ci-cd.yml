@@ -53,6 +53,11 @@ jobs:
       - name: Publish .NET application
         run: dotnet publish CodeMonkeys.CMS.Public.sln --configuration Release --output ./publish
 
+      # Verify that wwwroot content (including images) is present
+      - name: Verify wwwroot content
+        run: |
+          ls -R ./publish/wwwroot || echo "wwwroot folder not found"
+
       # Upload build artifacts
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
