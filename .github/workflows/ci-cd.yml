@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main # Only on push to main branchssss
+      - main # Only on push to main branch
 
 jobs:
   build-and-deploy:
@@ -19,6 +19,8 @@ jobs:
           if [[ "${{ github.event.head_commit.message }}" != *"[USE_CICD]"* ]]; then
             echo "Commit message does not contain USE_CICD. Aborting."
             exit 1
+          fi
+
       - name: Cache NuGet packages
         uses: actions/cache@v3
         with:
@@ -26,6 +28,7 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
           restore-keys: |
             ${{ runner.os }}-nuget-
+
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v3
         with:
