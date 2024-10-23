@@ -7,6 +7,7 @@
     <UserSecretsId>aspnet-CodeMonkeys.CMS.Public-f65b068e-f653-44ef-8689-2a1e34c18994</UserSecretsId>
     <PublishReadyToRun>false</PublishReadyToRun>
     <PublishTrimmed>false</PublishTrimmed>
+    <ScopedCssEnabled>true</ScopedCssEnabled>
   </PropertyGroup>
 
   <!-- Inkludera alla .razor.css-filer -->
