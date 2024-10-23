@@ -29,6 +29,10 @@
     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </None>
 </ItemGroup>
+
+<ItemGroup>
+  <None Update="Components/Pages/*.razor.css" CssScope="custom-scope-identifier" />
+</ItemGroup>
 <!-- 
 <ItemGroup>
   <None Update="Components/Account/Pages/*.razor.css" CssScope="custom-scope-identifier" />
