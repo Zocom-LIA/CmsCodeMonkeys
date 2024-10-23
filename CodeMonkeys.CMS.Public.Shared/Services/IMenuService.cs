@@ -8,5 +8,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         Task<Menu> CreateMenuAsync(int siteId, string name);
         Task<Menu?> GetMenuAsync(int menuId);
         Task<IEnumerable<Menu>> GetMenusBySiteIdAsync(int siteId);
+        Task UpdateMenuAsync(Menu menu);
     }
 }

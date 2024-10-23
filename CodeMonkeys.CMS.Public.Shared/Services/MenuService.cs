@@ -37,5 +37,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         {
             return await _repository.GetMenusBySiteIdAsync(siteId);
         }
+
+        public async Task UpdateMenuAsync(Menu menu)
+        {
+            await _repository.UpdateMenuAsync(menu);
+        }
     }
 }

@@ -41,6 +41,7 @@
                                     </div>
                                 </div>
                                 <div class="menus-card-actions">
+                                    <button class="btn btn-primary" @onclick="async () => await OpenMenuDialogAsync(menu.MenuId)">Rename menu</button>
                                     <!--
                                     <button class="btn btn-primary" @onclick="async () => await AddOrUpdatePageAsync(webPage.WebPageId)">Edit page title</button>
                                     <button class="btn btn-secondary" @onclick="async () => await EditContentsAsync(webPage.WebPageId)">Edit contents</button>
@@ -100,11 +101,23 @@
     {
         if (menuId == null)
         {
+            menuModel = new();
             MenuDialogTitle = "Add Menu";
             MenuDialogConfirmationText = "Add";
         }
         else
         {
+            Menu? menu = Menus.Where(m => m.MenuId == menuId).FirstOrDefault();
+            if (menu == null)
+            {
+                ErrorMessage = "Page not found";
+                return Task.CompletedTask;
+            }
+            menuModel = new()
+                {
+                    MenuID = menuId,
+                    Name = menu.Name
+                };
             MenuDialogTitle = "Edit Menu";
             MenuDialogConfirmationText = "Update";
         }
@@ -119,6 +132,17 @@
         {
             Menu menu = await MenuService.CreateMenuAsync(siteId, menuModel.Name);
             Menus.Add(menu);
+        }
+        else
+        {
+            Menu? menu = Menus.Where(m => m.MenuId == menuModel.MenuID).FirstOrDefault();
+            if (menu == null)
+            {
+                ErrorMessage = "Page not found";
+                return;
+            }
+            menu.Name = menuModel.Name;
+            await MenuService.UpdateMenuAsync(menu);
         }
     }
 

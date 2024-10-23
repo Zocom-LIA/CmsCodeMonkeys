@@ -12,6 +12,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
         Task AddMenuItemAsync(MenuItem menuItem);
         Task<Menu?> GetMenuAsync(int menuId);
         Task<IEnumerable<Menu>> GetMenusBySiteIdAsync(int siteId);
+        Task UpdateMenuAsync(Menu menu);
     }
     public class MenuRepository :RepositoryBase, IMenuRepository
     {
@@ -39,6 +40,15 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
                                           .Include(menu => menu.Items)
                                           .ThenInclude(item => item.WebPage)
                                           .ToListAsync();
+            }
+        }
+
+        public async Task UpdateMenuAsync(Menu menu)
+        {
+            using (ApplicationDbContext context = GetContext())
+            {
+                context.Menus.Update(menu);
+                await context.SaveChangesAsync();
             }
         }
     }
