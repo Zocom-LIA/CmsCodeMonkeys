@@ -108,6 +108,10 @@ builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
 
 var app = builder.Build();
 
+// Anropa UseStaticWebAssets() efter att appen har byggts
+app.UseStaticWebAssets();
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
