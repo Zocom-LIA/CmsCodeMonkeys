@@ -17,6 +17,12 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("CodeMonkeys.CMS.Public.Tests")]
 
 var builder = WebApplication.CreateBuilder(args);
+//UFFES
+// Configure Serilog console logging and enrichers
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .CreateLogger();
 
 // Configure Serilog console logging and enrichers
 
@@ -87,6 +93,7 @@ builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirme
 // Registrera repositorier
 builder.Services.AddScoped<IContentItemRepository, ContentItemRepository>();
 builder.Services.AddScoped<ContentItemRepository>();
+builder.Services.AddScoped<IContentItemRepository, ContentItemRepository>();
 builder.Services.AddScoped<IContentItemService, ContentItemService>();
 builder.Services.AddScoped<IContentRepository, ContentRepository>();
 builder.Services.AddScoped<IContentService, ContentService>();
@@ -115,10 +122,12 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
