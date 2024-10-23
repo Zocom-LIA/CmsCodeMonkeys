@@ -17,8 +17,13 @@
 	</ItemGroup>
 <ItemGroup>
   <Content Update="wwwroot\**\*.*" CopyToOutputDirectory="PreserveNewest" />
-	 <None Update="**/*.razor.css" CopyToOutputDirectory="PreserveNewest" />
+	 
 </ItemGroup>
+<ItemGroup>
+    <None Update="Components\**/*.razor.css" CopyToOutputDirectory="PreserveNewest" />
+</ItemGroup>
+
+
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.8" />
