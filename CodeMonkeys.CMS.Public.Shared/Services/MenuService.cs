@@ -42,5 +42,10 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         {
             await _repository.UpdateMenuAsync(menu);
         }
+
+        public async Task DeleteMenuAsync(int menuId)
+        {
+            await _repository.DeleteMenuAsync(menuId);
+        }
     }
 }

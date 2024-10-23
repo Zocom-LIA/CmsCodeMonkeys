@@ -42,6 +42,7 @@
                                 </div>
                                 <div class="menus-card-actions">
                                     <button class="btn btn-primary" @onclick="async () => await OpenMenuDialogAsync(menu.MenuId)">Rename menu</button>
+                                    <button class="btn btn-danger" @onclick="async () => await OpenDeleteMenuDialogAsync(menu.MenuId)">Delete menu</button>
                                     <!--
                                     <button class="btn btn-primary" @onclick="async () => await AddOrUpdatePageAsync(webPage.WebPageId)">Edit page title</button>
                                     <button class="btn btn-secondary" @onclick="async () => await EditContentsAsync(webPage.WebPageId)">Edit contents</button>
@@ -60,7 +61,7 @@
             }
         }
     </div>
-    <ConfirmationDialog @ref="MenuDialog" Title="@MenuDialogTitle" ConfirmationButtonText=@MenuDialogConfirmationText CancelButtonText="Cancel" OnCancel="() => MenuDialog.Hide()" OnConfirm = "SaveMenuDialogContents">
+    <ConfirmationDialog @ref="MenuDialog" Title="@MenuDialogTitle" ConfirmationButtonText=@MenuDialogConfirmationText CancelButtonText="Cancel" OnCancel="() => MenuDialog.Hide()" OnConfirm="SaveMenuDialogContents">
         <EditForm Model="@menuModel">
             <DataAnnotationsValidator />
             <ValidationSummary />
@@ -72,6 +73,11 @@
             </div>
         </EditForm>
     </ConfirmationDialog>
+
+    <ConfirmationDialog @ref="MenuDeleteDialog" Title="Delete Menu" ConfirmationButtonText="Delete" CancelButtonText="Cancel" OnCancel="() => MenuDeleteDialog.Hide()" OnConfirm="DeleteMenu">
+        Are you sure you want to delete the menu @(menuToDelete?.Name ?? "")?
+    </ConfirmationDialog>
+
 </UserViewer>
 
 @code {
@@ -80,9 +86,11 @@
     public Site? Site { get; set; } // Initialized with GetUserSiteAsync, does not actually contain the menus
     public List<Menu>? Menus { get; set; }
     private ConfirmationDialog? MenuDialog { get; set; }
+    private ConfirmationDialog? MenuDeleteDialog { get; set; }
     private string MenuDialogConfirmationText { get; set; }
     private string MenuDialogTitle { get; set; }
     private MenuModel menuModel = new();
+    private Menu menuToDelete;
 
 
     protected override async Task OnInitializedAsync()
@@ -128,7 +136,7 @@
 
     public async Task SaveMenuDialogContents()
     {
-        if(menuModel.MenuID == null)
+        if (menuModel.MenuID == null)
         {
             Menu menu = await MenuService.CreateMenuAsync(siteId, menuModel.Name);
             Menus.Add(menu);
@@ -138,12 +146,32 @@
             Menu? menu = Menus.Where(m => m.MenuId == menuModel.MenuID).FirstOrDefault();
             if (menu == null)
             {
-                ErrorMessage = "Page not found";
+                ErrorMessage = "Menu not found";
                 return;
             }
             menu.Name = menuModel.Name;
             await MenuService.UpdateMenuAsync(menu);
         }
+    }
+
+    public Task OpenDeleteMenuDialogAsync(int menuId)
+    {
+        Menu? menu = Menus.Where(m => m.MenuId == menuId).FirstOrDefault();
+        if (menu == null)
+        {
+            ErrorMessage = "Menu not found";
+            return Task.CompletedTask;
+        }
+        menuToDelete = menu;
+        MenuDeleteDialog.Show();
+        return Task.CompletedTask;
+    }
+
+    public async Task DeleteMenu()
+    {
+        await MenuService.DeleteMenuAsync(menuToDelete.MenuId);
+        Menus.RemoveAll(m => m.MenuId == menuToDelete.MenuId);
+        MenuDeleteDialog.Hide();
     }
 
 

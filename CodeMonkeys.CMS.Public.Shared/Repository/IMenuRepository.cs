@@ -10,6 +10,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
     {
         Task AddAsync(Menu menu);
         Task AddMenuItemAsync(MenuItem menuItem);
+        Task DeleteMenuAsync(int menuId);
         Task<Menu?> GetMenuAsync(int menuId);
         Task<IEnumerable<Menu>> GetMenusBySiteIdAsync(int siteId);
         Task UpdateMenuAsync(Menu menu);
@@ -30,6 +31,18 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             }
         }
         public Task AddMenuItemAsync(MenuItem menuItem) => throw new NotImplementedException();
+
+        public async Task DeleteMenuAsync(int menuId)
+        {
+            using (ApplicationDbContext context = GetContext())
+            {
+                Menu? menu = await context.Menus.FindAsync(menuId);
+                if (menu == null) throw new InvalidOperationException($"No menu with number{menuId} found.");
+                context.Menus.Remove(menu);
+                await context.SaveChangesAsync();
+            }
+        }
+
         public Task<Menu?> GetMenuAsync(int menuId) => throw new NotImplementedException();
         public async Task<IEnumerable<Menu>> GetMenusBySiteIdAsync(int siteId)
         {
