@@ -29,7 +29,22 @@
     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </None>
 </ItemGroup>
-
+<!-- 
+<ItemGroup>
+  <None Update="Components/Account/Pages/*.razor.css" CssScope="custom-scope-identifier" />
+  <None Update="Components/Layout/*.razor.css" CssScope="custom-scope-identifier" />
+  <None Update="Components/Pages/*.razor.css" CssScope="custom-scope-identifier" />
+  <None Update="Components/Pages/Home.razor.css"  />
+  <None Update="Components/Pages/Sites/WebPages/ContentItems/*.razor.css" CssScope="custom-scope-identifier" />
+  <None Update="Components/Pages/Sites/WebPages/*.razor.css" CssScope="custom-scope-identifier" />
+  <None Update="Components/Pages/Sites/*.razor.css" CssScope="custom-scope-identifier" />
+  <None Update="Components/Pages/*.razor.css" CssScope="custom-scope-identifier" />
+  <None Update="Components/Shared/UI/*.razor.css" CssScope="custom-scope-identifier" />
+  <None Update="Components/Shared/*.razor.css" CssScope="custom-scope-identifier" />
+</ItemGroup> -->
+<PropertyGroup>
+  <StaticWebAssetBasePath>_content/$(PackageId)</StaticWebAssetBasePath>
+</PropertyGroup>
 
   <!-- Inkludera alla bilder i wwwroot -->
   <ItemGroup>
