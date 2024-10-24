@@ -49,6 +49,7 @@
                                 <div class="menus-card-actions">
                                     <button class="btn btn-primary" @onclick="async () => await OpenMenuDialogAsync(menu.MenuId)">Rename menu</button>
                                     <button class="btn btn-danger" @onclick="async () => await OpenDeleteMenuDialogAsync(menu.MenuId)">Delete menu</button>
+                                    <button class="btn btn-primary" @onclick="async () => await OpenMenuItemDialogAsync(menu.MenuId)">Add a menu item</button>
                                     <!--
                                     <button class="btn btn-primary" @onclick="async () => await AddOrUpdatePageAsync(webPage.WebPageId)">Edit page title</button>
                                     <button class="btn btn-secondary" @onclick="async () => await EditContentsAsync(webPage.WebPageId)">Edit contents</button>
@@ -84,6 +85,22 @@
         Are you sure you want to delete the menu @(menuToDelete?.Name ?? "")?
     </ConfirmationDialog>
 
+    <ConfirmationDialog @ref="MenuItemDialog" Title="@MenuItemDialogTitle" ConfirmationButtonText=@MenuItemDialogConfirmationText CancelButtonText="Cancel" OnCancel="() => MenuItemDialog.Hide()" OnConfirm="() => SaveMenuItemDialogContents()">
+        <EditForm Model="@menuItemModel">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <StatusMessage Message="@ErrorMessage" />
+            <div class="form-floating mb-3">
+                <InputSelect id="landing_page" @bind-Value="menuItemModel.WebPageId" class="form-control">
+                    @foreach ((int key, string pageName) in PageOptions)
+                    {
+                        <option value="@key">@pageName</option>
+                    }
+                </InputSelect>
+            </div>
+        </EditForm>
+    </ConfirmationDialog>
+
 </UserViewer>
 
 @code {
@@ -93,11 +110,17 @@
     public List<Menu>? Menus { get; set; }
     private ConfirmationDialog? MenuDialog { get; set; }
     private ConfirmationDialog? MenuDeleteDialog { get; set; }
+    private ConfirmationDialog? MenuItemDialog { get; set; }
     private string MenuDialogConfirmationText { get; set; }
     private string MenuDialogTitle { get; set; }
+    private string MenuItemDialogConfirmationText { get; set; }
+    private string MenuItemDialogTitle { get; set; }
     private MenuModel menuModel = new();
     private Menu menuToDelete;
+    private MenuItemModel menuItemModel = new();
+    private Dictionary<int, string> PageOptions = new() { { NoPageChosen, "None" } };
 
+    private const int NoPageChosen = -1;
 
     protected override async Task OnInitializedAsync()
     {
@@ -107,6 +130,10 @@
         if (Site == null)
         {
             Logger.LogWarning($"Site for user with ID '{User!.Id}' not found");
+        }
+        else
+        {
+            foreach (WebPage page in Site.Pages) PageOptions.Add(page.WebPageId, page.Title);
         }
         Menus = (await MenuService.GetMenusBySiteIdAsync(siteId)).ToList();
     }
@@ -124,7 +151,7 @@
             Menu? menu = Menus.Where(m => m.MenuId == menuId).FirstOrDefault();
             if (menu == null)
             {
-                ErrorMessage = "Page not found";
+                ErrorMessage = "Menu not found";
                 return Task.CompletedTask;
             }
             menuModel = new()
@@ -137,6 +164,34 @@
         }
 
         MenuDialog.Show();
+        return Task.CompletedTask;
+    }
+    public Task OpenMenuItemDialogAsync(int menuId, int? menuItemId = null)
+    {
+        if (menuItemId == null)
+        {
+            menuItemModel = new(){MenuId = menuId};
+            MenuItemDialogTitle = "Add Menu Item";
+            MenuItemDialogConfirmationText = "Add";
+        }
+        else
+        {
+            MenuItem? item = Menus?.Find(m => m.MenuId == menuId)?.Items.Where(m => m.MenuItemId == menuItemId).FirstOrDefault();
+            if (item == null)
+            {
+                ErrorMessage = "Menu item not found";
+                return Task.CompletedTask;
+            }
+            menuItemModel = new()
+                {
+                    MenuId = menuId,
+                    WebPageId = item.MenuId
+                };
+            MenuItemDialogTitle = "Edit Menu Item";
+            MenuItemDialogConfirmationText = "Update";
+        }
+
+        MenuItemDialog.Show();
         return Task.CompletedTask;
     }
 
@@ -158,6 +213,23 @@
             menu.Name = menuModel.Name;
             await MenuService.UpdateMenuAsync(menu);
         }
+    }
+
+    public async Task SaveMenuItemDialogContents()
+    {
+        Menu menu = Menus.Find(m => m.MenuId == menuItemModel.MenuId);
+        WebPage? webPage = Site.Pages.FirstOrDefault(p => p.WebPageId == menuItemModel.WebPageId);
+        if (webPage == null) return;
+        if(menuItemModel.MenuItemId == null)
+        {
+            menu.Items.Add(new MenuItem() { WebPage = webPage });
+        }
+        else
+        {
+            MenuItem? menuItem = menu.Items.FirstOrDefault(i => i.MenuItemId == menuItemModel.MenuItemId);
+            menuItem.WebPage = webPage;
+        }
+        await MenuService.UpdateMenuAsync(menu);
     }
 
     public Task OpenDeleteMenuDialogAsync(int menuId)
@@ -185,5 +257,12 @@
     {
         public int? MenuID { get; set; } = null;
         public string Name { get; set; } = string.Empty;
+    }
+
+    protected sealed class MenuItemModel
+    {
+        public int? MenuItemId { get; set; } = null;
+        public int? MenuId {get; set; } = null;
+        public int WebPageId { get; set; } = NoPageChosen;
     }
 }
