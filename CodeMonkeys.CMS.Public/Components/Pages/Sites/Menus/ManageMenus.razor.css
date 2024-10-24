@@ -1,0 +1,68 @@
+﻿.menus-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.menus-col-md-4 {
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    flex: 0 0 33.3333%;
+    max-width: 33.3333%;
+}
+
+.menus-mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.menus-card, .menus-card-header {
+    background-color: #f8f9fa;
+}
+
+.menus-card {
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+}
+
+.menus-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.menus-card-header {
+    border-bottom: 1px solid #dee2e6;
+    font-size: 1.25rem;
+    font-weight: bold;
+    padding: 0.75rem 1.25rem;
+    text-align: center;
+}
+
+.menus-card-body {
+    flex: 1 1 auto;
+    padding: 1.25rem;
+}
+
+.menus-card-footer, .menus-card-header {
+    border-top: 1px solid #dee2e6;
+}
+
+.menus-empty-box {
+    background-color: #f8f9fa;
+    border: 1px dashed #dee2e6;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.menus-card-footer {
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 0.75rem 1.25rem;
+}
