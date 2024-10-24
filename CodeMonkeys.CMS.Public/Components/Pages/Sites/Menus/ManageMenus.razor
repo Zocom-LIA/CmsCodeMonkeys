@@ -37,7 +37,13 @@
                                 </div>
                                 <div class="menus-card-body">
                                     <div class="menus-empty-box bg-light" style="height: 150px;">
-                                        <!-- Additional content can go here -->
+                                        <div class="container" style="overflow-y:scroll; height: 120px" >
+                                            @foreach (MenuItem item in menu.Items)
+                                            {
+                                                <!--Not using rows, because I cannot get rows to work in this environment.-->
+                                                <div class="col-12" >@item.WebPage.Title</div>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="menus-card-actions">
