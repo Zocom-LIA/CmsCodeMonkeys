@@ -1,4 +1,5 @@
 using AutoMapper;
+
 using CodeMonkeys.CMS.Public.Components;
 using CodeMonkeys.CMS.Public.Components.Account;
 using CodeMonkeys.CMS.Public.Services;
@@ -8,10 +9,13 @@ using CodeMonkeys.CMS.Public.Shared.Entities;
 using CodeMonkeys.CMS.Public.Shared.Profiles;
 using CodeMonkeys.CMS.Public.Shared.Repository;
 using CodeMonkeys.CMS.Public.Shared.Services;
+
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("CodeMonkeys.CMS.Public.Tests")]
@@ -59,11 +63,15 @@ else
     {
         throw new InvalidOperationException("Connection string not found. Please set the DB_CONNECTION_STRING environment variable.");
     }
-    
-    dbConfigFunction = (options) => options.UseSqlServer(connectionString);
+
+    dbConfigFunction = (options) =>
+    {
+        options.UseSqlServer(connectionString, options =>
+        {
+            options.EnableRetryOnFailure(maxRetryCount: 5);
+        });
+    };
 }
-
-
 
 // Registrera DbContext
 builder.Services.AddDbContextFactory<ApplicationDbContext>(dbConfigFunction);
