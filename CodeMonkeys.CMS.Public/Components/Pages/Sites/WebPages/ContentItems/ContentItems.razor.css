@@ -71,7 +71,7 @@
 }
 .Toolbaren{
   position: fixed;
-    top: 160px;;
+    top: 170px;
     left: 95%;
     transform: translate(-50%, -50%);
     padding: 13px;
@@ -82,7 +82,7 @@
 }
 .bilden {
   position: fixed;
-  top: 350px;
+  top: 375px;
   left: 95%;
   transform: translate(-50%, -50%);
   padding: 13px;
@@ -94,7 +94,7 @@
 
 .color-picker {
   position: fixed;
-  top: 136px;
+  top: 156px;
   left:10%;
   transform: translate(-50%, -50%);
   padding: 20px;
