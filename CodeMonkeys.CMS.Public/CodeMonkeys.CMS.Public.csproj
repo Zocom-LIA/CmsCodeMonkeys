@@ -52,7 +52,7 @@
 <PropertyGroup>
   <StaticWebAssetBasePath>_content/$(PackageId)</StaticWebAssetBasePath>
 </PropertyGroup>
-
+<!-- dsadsa -->
   <!-- Inkludera alla bilder i wwwroot -->
   
  <ItemGroup>
