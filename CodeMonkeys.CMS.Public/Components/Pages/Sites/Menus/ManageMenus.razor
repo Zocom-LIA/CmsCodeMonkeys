@@ -41,7 +41,9 @@
                                             @foreach (MenuItem item in menu.Items)
                                             {
                                                 <!--Not using rows, because I cannot get rows to work in this environment.-->
-                                                <div class="col-12">@item.WebPage.Title<button class="btn btn-primary" @onclick="async () => await OpenMenuItemDialogAsync(menu.MenuId, item.MenuItemId)">Edit</button></div>
+                                                <div class="col-12">@item.WebPage.Title
+                                                    <button class="btn btn-primary" @onclick="async () => await OpenMenuItemDialogAsync(menu.MenuId, item.MenuItemId)">Edit</button>
+                                                    <button class="btn btn-danger" @onclick="async () => await OpenDeleteMenuItemDialogAsync(item.MenuId, item.MenuItemId)">Delete</button></div>
                                             }
                                         </div>
                                     </div>
@@ -101,6 +103,10 @@
         </EditForm>
     </ConfirmationDialog>
 
+    <ConfirmationDialog @ref="MenuItemDeleteDialog" Title="Delete Menu" ConfirmationButtonText="Delete" CancelButtonText="Cancel" OnCancel="() => MenuItemDeleteDialog.Hide()" OnConfirm="DeleteMenuItem">
+        Are you sure you want to delete the menu item?
+    </ConfirmationDialog>
+
 </UserViewer>
 
 @code {
@@ -111,12 +117,14 @@
     private ConfirmationDialog? MenuDialog { get; set; }
     private ConfirmationDialog? MenuDeleteDialog { get; set; }
     private ConfirmationDialog? MenuItemDialog { get; set; }
+    private ConfirmationDialog? MenuItemDeleteDialog { get; set; }
     private string MenuDialogConfirmationText { get; set; }
     private string MenuDialogTitle { get; set; }
     private string MenuItemDialogConfirmationText { get; set; }
     private string MenuItemDialogTitle { get; set; }
     private MenuModel menuModel = new();
     private Menu menuToDelete;
+    private MenuItem menuItemToDelete;
     private MenuItemModel menuItemModel = new();
     private Dictionary<int, string> PageOptions = new() { { NoPageChosen, "None" } };
 
@@ -247,11 +255,44 @@
         return Task.CompletedTask;
     }
 
+    public Task OpenDeleteMenuItemDialogAsync(int menuId, int menuItemId)
+    {
+        Menu? menu = Menus.Where(m => m.MenuId == menuId).FirstOrDefault();
+        if (menu == null)
+        {
+            ErrorMessage = "Menu not found";
+            return Task.CompletedTask;
+        }
+        MenuItem? menuItem = menu.Items.ToList().Where(i => i.MenuItemId ==menuItemId).FirstOrDefault();
+        if (menuItem == null)
+        {
+            ErrorMessage = "Menu Item not found";
+            return Task.CompletedTask;
+        }
+        menuItemToDelete = menuItem;
+        MenuItemDeleteDialog.Show();
+        return Task.CompletedTask;
+    }
+
     public async Task DeleteMenu()
     {
         await MenuService.DeleteMenuAsync(menuToDelete.MenuId);
         Menus.RemoveAll(m => m.MenuId == menuToDelete.MenuId);
         MenuDeleteDialog.Hide();
+    }
+
+    public async Task DeleteMenuItem()
+    {
+        Menu? menu = Menus.Where(m => m.MenuId == menuItemToDelete.MenuId).FirstOrDefault();
+        if (menu == null)
+        {
+            ErrorMessage = "Menu not found";
+            return;
+        }
+        menu.Items.Remove(menuItemToDelete);
+        await MenuService.DeleteMenuItemAsync(menuItemToDelete.MenuItemId);
+
+        MenuItemDeleteDialog.Hide();
     }
 
 

@@ -27,6 +27,7 @@ namespace CodeMonkeys.CMS.Public.Shared.Data
         public DbSet<ContentItem> ContentItems => Set<ContentItem>();
         public DbSet<Section> Sections => Set<Section>();
         public DbSet<Menu> Menus => Set<Menu>();
+        public DbSet<MenuItem> MenuItems => Set<MenuItem>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

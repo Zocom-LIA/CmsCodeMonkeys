@@ -50,6 +50,25 @@ namespace CodeMonkeys.CMS.Public.Shared.Repository
             }
         }
 
+        public async Task DeleteMenuItemAsync(int menuItemId)
+        {
+            using (ApplicationDbContext context = GetContext())
+            {
+                try
+                {
+                    MenuItem? menuItem = await context.MenuItems.FindAsync(menuItemId);
+                    if (menuItem == null) throw new InvalidOperationException($"No menu item with number{menuItemId} found.");
+                    context.MenuItems.Remove(menuItem);
+                    await context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to delete a menu item ");
+                    throw new RepositoryException("Failed to delete a menu item", ex);
+                }
+            }
+        }
+
         public Task<Menu?> GetMenuAsync(int menuId) => throw new NotImplementedException();
         public async Task<IEnumerable<Menu>> GetMenusBySiteIdAsync(int siteId)
         {
