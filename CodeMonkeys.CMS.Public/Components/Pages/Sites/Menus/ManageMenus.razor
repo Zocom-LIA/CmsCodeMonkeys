@@ -41,7 +41,7 @@
                                             @foreach (MenuItem item in menu.Items)
                                             {
                                                 <!--Not using rows, because I cannot get rows to work in this environment.-->
-                                                <div class="col-12" >@item.WebPage.Title</div>
+                                                <div class="col-12">@item.WebPage.Title<button class="btn btn-primary" @onclick="async () => await OpenMenuItemDialogAsync(menu.MenuId, item.MenuItemId)">Edit</button></div>
                                             }
                                         </div>
                                     </div>
@@ -184,8 +184,9 @@
             }
             menuItemModel = new()
                 {
+                    MenuItemId = item.MenuItemId,
                     MenuId = menuId,
-                    WebPageId = item.MenuId
+                    WebPageId = item.WebPageId
                 };
             MenuItemDialogTitle = "Edit Menu Item";
             MenuItemDialogConfirmationText = "Update";
@@ -228,6 +229,7 @@
         {
             MenuItem? menuItem = menu.Items.FirstOrDefault(i => i.MenuItemId == menuItemModel.MenuItemId);
             menuItem.WebPage = webPage;
+            menuItem.WebPageId = webPage.WebPageId;
         }
         await MenuService.UpdateMenuAsync(menu);
     }
