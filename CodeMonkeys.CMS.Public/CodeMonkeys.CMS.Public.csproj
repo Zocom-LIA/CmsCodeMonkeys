@@ -54,8 +54,11 @@
 </PropertyGroup>
 
   <!-- Inkludera alla bilder i wwwroot -->
-  <ItemGroup>
-    <None Include="wwwroot\Image\**" CopyToOutputDirectory="PreserveNewest" />
+  
+ <ItemGroup>
+    <Folder Include="Controllers\" />
+    <Folder Include="wwwroot\image\" />
+    <Folder Include="wwwroot\bootstrap\" />
   </ItemGroup>
 
   <!-- För CSS-isolering -->
