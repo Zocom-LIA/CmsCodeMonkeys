@@ -71,7 +71,7 @@
 }
 .Toolbaren{
   position: fixed;
-    top: 32%;
+    top: 160px;;
     left: 95%;
     transform: translate(-50%, -50%);
     padding: 13px;
@@ -82,7 +82,7 @@
 }
 .bilden {
   position: fixed;
-  top: 53%;
+  top: 350px;
   left: 95%;
   transform: translate(-50%, -50%);
   padding: 13px;
@@ -94,8 +94,8 @@
 
 .color-picker {
   position: fixed;
-  top: 15%;
-  left:95%;
+  top: 160px;
+  left:8%;
   transform: translate(-50%, -50%);
   padding: 20px;
   background-color: rgba(255, 255, 255, 0.9);
@@ -107,8 +107,8 @@
 
 .TextEditor {
   position: fixed;
-  top: 24%;
-  left: 82%;
+  top:34%;
+  left: 8%;
   transform: translate(-50%, -50%);
   padding: 8px;
   background-color: rgba(255, 255, 255, 0.9);
