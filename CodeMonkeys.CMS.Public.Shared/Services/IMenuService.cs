@@ -10,5 +10,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Services
         Task<IEnumerable<Menu>> GetMenusBySiteIdAsync(int siteId);
         Task UpdateMenuAsync(Menu menu);
         Task DeleteMenuAsync(int menuId);
+        Task DeleteMenuItemAsync(int menuItemId);
     }
 }
