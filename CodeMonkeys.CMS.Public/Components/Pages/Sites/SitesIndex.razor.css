@@ -1,52 +1,38 @@
-﻿.sites-empty-box {
+﻿/* Justera för att ha en grå ram runt boxarna */
+.admin-container{
+    margin-top: 60px;   
+}
+
+
+.sites-empty-box {
     width: 100%;
-    /* Fyller hela bredden av föräldern */
     max-height: 150px;
-    /* Maxhöjd 100 pixlar */
     overflow: hidden;
-    /* Döljer allt överskjutande innehåll */
     background-color: #f8f9fa;
-    /* Bakgrundsfärg */
     border-radius: 5px;
-    /* Rundade hörn */
+    border: 1px solid #b3b3b3; /* Grå ram för att framhäva boxarna */
 }
 
 .content {
     height: 100%;
-    /* Fyller hela höjden på boxen */
     width: 100%;
     display: flex;
-    /* Flexbox för inre innehåll */
     align-items: center;
-    /* Centrerar innehållet vertikalt */
     justify-content: center;
-    /* Centrerar innehållet horisontellt */
     flex-direction: column;
-    /* För att stapla innehållet vertikalt */
-    transform: scale(0.233);
-    /* Zoomar ut innehållet till 33.3% */
-
+    transform: scaleY(0.22) scaleX(200); /* Zooma ut innehållet till 33.3% */
 }
 
 .empty-content-message {
     display: flex;
     height: 150px;
     font-size: 20px;
-    /* Flexbox för meddelandet */
     align-items: center;
-    /* Centrerar meddelandet vertikalt */
     justify-content: center;
-    /* Centrerar meddelandet horisontellt */
-   
-    /* Fyller hela höjden på boxen */
     text-align: center;
-    /* Centrerar texten */
-    
-    /* Zoomar ut meddelandet till 33.3% */
-   
 }
-/* slutet */
 
+/* Styla rad och kolumner */
 .sites-row {
     display: flex;
     flex-wrap: wrap;
@@ -68,19 +54,21 @@
     margin-bottom: 1.5rem;
 }
 
+/* Justera boxarna med grå ram */
 .sites-card {
     background-color: #fff;
-    border: 1px solid #dee2e6;
-    border-radius: 0.25rem;
+    border: 1px solid #b3b3b3; /* Grå ram för hela kortet */
+    border-radius: 5px; /* Rundade hörn för mjukare utseende */
     display: flex;
     flex-direction: column;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Lätt skugga för att lyfta fram boxarna */
 }
 
 .sites-card-header {
     font-size: 1.25rem;
     font-weight: bold;
     background-color: #f8f9fa;
-    border-bottom: 1px solid #dee2e6;
+    border-bottom: 1px solid #b3b3b3; /* Grå ram för att matcha kortet */
 }
 
 .sites-card-body {
@@ -88,9 +76,10 @@
     padding: 1.25rem;
 }
 
+/* Justera den tomma boxen */
 .sites-empty-box {
     background-color: #f8f9fa;
-    border: 1px dashed #6c757d;
+    border: 1px solid #6c757d; /* Använd grå färg här också */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -101,10 +90,11 @@
     flex-direction: column;
     align-items: flex-start;
     padding: 1rem;
-    border-top: 1px solid #dee2e6;
+    border-top: 1px solid #b3b3b3; /* Grå ram för att separera actions */
     background-color: #f8f9fa;
 }
 
+/* Stil för knappar */
 .sites-btn {
     width: 100%;
     margin-bottom: 10px;
@@ -132,7 +122,7 @@
     font-size: 0.85rem;
     text-align: right;
     background-color: #f8f9fa;
-    border-top: 1px solid #dee2e6;
+    border-top: 1px solid #b3b3b3; /* Grå ram för sidfoten */
     padding: 0.75rem 1.25rem;
 }
 
@@ -152,35 +142,61 @@
 }
 
 @media (max-width: 767.98px) {
+    .admin-profile-section{
+        width: 100%;
+    }
+
+    .admin-templates-section{
+        width: 100%;
+    }
+
+    .admin-container {
+
+        display: block;
+            
+        }
+
+
+
     .sites-btn {
         margin-bottom: 5px;
     }
 }
 
-
-
+/* Justera för admin-action-knappar */
 .admin-action-buttons {
     display: flex;
-    justify-content: start; /* Knapparna placeras nära varandra */
-    padding: 10px; /* Utrymme runt knapparna */
+    justify-content: start;
+    padding: 10px;
     padding-left: 50px;
-    border-radius: 10px; /* Rundade hörn på containern */
+    border-radius: 10px;
 }
 
     .admin-action-buttons a {
         text-decoration: none;
-        color: #ffffff; /* Vit textfärg, för bättre synlighet på mörk bakgrund */
-        background-color: #007bff; /* Bootstrap's standardblå färg för primary knappar */
-        padding: 8px 16px; /* Padding runt texten */
-        margin-right: 10px; /* Marginal mellan knapparna */
-        border-radius: 5px; /* Rundade hörn för knapparna */
-        transition: background-color 0.3s ease; /* Övergångseffekt för bakgrundsfärgen */
+        color: #ffffff;
+        background-color: #007bff;
+        padding: 8px 16px;
+        margin-right: 10px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
     }
 
         .admin-action-buttons a:hover {
-            background-color: #0056b3; /* En mörkare blå nyans för hover-effekt */
+            background-color: #0056b3;
         }
 
         .admin-action-buttons a:last-child {
-            margin-right: 0; /* Ingen marginal på den sista knappen */
+            margin-right: 0;
         }
+
+@media (max-width: 426.98px) {
+
+    .admin-templates-title{
+        margin-bottom:0px;
+    }
+
+    .admin-action-buttons{
+        margin-top: 20px;
+    }
+}

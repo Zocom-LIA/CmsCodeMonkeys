@@ -1,41 +1,115 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<UserSecretsId>aspnet-CodeMonkeys.CMS.Public-f65b068e-f653-44ef-8689-2a1e34c18994</UserSecretsId>
-		<GenerateDependency>false</GenerateDependency>
-	</PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-CodeMonkeys.CMS.Public-f65b068e-f653-44ef-8689-2a1e34c18994</UserSecretsId>
+    <PublishReadyToRun>false</PublishReadyToRun>
+    <PublishTrimmed>false</PublishTrimmed>
+    <ScopedCssEnabled>true</ScopedCssEnabled>
+  </PropertyGroup>
 
-	<ItemGroup>
-	  <Compile Remove="Components\Pages\Contents\**" />
-	  <Content Remove="Components\Pages\Contents\**" />
-	  <EmbeddedResource Remove="Components\Pages\Contents\**" />
-	  <None Remove="Components\Pages\Contents\**" />
-	</ItemGroup>
+  <!-- Inkludera alla .razor.css-filer -->
+  <ItemGroup>
+    <Content Update="**\*.razor.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.8" />
-		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.8" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8" />
-	</ItemGroup>
+  <!-- Inkludera alla .razor.css-filer -->
+<ItemGroup>
+  <Content Update="**/*.razor.css">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </Content>
+</ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\CodeMonkeys.CMS.Public.Shared\CodeMonkeys.CMS.Public.Shared.csproj" />
-	</ItemGroup>
+<!-- Inkludera alla bilder i wwwroot -->
+  
+<ItemGroup>
+  <None Update="wwwroot/Image/*.{png,jpg}">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </None>
+</ItemGroup>
 
-	<ItemGroup>
-		<Reference Include="CodeMonkeys.CMS.Public.Shared">
-			<HintPath>..\CodeMonkeys.CMS.Public.Shared\bin\Debug\net8.0\CodeMonkeys.CMS.Public.Shared.dll</HintPath>
-		</Reference>
-	</ItemGroup>
+<!-- <ItemGroup>
+  <None Update="Components/**/*.razor.css" CssScope="custom-scope-identifier" />
+</ItemGroup> -->
 
-	<ItemGroup>
-	  <Folder Include="Components\Pages\Contents\" />
-	</ItemGroup>
+
+<!-- <ItemGroup>
+  <None Update="Components/Account/Pages/*.razor.css" CssScope="custom-scope-identifier" />
+  <None Update="Components/Layout/*.razor.css" CssScope="custom-scope-identifier" />
+  <None Update="Components/Pages/*.razor.css" CssScope="custom-scope-identifier" />
+  <None Update="Components/Pages/Home.razor.css"  />
+  <None Update="Components/Pages/Sites/WebPages/ContentItems/*.razor.css" CssScope="custom-scope-identifier" />
+  <None Update="Components/Pages/Sites/WebPages/*.razor.css" CssScope="custom-scope-identifier" />
+  <None Update="Components/Pages/Sites/*.razor.css" CssScope="custom-scope-identifier" />
+  <None Update="Components/Pages/*.razor.css" CssScope="custom-scope-identifier" />
+  <None Update="Components/Shared/UI/*.razor.css" CssScope="custom-scope-identifier" />
+  <None Update="Components/Shared/*.razor.css" CssScope="custom-scope-identifier" />
+</ItemGroup> -->
+<PropertyGroup>
+  <StaticWebAssetBasePath>_content/$(PackageId)</StaticWebAssetBasePath>
+</PropertyGroup>
+<!-- dsadsa -->
+  <!-- Inkludera alla bilder i wwwroot -->
+  
+ <ItemGroup>
+    <Folder Include="Controllers\" />
+    <Folder Include="wwwroot\image\" />
+    <Folder Include="wwwroot\bootstrap\" />
+  </ItemGroup>
+
+  <!-- För CSS-isolering -->
+  <ItemGroup>
+    <Content Update="**\*.razor.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <!-- Se till att inga CSS-isoleringsfiler eller andra resurser exkluderas från publiceringen -->
+  <ItemGroup>
+    <None Update="Components\**/*.razor.css" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- Paketreferenser (lägg till alla paket som behövs för din applikation) -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8" />
+    <PackageReference Include="Serilog" Version="4.1.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
+    <!-- Lägg till andra relevanta paket här -->
+  </ItemGroup>
+
+  <!-- Projektreferenser -->
+  <ItemGroup>
+    <ProjectReference Include="..\CodeMonkeys.CMS.Public.Shared\CodeMonkeys.CMS.Public.Shared.csproj" />
+    <Reference Include="CodeMonkeys.CMS.Public.Shared">
+      <HintPath>..\CodeMonkeys.CMS.Public.Shared\bin\Debug\net8.0\CodeMonkeys.CMS.Public.Shared.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Hantering av mappar -->
+  <ItemGroup>
+    <Folder Include="Components\Pages\Contents\" />
+  </ItemGroup>
+
+  <!-- Exkludering av filer från Components\Pages\Contents\ -->
+  <ItemGroup>
+    <Compile Remove="Components\Pages\Contents\**" />
+    <Content Remove="Components\Pages\Contents\**" />
+    <EmbeddedResource Remove="Components\Pages\Contents\**" />
+    <None Remove="Components\Pages\Contents\**" />
+  </ItemGroup>
+
+  <PropertyGroup>
+  <CopyAllFilesToOutputDirectory>PreserveNewest</CopyAllFilesToOutputDirectory>
+</PropertyGroup>
+
 
 </Project>

@@ -14,17 +14,18 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
-using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("CodeMonkeys.CMS.Public.Tests")]
 
 var builder = WebApplication.CreateBuilder(args);
+//UFFES
+// Configure Serilog console logging and enrichers
 
-//builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
-// TODO: Add logging configuration that includes database storage
+
+// Configure Serilog console logging and enrichers
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -33,21 +34,20 @@ builder.Services.AddRazorComponents()
 builder.Services.AddAutoMapper(typeof(EntityProfiles).Assembly);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<ContentItemService>();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
-builder.Services.AddScoped<ContentItemRepository>();
-builder.Services.AddScoped<IContentItemService, ContentItemService>();
 
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = IdentityConstants.ApplicationScheme;
     options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
 })
-    .AddIdentityCookies();
-
+.AddIdentityCookies();
 
 Action<DbContextOptionsBuilder> dbConfigFunction;
+
 if (builder.Configuration["database"] == "inMemory")
 {
     string databaseName = builder.Configuration["database_name"] ?? "Something";
@@ -55,9 +55,25 @@ if (builder.Configuration["database"] == "inMemory")
 }
 else
 {
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-    dbConfigFunction = (options) => options.UseSqlServer(connectionString);
+    // Försök hämta anslutningssträngen från miljövariabeln
+    var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING")
+        ?? builder.Configuration.GetConnectionString("DockerConnection");
+
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        throw new InvalidOperationException("Connection string not found. Please set the DB_CONNECTION_STRING environment variable.");
+    }
+
+    dbConfigFunction = (options) =>
+    {
+        options.UseSqlServer(connectionString, options =>
+        {
+            options.EnableRetryOnFailure(maxRetryCount: 5);
+        });
+    };
 }
+
+// Registrera DbContext
 builder.Services.AddDbContextFactory<ApplicationDbContext>(dbConfigFunction);
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -68,22 +84,27 @@ builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirme
     .AddRoleManager<RoleManager<Role>>() // Corrected this line
     .AddDefaultTokenProviders();
 
-builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
-builder.Services.AddScoped<IPageStatsRepository, PageStatsRepository>();
-builder.Services.AddScoped<IPageStatsService, PageStatsService>();
+// Registrera repositorier
+builder.Services.AddScoped<IContentItemRepository, ContentItemRepository>();
+builder.Services.AddScoped<ContentItemRepository>();
+builder.Services.AddScoped<IContentItemRepository, ContentItemRepository>();
+builder.Services.AddScoped<IContentItemService, ContentItemService>();
+builder.Services.AddScoped<IContentRepository, ContentRepository>();
+builder.Services.AddScoped<IContentService, ContentService>();
 builder.Services.AddScoped<IMenuRepository, MenuRepository>();
 builder.Services.AddScoped<IMenuService, MenuService>();
-builder.Services.AddScoped<ISiteRepository, SiteRepository>();
-builder.Services.AddScoped<IWebPageRepository, WebPageRepository>();
-builder.Services.AddScoped<IContentRepository, ContentRepository>();
-builder.Services.AddScoped<ISiteService, SiteService>();
-builder.Services.AddScoped<IWebPageService, WebPageService>();
-builder.Services.AddScoped<IContentService, ContentService>();
-builder.Services.AddScoped<IContentItemService, ContentItemService>();
-builder.Services.AddScoped<CodeMonkeys.CMS.Public.Shared.Repository.IContentItemRepository, CodeMonkeys.CMS.Public.Shared.Repository.ContentItemRepository>();
-builder.Services.AddScoped<ISectionService, SectionService>();
+builder.Services.AddScoped<IPageStatsRepository, PageStatsRepository>();
+builder.Services.AddScoped<IPageStatsService, PageStatsService>();
 builder.Services.AddScoped<ISectionRepository, SectionRepository>();
+builder.Services.AddScoped<ISectionService, SectionService>();
+builder.Services.AddScoped<ISiteRepository, SiteRepository>();
+builder.Services.AddScoped<ISiteService, SiteService>();
+builder.Services.AddScoped<IWebPageRepository, WebPageRepository>();
+builder.Services.AddScoped<IWebPageService, WebPageService>();
+builder.Services.AddScoped<IdentityRedirectManager>();
+builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<MenuConfigurationService>();
+builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
 
 var app = builder.Build();
 
@@ -106,7 +127,6 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseAntiforgery();
-
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();

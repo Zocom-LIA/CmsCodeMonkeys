@@ -1,0 +1,141 @@
+.row{
+   padding-bottom: 110px;
+   animation: moveBackground 30s ease-in-out infinite;
+   background-image: radial-gradient(at 45% 30%, hsla(241, 77%, 65%, 1) 0px, transparent 50%), radial-gradient(at 17% 10%, hsla(271, 87%, 70%, 1) 0px, transparent 50%), radial-gradient(at 59% 50%, hsla(318, 69%, 68%, 1) 0px, transparent 50%), radial-gradient(at 49% 78%, hsla(224, 65%, 69%, 1) 0px, transparent 50%), radial-gradient(at 23% 68%, hsla(266, 84%, 73%, 1) 0px, transparent 50%), radial-gradient(at 13% 15%, hsla(267, 96%, 62%, 1) 0px, transparent 50%), radial-gradient(at 69% 56%, hsla(263, 65%, 70%, 1) 0px, transparent 50%), radial-gradient(at 2% 0%, hsla(320, 61%, 60%, 1) 0px, transparent 50%), radial-gradient(at 17% 58%, hsla(296, 84%, 77%, 1) 0px, transparent 50%), radial-gradient(at 95% 67%, hsla(181, 83%, 66%, 1) 0px, transparent 50%);
+   background-size: 200% 200%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Jost', sans-serif;
+}
+
+.main {
+  background-color: #ffffff;
+  margin-top: 60px;
+  width: 350px;
+  height: 655px;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 5px 20px 50px #000;
+}
+
+#chk {
+  display: none;
+}
+
+.Login {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+
+
+label {
+  color: rgb(179, 0, 255);
+  font-size: 2.3em;
+  justify-content: center;
+  display: flex;
+  margin: 15px;
+  
+  padding-top: 42px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: .5s ease-in-out;
+}
+
+::deep .Inputen {
+  width: 60%;
+  color: black;
+    height: 10px;
+    background: #e0dede;
+    justify-content: center;
+    display: flex;
+    margin: 20px auto;
+    padding: 12px;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+}
+
+
+input {
+  width: 70%;
+  height: 10px;
+  background: #e0dede;
+  justify-content: center;
+  display: flex;
+  margin: 20px auto;
+  padding: 12px;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+}
+
+button {
+  width: 60%;
+  height: 40px;
+  margin: 10px auto;
+  justify-content: center;
+  display: block;
+  color: #fff;
+  background-color: rgb(179, 0, 255);
+  font-size: 1em;
+  font-weight: bold;
+  margin-top: 30px;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  transition: .2s ease-in;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #6d44b8;
+}
+
+.signup {
+  height: 560px;
+  background: #eee;
+  border-radius: 60% / 10%;
+  transform: translateY(-180px);
+  transition: .8s ease-in-out;
+  margin-bottom: 20px;
+}
+
+.signup label {
+      margin-bottom: 60px;
+  
+  color: #573b8a;
+  transform: scale(.6);
+}
+
+#chk:checked~.signup {
+ 
+  transform: translateY(-500px);
+}
+
+#chk:checked~.signup label {
+  margin-bottom: -60px;
+  transform: scale(1);
+}
+
+#chk:checked~.Login label {
+  transform: scale(.6);
+}
+
+.regy{
+  text-align: left;
+  font-size: 12px;
+  padding: 0;
+  justify-content: start;
+  margin-right: 20px;
+  margin-left: -0px;
+  color: #0d6efd;
+}

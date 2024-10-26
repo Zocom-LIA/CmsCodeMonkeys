@@ -23,12 +23,24 @@ namespace CodeMonkeys.CMS.Public.Tests
 
         protected IWebDriver StartAnyWebDriver()
         {
+            //Comment out the AddArgument commands for examining results onscreen.
+            ChromeOptions chromeOptions = new ChromeOptions();
+            chromeOptions.AddArgument("--headless");
+            chromeOptions.AddArgument("--disable-gpu");
+
+            FirefoxOptions firefoxOptions = new FirefoxOptions();
+            firefoxOptions.AddArgument("--headless");
+            firefoxOptions.AddArgument("--disable-gpu");
+
+            EdgeOptions edgeOptions = new EdgeOptions();
+            edgeOptions.AddArgument("--headless");
+            edgeOptions.AddArgument("--disable-gpu");
             List<Func<IWebDriver>> funcs = new List<Func<IWebDriver>>()
             {
-                () => new ChromeDriver(),
-                () => new FirefoxDriver(),
+                () => new ChromeDriver(chromeOptions),
+                () => new FirefoxDriver(firefoxOptions),
                 () => new SafariDriver(),
-                () => new EdgeDriver(),
+                () => new EdgeDriver(edgeOptions),
                 () => new InternetExplorerDriver()
             };
             List<Exception> exceptions = new List<Exception>();
