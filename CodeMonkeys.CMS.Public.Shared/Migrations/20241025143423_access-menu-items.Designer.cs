@@ -4,6 +4,7 @@ using CodeMonkeys.CMS.Public.Shared.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeMonkeys.CMS.Public.Shared.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241025143423_access-menu-items")]
+    partial class accessmenuitems
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -414,17 +417,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.ToTable("UserTokens");
                 });
 
-            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.CodeContent", b =>
-                {
-                    b.HasBaseType("CodeMonkeys.CMS.Public.Shared.Entities.Content");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasDiscriminator().HasValue("CodeContent");
-                });
-
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.ContentItem", b =>
                 {
                     b.HasBaseType("CodeMonkeys.CMS.Public.Shared.Entities.Content");
@@ -472,98 +464,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Migrations
                     b.HasIndex("SectionId");
 
                     b.HasDiscriminator().HasValue("ContentItem");
-                });
-
-            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.FileContent", b =>
-                {
-                    b.HasBaseType("CodeMonkeys.CMS.Public.Shared.Entities.Content");
-
-                    b.Property<string>("FileUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasDiscriminator().HasValue("FileContent");
-                });
-
-            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.ImageContent", b =>
-                {
-                    b.HasBaseType("CodeMonkeys.CMS.Public.Shared.Entities.Content");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasDiscriminator().HasValue("ImageContent");
-                });
-
-            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.LinkContent", b =>
-                {
-                    b.HasBaseType("CodeMonkeys.CMS.Public.Shared.Entities.Content");
-
-                    b.Property<bool>("IsEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("LinkDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LinkUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.ToTable("Contents", t =>
-                        {
-                            t.Property("LinkDescription")
-                                .HasColumnName("LinkContent_LinkDescription");
-
-                            t.Property("LinkUrl")
-                                .HasColumnName("LinkContent_LinkUrl");
-                        });
-
-                    b.HasDiscriminator().HasValue("LinkContent");
-                });
-
-            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.QuoteContent", b =>
-                {
-                    b.HasBaseType("CodeMonkeys.CMS.Public.Shared.Entities.Content");
-
-                    b.Property<string>("Quote")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("QuoteAuthor")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasDiscriminator().HasValue("QuoteContent");
-                });
-
-            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.TextContent", b =>
-                {
-                    b.HasBaseType("CodeMonkeys.CMS.Public.Shared.Entities.Content");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.ToTable("Contents", t =>
-                        {
-                            t.Property("Text")
-                                .HasColumnName("TextContent_Text");
-                        });
-
-                    b.HasDiscriminator().HasValue("TextContent");
-                });
-
-            modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.VideoContent", b =>
-                {
-                    b.HasBaseType("CodeMonkeys.CMS.Public.Shared.Entities.Content");
-
-                    b.Property<string>("VideoUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasDiscriminator().HasValue("VideoContent");
                 });
 
             modelBuilder.Entity("CodeMonkeys.CMS.Public.Shared.Entities.Content", b =>

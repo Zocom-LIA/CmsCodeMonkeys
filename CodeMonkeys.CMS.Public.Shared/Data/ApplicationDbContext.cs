@@ -20,7 +20,6 @@ namespace CodeMonkeys.CMS.Public.Shared.Data
         public DbSet<Site> Sites => Set<Site>();
         public DbSet<WebPage> Pages => Set<WebPage>();
         public DbSet<Content> Contents => Set<Content>();
-        public DbSet<Menu> Menus => Set<Menu>();
         public DbSet<ContentItem> ContentItems => Set<ContentItem>();
         public DbSet<Section> Sections => Set<Section>();
         public DbSet<TextContent> TextContents => Set<TextContent>();
@@ -30,6 +29,8 @@ namespace CodeMonkeys.CMS.Public.Shared.Data
         public DbSet<CodeContent> CodeContent => Set<CodeContent>();
         public DbSet<FileContent> FileContent => Set<FileContent>();
         public DbSet<QuoteContent> QuoteContent => Set<QuoteContent>();
+        public DbSet<Menu> Menus => Set<Menu>();
+        public DbSet<MenuItem> MenuItems => Set<MenuItem>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
